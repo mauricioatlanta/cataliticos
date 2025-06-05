@@ -3,12 +3,6 @@ from .models import Catalitico
 from .forms import CataliticoForm
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseServerError
-from django.http import HttpResponse
-
-
-def inicio(request):
-    return HttpResponse("<h1>App catalíticos en línea ✅</h1>")
-
 
 @csrf_protect
 def buscar_codigo(request):
@@ -37,7 +31,4 @@ def buscar_codigo(request):
         })
 
     except Exception as e:
-        return HttpResponseServerError(f"""
-500 Error del servidor
-{e}
-""")
+        return HttpResponseServerError(f"<h1>500 Error del servidor</h1><pre>{e}</pre>")
