@@ -3,6 +3,10 @@ from .models import Catalitico
 from .forms import CataliticoForm
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseServerError
+from django.shortcuts import render
+
+def inicio(request):
+    return render(request, "index.html")
 
 @csrf_protect
 def buscar_codigo(request):
