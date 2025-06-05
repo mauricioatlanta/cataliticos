@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from .forms import CataliticoForm
+from .models import Catalitico
+
 
 def buscar_codigo(request):
     codigo = request.GET.get('q')
