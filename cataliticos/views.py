@@ -3,6 +3,12 @@ from .models import Catalitico
 from .forms import CataliticoForm
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseServerError
+from django.http import HttpResponse
+
+
+def inicio(request):
+    return HttpResponse("<h1>App catalíticos en línea ✅</h1>")
+
 
 @csrf_protect
 def buscar_codigo(request):
