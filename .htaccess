@@ -1,0 +1,12 @@
+PassengerEnabled on
+PassengerAppRoot /home/cat76477/public_html/cataliticos
+PassengerPython /home/cat76477/virtualenv/cataliticos/3.9/bin/python
+SetEnv DJANGO_SETTINGS_MODULE cataliticos_project.settings
+SetEnv PYTHON_EGG_CACHE /home/cat76477/tmp
+Options -MultiViews
+
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/cat76477/cataliticos"
+PassengerBaseURI "/cataliticos"
+PassengerPython "/home/cat76477/virtualenv/cataliticos/3.9/bin/python"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END

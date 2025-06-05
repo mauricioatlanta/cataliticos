@@ -1,0 +1,7 @@
+PassengerEnabled On
+PassengerAppEnv development
+
+Alias /static/ /home/cat76477/cataliticos/static/
+<Directory /home/cat76477/cataliticos/static/>
+    Require all granted
+</Directory>
