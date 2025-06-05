@@ -1,29 +1,37 @@
 from django.shortcuts import render
-from .forms import CataliticoForm
 from .models import Catalitico
+from .forms import CataliticoForm
+from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponseServerError
 
-
+@csrf_protect
 def buscar_codigo(request):
-    codigo = request.GET.get('q')
-    resultado = None
-    creado = False
-    form = CataliticoForm()
+    try:
+        codigo = request.GET.get('q', '').strip()
+        resultado = None
+        creado = False
+        form = CataliticoForm()
 
-    if codigo:
-        try:
-            resultado = Catalitico.objects.get(codigo__iexact=codigo.strip())
-        except Catalitico.DoesNotExist:
-            if request.method == 'POST':
-                form = CataliticoForm(request.POST)
-                if form.is_valid():
-                    form.save()
-                    creado = True
-                    resultado = form.instance
+        if codigo:
+            try:
+                resultado = Catalitico.objects.get(codigo__iexact=codigo)
+            except Catalitico.DoesNotExist:
+                if request.method == 'POST':
+                    form = CataliticoForm(request.POST)
+                    if form.is_valid():
+                        form.save()
+                        resultado = form.instance
+                        creado = True
 
-    # SIEMPRE se devuelve la plantilla
-    return render(request, 'cataliticos/busqueda.html', {
-        'codigo': codigo,
-        'resultado': resultado,
-        'form': form,
-        'creado': creado
-    })
+        return render(request, 'cataliticos/busqueda.html', {
+            'codigo': codigo,
+            'resultado': resultado,
+            'form': form,
+            'creado': creado
+        })
+
+    except Exception as e:
+        return HttpResponseServerError(f"""
+500 Error del servidor
+{e}
+""")
