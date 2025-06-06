@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Códigos Catalíticos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: #fff;
+            margin: 0; padding: 0;
+        }
+        header {
+            background: #000000cc;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            height: 50px;
+        }
+        nav a {
+            color: #00ffff;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #1de9b6;
+        }
+        .content {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #00ffff;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+            background-color: #ffffff22;
+            color: #fff;
+        }
+        .resultados {
+            margin-top: 20px;
+        }
+        .registro {
+            background: #111;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .registro span {
+            font-size: 1.1em;
+        }
+        .registro a {
+            color: #1de9b6;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .registro a:hover {
+            color: #00ffff;
+        }
+        .registro img {
+            max-width: 200px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/crear/">Nuevo código</a>
+        <a href="/listado/">Buscar código</a>
+        <a href="/dashboard/">Dashboard</a>
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
+<div class="content">
+    <h1>Listado de Códigos Catalíticos</h1>
+    <form method="get" action="/listado/">
+        <input type="text" name="q" placeholder="Buscar código..." value="{{ codigo|default:'' }}">
+    </form>
+
+    <div class="resultados">
+    {% if resultado %}
+        <div class="registro" style="flex-direction: column; align-items: flex-start;">
+            <span><strong>{{ resultado.codigo }}</strong> - {{ resultado.descripcion }}</span>
+            {% if resultado.valor %}
+                <span style="color:#00ffff; font-size:1.2em; font-weight:bold;">Precio: ${{ resultado.valor }}</span>
+            {% endif %}
+            {% if resultado.foto1 %}
+                <img src="{{ resultado.foto1.url }}">
+            {% endif %}
+            {% if resultado.foto2 %}
+                <img src="{{ resultado.foto2.url }}">
+            {% endif %}
+            {% if resultado.foto3 %}
+                <img src="{{ resultado.foto3.url }}">
+            {% endif %}
+            {% if resultado.foto4 %}
+                <img src="{{ resultado.foto4.url }}">
+            {% endif %}
+            <a href="/editar/{{ resultado.id }}/">Editar</a>
+        </div>
+    {% elif codigo %}
+        <div class="registro" style="background: #ff4444;">
+            Código no encontrado: <strong>{{ codigo }}</strong>. Puedes agregarlo abajo.
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Guardar nuevo código</button>
+        </form>
+    {% else %}
+        {% for item in codigos %}
+        <div class="registro">
+            <span><strong>{{ item.codigo }}</strong> - {{ item.descripcion }}</span>
+            <span><a href="/editar/{{ item.id }}/">Editar</a></span>
+        </div>
+        {% empty %}
+        <p>No hay códigos disponibles.</p>
+        {% endfor %}
+    {% endif %}
+    </div>
+</div>
+</body>
+</html>

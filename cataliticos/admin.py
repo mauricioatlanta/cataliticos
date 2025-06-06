@@ -4,6 +4,6 @@ from .models import Catalitico
 
 @admin.register(Catalitico)
 class CataliticoAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'descripcion', 'valor_estimado', 'fecha_creacion')
+    list_display = ['codigo', 'descripcion']
+    list_filter = []
     search_fields = ('codigo', 'descripcion')
-    list_filter = ('fecha_creacion',)

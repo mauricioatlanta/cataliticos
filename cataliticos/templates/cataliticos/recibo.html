@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recibo de Compra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #000000aa;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header img.logo {
+            height: 50px;
+        }
+        nav a {
+            color: #00ffff;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #1de9b6;
+        }
+        .recibo {
+            max-width: 700px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #00ffff;
+        }
+        .campo {
+            margin-bottom: 1em;
+        }
+        .campo strong {
+            color: #ffffff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2em;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+        .btn-whatsapp {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            background: #25d366;
+            color: white;
+            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1em;
+            box-shadow: 0 0 10px #25d36680;
+        }
+        .btn-whatsapp:hover {
+            background: #1ebc59;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="{% static 'img/logo.png' %}" class="logo" alt="Atlanta Reciclajes">
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/crear/">Nuevo código</a>
+        <a href="/buscar/?q=">Buscar código</a>
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
+<div class="recibo">
+    <h1>Recibo de Compra</h1>
+    <div class="campo"><strong>Cliente:</strong> {{ compra.cliente_nombre }}</div>
+    <div class="campo"><strong>RUT:</strong> {{ compra.cliente_rut }}</div>
+    <div class="campo"><strong>Catalítico:</strong> {{ compra.catalitico.codigo }}</div>
+    <div class="campo"><strong>Valor:</strong> ${{ compra.valor_ofrecido|intcomma }}</div>
+    <div class="campo"><strong>Fecha:</strong> {{ compra.fecha }}</div>
+    <a class="btn-whatsapp" href="https://wa.me/?text=Hola%20{{ compra.cliente_nombre }}.%20Confirmamos%20la%20compra%20del%20catal%C3%ADtico%20{{ compra.catalitico.codigo }}%20por%20${{ compra.valor_ofrecido|intcomma }}.%20Gracias%20por%20su%20compra.%20-%20Atlanta%20Reciclajes" target="_blank">
+        📲 Enviar por WhatsApp
+    </a>
+    <div class="footer">Gracias por su compra - Atlanta Reciclajes</div>
+</div>
+</body>
+</html>

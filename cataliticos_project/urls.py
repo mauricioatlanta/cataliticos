@@ -1,9 +1,13 @@
-
 from django.contrib import admin
-from django.urls import path
-from cataliticos import views
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.buscar_codigo, name='buscar_codigo'),
     path('admin/', admin.site.urls),
+    path('', include('cataliticos.urls', namespace='cataliticos')),
 ]
+
+# Servir archivos multimedia en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Atlanta Reciclajes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #000428, #004e92);
+            color: #fff;
+        }
+        header {
+            background: #000;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header img.logo {
+            height: 50px;
+        }
+        nav a {
+            color: #00ffff;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #1de9b6;
+        }
+        .content {
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #00ffff;
+            margin-bottom: 40px;
+        }
+        .chart-container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="{% static 'img/logo.png' %}" class="logo" alt="Atlanta Reciclajes">
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/crear/">Nuevo código</a>
+        <a href="/buscar/?q=">Buscar código</a>
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
+<div class="content">
+    <h1>Panel de Control</h1>
+
+    <div class="chart-container">
+        <canvas id="ventasPorDia"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="topCataliticos"></canvas>
+    </div>
+</div>
+
+<script>
+    const ventasPorDia = new Chart(document.getElementById('ventasPorDia'), {
+        type: 'line',
+        data: {
+            labels: {{ dias|safe }},
+            datasets: [{
+                label: 'Ventas por Día',
+                data: {{ ventas|safe }},
+                borderColor: '#00ffff',
+                backgroundColor: 'rgba(0,255,255,0.2)',
+                fill: true
+            }]
+        }
+    });
+
+    const topCataliticos = new Chart(document.getElementById('topCataliticos'), {
+        type: 'bar',
+        data: {
+            labels: {{ top_codigos|safe }},
+            datasets: [{
+                label: 'Códigos más vendidos',
+                data: {{ top_valores|safe }},
+                backgroundColor: '#1de9b6'
+            }]
+        }
+    });
+</script>
+</body>
+</html>
