@@ -24,18 +24,24 @@ def dashboard(request):
 
     top_codigos = [t['catalitico__codigo'] for t in top]
     top_valores = [t['total'] for t in top]
+    top_cataliticos = list(zip(top_codigos, top_valores))
+
+    total_ventas = sum(ventas)
 
     return render(request, 'cataliticos/dashboard.html', {
         'dias': dias,
         'ventas': ventas,
         'top_codigos': top_codigos,
         'top_valores': top_valores,
+        'top_cataliticos': top_cataliticos,
+        'total_ventas': total_ventas,
+        'codigos': Catalitico.objects.all(),
     })
              
  
 def listado(request):
-    codigos = Catalitico.objects.all().order_by('-id')
-    return render(request, 'cataliticos/listado.html', {'codigos': codigos})
+    cataliticos = Catalitico.objects.all().order_by('-id')
+    return render(request, 'cataliticos/listado.html', {'cataliticos': cataliticos, 'codigo': ''})
 
 
 def buscar_codigo(request):
@@ -91,7 +97,7 @@ def editar_catalitico(request, pk):
 
 
 def listado_y_busqueda(request):
-    codigo = request.GET.get("q")
+    codigo = request.GET.get("q", "")
     resultado = None
     creado = False
     form = CataliticoForm()
@@ -107,6 +113,9 @@ def listado_y_busqueda(request):
                     form.save()
                     creado = True
                     resultado = form.instance
+        cataliticos = codigos.filter(codigo__icontains=codigo)
+    else:
+        cataliticos = codigos
 
     context = {
         "codigo": codigo,
@@ -114,5 +123,6 @@ def listado_y_busqueda(request):
         "creado": creado,
         "form": form,
         "codigos": codigos,
+        "cataliticos": cataliticos,
     }
     return render(request, "cataliticos/listado.html", context)

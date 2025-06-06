@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Crear - Catalíticos{% endblock %} 
+{% block content %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -28,13 +31,21 @@
             display: block;
             margin-top: 1em;
             font-weight: bold;
+            color: #fff;
         }
-        input, textarea {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border-radius: 8px;
-            border: none;
+            border: 1px solid #fff;
             margin-top: 5px;
+            background-color: rgba(17, 24, 39, 0.8);
+            color: #fff;
+            font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #e0e0e0;
+            opacity: 1;
         }
         button {
             background: #00f2ff;
@@ -50,6 +61,10 @@
         button:hover {
             background: #0ff;
         }
+        .error-message {
+            color: #f00;
+            font-size: 0.875em;
+        }
     </style>
 </head>
 <body>
@@ -57,9 +72,22 @@
         <h1>Nuevo Código Catalítico</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="text-xs text-white/60">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
             <button type="submit">Guardar código</button>
         </form>
     </div>
 </body>
 </html>
+
+{% endblock %}

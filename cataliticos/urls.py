@@ -8,7 +8,6 @@ urlpatterns = [
     path('editar/<int:pk>/', views.editar_catalitico, name='editar'),
     path('', views.listado, name='listado'),
     path('listado/', views.listado_y_busqueda, name='listado'),
-    path('listado', views.listado, name='listado'),
     path('buscar/', views.buscar_codigo, name='buscar'),
     path('crear/', views.crear_catalitico, name='crear'),
     path('comprar/<int:pk>/', views.comprar, name='comprar'),

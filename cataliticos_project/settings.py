@@ -6,7 +6,8 @@ SECRET_KEY = 'django-insecure-1234567890'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['cataliticos.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cataliticos.onrender.com']
+
 
 
 INSTALLED_APPS = [
@@ -16,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'cataliticos',
 ]
 
