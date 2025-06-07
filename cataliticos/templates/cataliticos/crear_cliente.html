@@ -1,0 +1,40 @@
+
+{% extends 'base.html' %}
+{% block title %}Nuevo Cliente{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto p-6 bg-white/10 text-white rounded-xl font-orbitron">
+  <h1 class="text-2xl font-bold mb-4">Crear Nuevo Cliente</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        {{ form.nombre.label_tag }}{{ form.nombre }}
+      </div>
+      <div>
+        {{ form.apellido.label_tag }}{{ form.apellido }}
+      </div>
+      <div>
+        {{ form.rut.label_tag }}{{ form.rut }}
+      </div>
+      <div>
+        {{ form.telefono.label_tag }}{{ form.telefono }}
+      </div>
+      <div>
+        {{ form.correo.label_tag }}{{ form.correo }}
+      </div>
+      <div class="md:col-span-2">
+        {{ form.direccion.label_tag }}{{ form.direccion }}
+      </div>
+      <div>
+        {{ form.region.label_tag }}{{ form.region }}
+      </div>
+      <div>
+        {{ form.ciudad.label_tag }}{{ form.ciudad }}
+      </div>
+    </div>
+    <button type="submit" class="mt-6 w-full bg-green-400 hover:bg-green-300 text-black font-bold py-2 px-4 rounded">
+      Guardar Cliente
+    </button>
+  </form>
+</div>
+{% endblock %}

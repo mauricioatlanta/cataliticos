@@ -19,20 +19,20 @@
             <h2 class="text-xl font-bold">🔧 {{ resultado.codigo }}</h2>
             <p class="text-white/80 text-sm">Marca/Descripción: {{ resultado.descripcion|default:"Sin descripción" }}</p>
             <p class="text-white/90 text-sm">Valor: ${{ resultado.valor|floatformat:0|intcomma }}</p>
-            {% if resultado.foto1 %}
-    <img src="{{ resultado.foto1.url }}" alt="Foto 1"
+            {% if resultado.imagen_principal %}
+    <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
          class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white">
-{% endif %}
-{% if resultado.foto2 %}
-    <img src="{{ resultado.foto2.url }}" alt="Foto 2"
+
+{% if resultado.galeria %}
+    <img src="{{ resultado.galeria.url }}" alt="Foto 2"
+         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+
+
+    <img src="" alt="Foto 3"
          class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
 {% endif %}
-{% if resultado.foto3 %}
-    <img src="{{ resultado.foto3.url }}" alt="Foto 3"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-{% endif %}
-{% if resultado.foto4 %}
-    <img src="{{ resultado.foto4.url }}" alt="Foto 4"
+
+    <img src="" alt="Foto 4"
          class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
 {% endif %}
 
