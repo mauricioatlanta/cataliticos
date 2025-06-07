@@ -1,0 +1,75 @@
+{% extends 'cataliticos/base.html' %}
+{% block title %}Busqueda - Catalíticos{% endblock %} 
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Búsqueda de Catalíticos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2em;
+            background-color: #f6f6f6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 2em;
+            border-radius: 8px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .resultado, .error {
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 5px;
+        }
+        .resultado {
+            background-color: #e6ffe6;
+            border: 1px solid #00aa00;
+        }
+        .error {
+            background-color: #ffe6e6;
+            border: 1px solid #aa0000;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Búsqueda de Código Catalítico</h1>
+
+    {% if creado %}
+        <div class="resultado">
+            {% if resultado %}
+    <strong>{{ resultado.codigo }}</strong>
+{% else %}
+    <em>(sin datos)</em>
+{% endif %}
+
+
+        </div>
+    {% elif resultado %}
+        <div class="resultado">
+            🔎 Código encontrado: <strong>{{ resultado.codigo }}</strong>
+        </div>
+    {% elif codigo %}
+        <div class="error">
+            ❌ El código <strong>{{ codigo }}</strong> no existe. Puedes ingresarlo abajo.
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar nuevo código</button>
+    </form>
+</div>
+</body>
+</html>
+
+{% endblock %}

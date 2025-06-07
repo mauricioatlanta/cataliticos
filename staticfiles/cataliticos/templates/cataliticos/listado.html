@@ -1,0 +1,78 @@
+{% extends 'cataliticos/base.html' %}
+{% load humanize %}
+{% block title %}Listado de Catalíticos{% endblock %}
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-gradient-to-br from-cyan-800 to-emerald-700 p-6 rounded-2xl shadow-lg text-white font-[Orbitron]">
+
+    <h1 class="text-2xl font-bold mb-6 text-center">Listado de Catalíticos</h1>
+
+    <!-- Buscador -->
+    <form method="GET" action="{% url 'cataliticos:listado' %}" class="mb-4">
+        <input type="text" name="q" placeholder="Buscar código..." value="{{ codigo }}"
+            class="w-full p-3 rounded-xl bg-transparent border border-white placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-cyan-300">
+    </form>
+
+    {% if codigo and resultado %}
+        <!-- Ficha del catalítico -->
+        <div class="bg-cyan-700/30 rounded-xl p-4 shadow-md space-y-2">
+            <h2 class="text-xl font-bold">🔧 {{ resultado.codigo }}</h2>
+            <p class="text-white/80 text-sm">Marca/Descripción: {{ resultado.descripcion|default:"Sin descripción" }}</p>
+            <p class="text-white/90 text-sm">Valor: ${{ resultado.valor|floatformat:0|intcomma }}</p>
+            {% if resultado.imagen_principal %}
+    <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
+         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white">
+
+{% if resultado.galeria %}
+    <img src="{{ resultado.galeria.url }}" alt="Foto 2"
+         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+
+
+    <img src="" alt="Foto 3"
+         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+{% endif %}
+
+    <img src="" alt="Foto 4"
+         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+{% endif %}
+
+            <a href="{% url 'cataliticos:editar' resultado.id %}" 
+               class="inline-block mt-4 bg-white text-cyan-800 font-semibold px-4 py-2 rounded-lg hover:bg-cyan-200 transition">
+               Editar Catalítico
+            </a>
+        </div>
+
+    {% elif codigo and not resultado %}
+        <!-- No se encontró -->
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded-xl text-center">
+            <p class="mb-2">El código <strong>{{ codigo }}</strong> no está registrado.</p>
+            <a href="{% url 'cataliticos:crear' %}?codigo={{ codigo }}" 
+               class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+               Crear este catalítico
+            </a>
+        </div>
+
+    {% else %}
+        <!-- Listado completo -->
+        <div class="space-y-3">
+            {% for catalitico in cataliticos %}
+                <div class="bg-cyan-700/30 rounded-xl p-3 flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-lg">🔧 {{ catalitico.codigo }}</p>
+                        <p class="text-sm uppercase text-white/70">{{ catalitico.descripcion|default:"Sin marca" }}</p>
+                    </div>
+                    <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300">Editar</a>
+                </div>
+            {% empty %}
+                <p class="text-white text-center mt-4">No hay catalíticos registrados aún.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Botón flotante -->
+    <a href="{% url 'cataliticos:crear' %}" 
+       class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition text-xl">+</a>
+
+</div>
+
+{% endblock %}
