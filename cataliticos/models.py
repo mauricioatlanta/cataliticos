@@ -28,6 +28,7 @@ class Cliente(models.Model):
 
 class CompraCatalitico(models.Model):
     cliente_nombre = models.CharField(max_length=100)
+    cliente_apellido = models.CharField(max_length=100, blank=True) 
     cliente_rut = models.CharField(max_length=20)
     fecha = models.DateTimeField(auto_now_add=True)
 

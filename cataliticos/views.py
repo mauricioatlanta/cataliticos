@@ -6,6 +6,8 @@ from django.utils.timezone import now, timedelta
 from urllib.parse import quote
 from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico
 from .forms import CataliticoForm, ClienteForm, CompraForm
+from .views_compras import listado_compras
+
 
 def dashboard(request):
     dias, ventas = [], []
