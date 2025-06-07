@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.utils.http import urlencode
@@ -91,6 +90,7 @@ def crear_compra_multiple(request):
             cliente = Cliente.objects.get(id=cliente_id)
         else:
             nombre = request.POST.get('cliente_nombre')
+            apellido = request.POST.get('cliente_apellido')
             rut = request.POST.get('cliente_rut')
             telefono = request.POST.get('cliente_telefono')
             if not (nombre and rut):
@@ -98,10 +98,10 @@ def crear_compra_multiple(request):
                 return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos, 'error': error})
             cliente, _ = Cliente.objects.get_or_create(
                 rut=rut,
-                defaults={'nombre': nombre, 'telefono': telefono}
+                defaults={'nombre': nombre, 'apellido': apellido, 'telefono': telefono}
             )
 
-        compra = CompraCatalitico.objects.create(cliente_nombre=cliente.nombre, cliente_rut=cliente.rut)
+        compra = CompraCatalitico.objects.create(cliente_nombre=f"{cliente.nombre} {cliente.apellido}", cliente_rut=cliente.rut)
 
         codigos = request.POST.getlist('codigo[]')
         cantidades = request.POST.getlist('cantidad[]')
@@ -119,11 +119,17 @@ def crear_compra_multiple(request):
             except Catalitico.DoesNotExist:
                 continue
 
-        mensaje = f"📄 *Recibo de compra Atlanta Reciclajes*%0A👤 Cliente: {cliente.nombre}%0A"
+        mensaje = (
+            "📄 *Atlanta Reciclajes Spa*%0A"
+            "🧾 *Recibo de Compra*%0A%0A"
+            f"👤 Cliente: {cliente.nombre} {cliente.apellido}%0A"
+            f"🛒 Detalle:%0A"
+        )
         for detalle in compra.detalles.all():
             subtotal = detalle.subtotal()
-            mensaje += f"🔧 {detalle.catalitico.descripcion} — {detalle.cantidad} x ${detalle.precio_unitario:,} = ${subtotal:,}%0A"
-        mensaje += f"💰 Total: ${compra.total():,}%0A✅ ¡Gracias por preferirnos!"
+            mensaje += f"• {detalle.catalitico.codigo} - {detalle.cantidad} x ${detalle.precio_unitario:,} = ${subtotal:,}%0A"
+        mensaje += f"%0A💰 Total: ${compra.total():,}%0A"
+        mensaje += "✅ ¡Gracias por preferirnos!"
         return redirect(f"https://wa.me/?text={quote(mensaje)}")
 
     return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos})
