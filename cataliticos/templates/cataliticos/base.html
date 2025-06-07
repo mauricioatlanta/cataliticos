@@ -1,39 +1,37 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Atlanta Reciclajes{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    {% load static %}
 </head>
 <body class="bg-fixed bg-cover bg-center text-white" style="background-image: url('{% static 'img/fondo_cataliticos_espacio.png' %}');">
-
-<!-- Overlay oscuro -->
 <div class="bg-black bg-opacity-60 min-h-screen">
 
-<nav class="bg-gradient-to-r from-cyan-700 via-blue-800 to-indigo-900 shadow-lg p-4">
-  <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-white">
-
-    <!-- Logo y título -->
+<nav class="bg-gradient-to-r from-cyan-700 via-blue-800 to-indigo-900 shadow-lg px-4 py-2">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between text-white gap-2 sm:gap-6">
+    <!-- Logo -->
     <div class="flex items-center gap-2">
-      <img src="{% static 'img/logo.png' %}" alt="Logo" class="h-8">
-      <span class="text-xl font-bold tracking-wide">Atlanta Reciclajes</span>
+      <img src="{% static 'img/logo.png' %}" alt="Logo" class="h-8 sm:h-10">
+      <span class="text-lg sm:text-xl font-bold">Atlanta Reciclajes</span>
     </div>
 
-    <!-- Navegación -->
-    <div class="flex flex-wrap gap-4 text-sm justify-center md:justify-end">
+    <!-- Menú de navegación -->
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-4 text-sm">
       <a href="{% url 'cataliticos:listado' %}" class="hover:text-cyan-300">📋 Listado</a>
       <a href="{% url 'cataliticos:crear' %}" class="hover:text-cyan-300">➕ Nuevo</a>
       <a href="{% url 'cataliticos:dashboard' %}" class="hover:text-cyan-300">📈 Dashboard</a>
       <a href="{% url 'cataliticos:crear_compra_multiple' %}" class="hover:text-cyan-300">💵 Crear compra</a>
       <a href="{% url 'cataliticos:listado_compras' %}" class="hover:text-cyan-300">🧾 Compras</a>
     </div>
-
   </div>
 </nav>
 
-<main class="max-w-5xl mx-auto p-4">
+<main class="max-w-6xl mx-auto p-4">
     {% block content %}{% endblock %}
 </main>
 
