@@ -1,0 +1,69 @@
+
+# Proyecto de Gestión de Catalíticos
+
+Esta es una aplicación Django para registrar, valorar y gestionar la compra y venta de catalíticos automotrices, con base en cotizaciones de metales preciosos como platino, paladio y rodio.
+
+---
+
+## ⚙️ Requisitos
+
+- Python 3.9+
+- pip
+- virtualenv (opcional pero recomendado)
+- Django 4.x o superior
+
+---
+
+## 🚀 Instalación
+
+cd C:\projecto\cataliticos_project
+python -m venv venv
+python manage.py createsuperuser  # (opcional) Para acceder al admin
+
+python manage.py migrate
+python manage.py runserver
+
+
+
+
+# Instala Django
+pip install django
+
+
+## 🧪 Pruebas iniciales
+
+- Accede a `http://127.0.0.1:8000/` para buscar o registrar códigos de catalíticos.
+- Entra a `/admin` para gestionar desde el panel de administración.
+- Usa el comando para simular actualización de precios:
+
+```bash
+python manage.py actualizar_precios_metales
+```
+
+---
+
+## 🖼️ Estructura del proyecto
+
+```
+cataliticos_project/
+├── cataliticos/                  # App principal
+│   ├── models.py                 # Modelos: Catalitico, Compra, PrecioMetal
+│   ├── views.py                  # Vistas para buscar, crear y listar
+│   ├── forms.py                  # Formularios de creación
+│   ├── urls.py                   # URLs locales
+│   ├── admin.py                  # Administración Django
+│   ├── static/cataliticos/       # Archivos CSS y JS
+│   └── templates/cataliticos/    # Templates HTML
+├── cataliticos_project/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py / asgi.py
+└── manage.py
+```
+
+---
+
+## 📝 Notas
+
+- Esta app no conecta aún a una API real de Kitco, pero puede ser integrada fácilmente en el futuro.
+- Se recomienda usar PostgreSQL en producción.
