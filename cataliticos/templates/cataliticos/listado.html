@@ -61,7 +61,9 @@
                         <p class="font-bold text-lg">🔧 {{ catalitico.codigo }}</p>
                         <p class="text-sm uppercase text-white/70">{{ catalitico.descripcion|default:"Sin marca" }}</p>
                     </div>
-                    <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300">Editar</a>
+                    <div class="flex items-center">
+                        <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300">Editar</a>
+                    </div>
                 </div>
             {% empty %}
                 <p class="text-white text-center mt-4">No hay catalíticos registrados aún.</p>

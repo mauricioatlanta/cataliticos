@@ -1,11 +1,6 @@
 from django import template
-
 register = template.Library()
 
 @register.filter
 def recibo_whatsapp(compra):
-    mensaje = f"📄 Recibo de compra Atlanta Reciclajes\n👤 Cliente: {compra.cliente_nombre}"
-    for detalle in compra.detalles.all():
-        mensaje += f"\n🔧 {detalle.catalitico.codigo} - ${detalle.precio_unitario:,}"
-    mensaje += f"\n💰 Total: ${compra.total():,}\n✅ ¡Gracias por preferirnos!"
-    return mensaje
+    return f"""📄 *Recibo de compra - Atlanta Reciclajes*%0A👤 Cliente: {compra.cliente_nombre} {compra.cliente_apellido}%0A💰 Total: ${compra.total():,}%0A✅ ¡Gracias por preferirnos!"""

@@ -1,11 +1,10 @@
-
 from django import forms
 from .models import Catalitico, Cliente, CompraCatalitico
 
 class CataliticoForm(forms.ModelForm):
     class Meta:
         model = Catalitico
-        fields = ['codigo', 'descripcion', 'valor', 'imagen_principal', 'galeria']
+        fields = ['codigo', 'descripcion', 'valor', 'imagen_principal', 'imagen2', 'imagen3', 'imagen4']
 
 class ClienteForm(forms.ModelForm):
     class Meta:

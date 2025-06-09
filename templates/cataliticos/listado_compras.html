@@ -1,31 +1,26 @@
+
 {% extends "base.html" %}
-{% load filtros_whatsapp %}
+{% load static humanize filtros_whatsapp %}
 
 {% block content %}
-  <h1 class="text-3xl font-bold mb-4">Compras</h1>
-  <div class="bg-white bg-opacity-10 backdrop-blur-md rounded-lg p-4">
-    <table class="min-w-full text-white">
-      <thead class="text-sm uppercase border-b border-white border-opacity-20">
-        <tr>
-          <th class="px-4 py-2 text-left">Cliente</th>
-          <th class="px-4 py-2 text-left">Total</th>
-          <th class="px-4 py-2 text-left">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for compra in compras %}
-        <tr class="border-b border-white border-opacity-10">
-          <td class="px-4 py-2">{{ compra.cliente_nombre }}</td>
-          <td class="px-4 py-2">${{ compra.total|floatformat:0 }}</td>
-          <td class="px-4 py-2 space-x-2">
-            <a href="{% url 'cataliticos:editar_compra' compra.id %}" class="text-blue-300 hover:underline">Editar</a>
-            <a href="{% url 'cataliticos:eliminar_compra' compra.id %}" class="text-red-300 hover:underline">Eliminar</a>
-            <a href="https://wa.me/?text={{ compra|recibo_whatsapp|urlencode }}" target="_blank"
-               class="bg-green-600 hover:bg-green-800 text-white text-xs px-2 py-1 rounded">📤 WhatsApp</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<div class="max-w-4xl mx-auto py-10 px-4">
+  <h1 class="text-3xl font-bold text-white mb-6">📋 Compras registradas</h1>
+
+  {% for compra in compras %}
+    <div class="bg-white/10 text-white p-4 rounded-lg shadow-md flex justify-between items-center mb-4">
+      <div>
+        <p class="text-lg font-semibold">🧾 Compra #{{ compra.codigo }}</p>
+        <p class="text-sm text-white/70">Cliente: {{ compra.comprador }}</p>
+        <p class="text-sm text-white/70">Total: ${{ compra.total|floatformat:"0"|intcomma }}</p>
+      </div>
+      <div class="flex space-x-4 text-sm">
+        <a href="{% url 'cataliticos:editar_compra' compra.pk %}" class="text-cyan-300 hover:text-cyan-500">✏️ Editar</a>
+        <a href="{% url 'cataliticos:eliminar_compra' compra.pk %}" class="text-red-400 hover:text-red-600" onclick="return confirm('¿Eliminar esta compra?');">🗑 Eliminar</a>
+        <a href="https://wa.me/?text={{ compra|recibo_whatsapp|urlencode }}" target="_blank" class="text-green-400 hover:text-green-600">📤 WhatsApp</a>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-white">No hay compras registradas aún.</p>
+  {% endfor %}
+</div>
 {% endblock %}

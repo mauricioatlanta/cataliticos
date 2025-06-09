@@ -1,5 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import CompraCatalitico
+from .forms import CompraForm
+
+def crear_compra(request):
+    form = CompraForm()
+    if request.method == "POST":
+        form = CompraForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('cataliticos:listado_compras')
+    return render(request, 'cataliticos/crear_compra.html', {'form': form})
 
 def listado_compras(request):
     compras = CompraCatalitico.objects.order_by('-fecha')

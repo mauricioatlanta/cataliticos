@@ -15,6 +15,7 @@ urlpatterns = [
     path('listado/', views.listado_y_busqueda, name='listado'),
     path('crear/', views.crear_catalitico, name='crear'),
     path('editar/<int:pk>/', views.editar_catalitico, name='editar'),
+    path('eliminar/<int:pk>/', views.eliminar_catalitico, name='eliminar'),
     path('compras/', views_compras.listado_compras, name='listado_compras'),
     path('compras/editar/<int:pk>/', views_compras.editar_compra, name='editar_compra'),
     path('compras/eliminar/<int:pk>/', views_compras.eliminar_compra, name='eliminar_compra'),

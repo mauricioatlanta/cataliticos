@@ -1,3 +1,4 @@
+
 {% extends 'cataliticos/base.html' %}
 {% load humanize %}
 {% block title %}Listado de Catalíticos{% endblock %}
@@ -20,22 +21,17 @@
             <p class="text-white/80 text-sm">Marca/Descripción: {{ resultado.descripcion|default:"Sin descripción" }}</p>
             <p class="text-white/90 text-sm">Valor: ${{ resultado.valor|floatformat:0|intcomma }}</p>
             {% if resultado.imagen_principal %}
-    <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white">
-
-{% if resultado.galeria %}
-    <img src="{{ resultado.galeria.url }}" alt="Foto 2"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-
-
-    <img src="" alt="Foto 3"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-{% endif %}
-
-    <img src="" alt="Foto 4"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-{% endif %}
-
+            <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
+                 class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white">
+            {% if resultado.galeria %}
+                <img src="{{ resultado.galeria.url }}" alt="Foto 2"
+                     class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+                <img src="" alt="Foto 3"
+                     class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+            {% endif %}
+            <img src="" alt="Foto 4"
+                 class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
+            {% endif %}
             <a href="{% url 'cataliticos:editar' resultado.id %}" 
                class="inline-block mt-4 bg-white text-cyan-800 font-semibold px-4 py-2 rounded-lg hover:bg-cyan-200 transition">
                Editar Catalítico
@@ -61,7 +57,10 @@
                         <p class="font-bold text-lg">🔧 {{ catalitico.codigo }}</p>
                         <p class="text-sm uppercase text-white/70">{{ catalitico.descripcion|default:"Sin marca" }}</p>
                     </div>
-                    <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300">Editar</a>
+                    <div class="flex items-center">
+                        <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300">Editar</a>
+                        <a href="{% url 'cataliticos:eliminar' catalitico.id %}" class="text-sm text-red-400 hover:text-red-600 ml-4" onclick="return confirm('¿Estás seguro que deseas eliminar este catalítico?');">Eliminar</a>
+                    </div>
                 </div>
             {% empty %}
                 <p class="text-white text-center mt-4">No hay catalíticos registrados aún.</p>

@@ -77,6 +77,11 @@ def crear_catalitico(request):
         return redirect('cataliticos:listado')
     return render(request, 'cataliticos/crear.html', {'form': form})
 
+def eliminar_catalitico(request, pk):
+    catalitico = get_object_or_404(Catalitico, pk=pk)
+    catalitico.delete()
+    return redirect('cataliticos:listado')
+
 def crear_cliente(request):
     form = ClienteForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():

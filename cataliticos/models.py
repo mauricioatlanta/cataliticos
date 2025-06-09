@@ -1,4 +1,3 @@
-
 from django.db import models
 
 class Catalitico(models.Model):
@@ -7,7 +6,9 @@ class Catalitico(models.Model):
     valor = models.PositiveIntegerField(default=0)
 
     imagen_principal = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
-    galeria = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
+    imagen2 = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
+    imagen3 = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
+    imagen4 = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
 
 
     def __str__(self):

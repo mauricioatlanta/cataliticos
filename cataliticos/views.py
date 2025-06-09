@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.utils.http import urlencode
 from django.db.models import Count, Q
 from django.utils.timezone import now, timedelta
@@ -76,6 +77,12 @@ def crear_catalitico(request):
         form.save()
         return redirect('cataliticos:listado')
     return render(request, 'cataliticos/crear.html', {'form': form})
+
+
+def eliminar_catalitico(request, pk):
+    catalitico = get_object_or_404(Catalitico, pk=pk)
+    catalitico.delete()
+    return HttpResponseRedirect(reverse('cataliticos:listado'))
 
 def crear_cliente(request):
     form = ClienteForm(request.POST or None)
