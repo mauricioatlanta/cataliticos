@@ -1,51 +1,29 @@
-{% extends 'cataliticos/base.html' %}
-{% load humanize %}
+{% extends "base.html" %}
+{% load filtros_whatsapp %}
+
 {% block content %}
-<div class="p-4">
-  <h1 class="text-2xl font-bold mb-4 text-white">🧾 Historial de Compras</h1>
-
-  <!-- Buscador -->
-  <input type="text" id="buscador" placeholder="Buscar cliente..." class="w-full p-2 mb-4 rounded bg-white text-black" />
-
-  <div class="overflow-auto bg-black bg-opacity-50 rounded-xl p-4 shadow-xl text-white">
-    <table class="min-w-full text-sm" id="tabla-compras">
-      <thead class="border-b border-gray-600">
-        <tr>
-          <th class="text-left py-2">#</th>
-          <th class="text-left py-2">Cliente</th>
-          <th class="text-left py-2">Fecha</th>
-          <th class="text-left py-2">Total</th>
-          <th class="text-left py-2">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for compra in compras %}
-        <tr class="border-b border-gray-700 hover:bg-gray-800">
-          <td class="py-2">{{ compra.id }}</td>
-          <td class="py-2">{{ compra.cliente_nombre }} {{ compra.cliente.apellido }}</td>
-          <td class="py-2">{{ compra.fecha|date:"d M Y H:i" }}</td>
-          <td class="py-2">${{ compra.total|floatformat:0|intcomma }}</td>
-          <td class="py-2 space-x-2">
-            <a href="{% url 'cataliticos:editar_compra' compra.id %}" class="bg-blue-600 hover:bg-blue-800 px-2 py-1 rounded text-white text-xs">✏️ Editar</a>
-            <a href="{% url 'cataliticos:eliminar_compra' compra.id %}" class="bg-red-600 hover:bg-red-800 px-2 py-1 rounded text-white text-xs" onclick="return confirm('¿Eliminar esta compra?');">🗑️ Borrar</a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="5" class="py-4 text-center">No hay compras registradas aún.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<script>
-  $(document).ready(function() {
-    $("#buscador").on("keyup", function() {
-      var value = $(this).val().toLowerCase();
-      $("#tabla-compras tbody tr").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-      });
-    });
-  });
-</script>
+  <h1 class="text-3xl font-bold mb-4">Compras</h1>
+  <table class="min-w-full bg-white text-black rounded-lg overflow-hidden">
+    <thead class="bg-gray-200 text-sm uppercase">
+      <tr>
+        <th class="px-4 py-2 text-left">Cliente</th>
+        <th class="px-4 py-2 text-left">Total</th>
+        <th class="px-4 py-2 text-left">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for compra in compras %}
+      <tr class="border-b">
+        <td class="px-4 py-2">{{ compra.cliente_nombre }}</td>
+        <td class="px-4 py-2">${{ compra.total|floatformat:0 }}</td>
+        <td class="px-4 py-2 space-x-2">
+          <a href="{% url 'cataliticos:editar_compra' compra.id %}" class="text-blue-600 hover:underline">Editar</a>
+          <a href="{% url 'cataliticos:eliminar_compra' compra.id %}" class="text-red-600 hover:underline">Eliminar</a>
+          <a href="https://wa.me/?text={{ compra|recibo_whatsapp|urlencode }}" target="_blank"
+             class="bg-green-600 hover:bg-green-800 text-white text-xs px-2 py-1 rounded">📤 WhatsApp</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

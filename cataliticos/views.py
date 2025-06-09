@@ -132,8 +132,9 @@ def crear_compra_multiple(request):
             mensaje += f"• {detalle.catalitico.codigo} - {detalle.cantidad} x ${detalle.precio_unitario:,} = ${subtotal:,}%0A"
         mensaje += f"%0A💰 Total: ${compra.total():,}%0A"
         mensaje += "✅ ¡Gracias por preferirnos!"
-        return redirect(f"https://wa.me/?text={quote(mensaje)}")
+        return redirect('cataliticos:listado_compras')
 
+ 
     return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos})
 
 def api_buscar_catalitico(request):
