@@ -1,127 +1,29 @@
-{% extends 'base.html' %}
-{% block title %}Compra de Catalíticos{% endblock %}
+
+{% extends 'cataliticos/base.html' %}
+{% block title %}Confirmar Compra{% endblock %}
 {% block content %}
-<div class="max-w-2xl mx-auto bg-gradient-to-br from-cyan-800 to-emerald-700 p-6 rounded-2xl shadow-lg text-white font-[Orbitron]">
-    <h1 class="text-2xl font-bold mb-6 text-center">Clientes registrados</h1>
-    <div class="space-y-3">
-        {% for cliente in clientes %}
-            <div class="bg-cyan-300 rounded-xl p-3 flex flex-col md:flex-row md:items-center md:justify-between border border-cyan-400">
-                <div>
-                    <p class="font-bold text-lg text-black">👤 {{ cliente.nombre }} {{ cliente.apellido }}</p>
-                    <p class="text-sm text-black">RUT: {{ cliente.rut }}</p>
-                    <p class="text-sm text-black">Teléfono: {{ cliente.telefono }}</p>
-                    <p class="text-sm text-black">Ciudad: {{ cliente.ciudad }}</p>
-                </div>
-            </div>
-        {% empty %}
-            <p class="text-white text-center mt-4">No hay clientes registrados aún.</p>
-        {% endfor %}
-    </div>
-    <hr class="my-8 border-cyan-400/30">
-    <h2 class="text-xl font-bold mb-4 text-center">Buscar catalítico por código</h2>
-    <form method="get" action="" class="mb-6 flex flex-col gap-4 items-center" autocomplete="off">
-        <div class="w-full relative">
-            <input type="text" name="codigo" id="codigo" placeholder="Escribe el código..." autocomplete="off"
-                class="w-full p-3 rounded-xl bg-cyan-900 border border-cyan-400 text-white focus:outline-none focus:ring-2 focus:ring-cyan-300 font-mono">
-            <ul id="sugerencias-codigo" class="absolute left-0 right-0 bg-cyan-950 border border-cyan-400 rounded-xl mt-1 z-20 hidden text-white shadow-xl"></ul>
+<div class="container mx-auto max-w-xl bg-white/10 p-6 rounded-xl shadow-lg text-white mt-8 font-orbitron">
+    <h1 class="text-2xl font-bold mb-4">Confirmar Compra</h1>
+    {% if resultado %}
+        <div class="mb-6">
+            <p class="text-lg"><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
+            <img src="{{ resultado.foto1.url }}" alt="Imagen catalítico" class="mt-4 rounded-lg max-w-xs">
         </div>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl shadow-lg transition">Buscar</button>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="block mb-1 font-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="text-red-400 text-sm">{{ field.errors }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-bold py-2 px-4 rounded">
+            Confirmar y Enviar por WhatsApp
+        </button>
     </form>
-    <div id="info-catalitico" class="mt-4"></div>
-    <!-- TABLA DE COMPRA -->
-    <div class="overflow-x-auto mt-8">
-        <table class="min-w-full rounded-xl overflow-hidden">
-            <thead>
-                <tr>
-                    <th class="bg-cyan-300 text-black px-4 py-2">Descripción</th>
-                    <th class="bg-cyan-300 text-black px-4 py-2">Cantidad</th>
-                    <th class="bg-cyan-300 text-black px-4 py-2">Valor Unitario</th>
-                    <th class="bg-cyan-300 text-black px-4 py-2">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí van las filas dinámicas de la compra -->
-            </tbody>
-        </table>
-    </div>
-    <a href="{% url 'cataliticos:crear_cliente' %}" class="block mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg text-center transition">Registrar nuevo cliente</a>
 </div>
-<script>
-const inputCodigo = document.getElementById('codigo');
-const infoDiv = document.getElementById('info-catalitico');
-const sugerencias = document.getElementById('sugerencias-codigo');
-
-inputCodigo.addEventListener('input', function() {
-    const valor = this.value.trim();
-    if (valor.length > 0) {
-        fetch(`/api/catalitico/?term=${encodeURIComponent(valor)}`)
-            .then(r => r.json())
-            .then(data => {
-                sugerencias.innerHTML = '';
-                if (data.results && data.results.length > 0) {
-                    sugerencias.classList.remove('hidden');
-                    data.results.forEach(item => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<span class='font-bold text-cyan-300'>${item.text}</span> <span class='text-cyan-100'>${item.descripcion}</span>`;
-                        li.className = 'px-4 py-2 cursor-pointer hover:bg-cyan-800 border-b border-cyan-700 last:border-b-0';
-                        li.onclick = () => {
-                            inputCodigo.value = item.text;
-                            sugerencias.classList.add('hidden');
-                            mostrarInfoCatalitico(item.text);
-                        };
-                        sugerencias.appendChild(li);
-                    });
-                } else {
-                    sugerencias.classList.add('hidden');
-                }
-            });
-    } else {
-        sugerencias.classList.add('hidden');
-    }
-});
-
-inputCodigo.addEventListener('blur', function() {
-    setTimeout(() => sugerencias.classList.add('hidden'), 200);
-});
-
-inputCodigo.addEventListener('change', function() {
-    mostrarInfoCatalitico(this.value);
-});
-
-function mostrarInfoCatalitico(codigo) {
-    if (codigo.trim() !== '') {
-        fetch(`/api/catalitico/?codigo=${encodeURIComponent(codigo)}`)
-            .then r => r.json())
-            .then data => {
-                if (data.descripcion) {
-                    infoDiv.innerHTML = `<div class='bg-cyan-800/80 rounded-xl p-4 mt-2'><p class='font-bold'>${data.descripcion}</p><p class='text-cyan-200'>Valor: $${data.valor.toLocaleString()}</p></div>`;
-                } else {
-                    infoDiv.innerHTML = `<p class='text-yellow-200'>No se encontró el catalítico.</p>`;
-                }
-            });
-    } else {
-        infoDiv.innerHTML = '';
-    }
-}
-</script>
-<style>
-input, select, textarea {
-    background-color: #0f172a !important;
-    color: #fff !important;
-    border: 1px solid #38bdf8 !important;
-    font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif !important;
-}
-input::placeholder, textarea::placeholder {
-    color: #a5f3fc !important;
-    opacity: 1;
-}
-#sugerencias-codigo {
-    max-height: 220px;
-    overflow-y: auto;
-    font-size: 1rem;
-}
-#sugerencias-codigo li {
-    background: transparent;
-}
-</style>
 {% endblock %}
