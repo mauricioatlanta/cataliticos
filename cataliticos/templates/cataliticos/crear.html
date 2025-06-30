@@ -1,93 +1,361 @@
-{% extends 'cataliticos/base.html' %}
-{% block title %}Crear - Catalíticos{% endblock %} 
+{% extends 'base.html' %}
+{% load formato_moneda %}
+
+{% block title %}Crear Catalítico - Atlanta Reciclajes{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Crear Código Catalítico</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Orbitron', sans-serif;
-            background: radial-gradient(circle at top left, #004d7a, #008793, #00bf72);
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 1em;
-        }
-        label {
-            display: block;
-            margin-top: 1em;
-            font-weight: bold;
-            color: #fff;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #fff;
-            margin-top: 5px;
-            background-color: rgba(17, 24, 39, 0.8);
-            color: #fff;
-            font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
-        }
-        input::placeholder, textarea::placeholder {
-            color: #e0e0e0;
-            opacity: 1;
-        }
-        button {
-            background: #00f2ff;
-            color: #000;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            margin-top: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-        button:hover {
-            background: #0ff;
-        }
-        .error-message {
-            color: #f00;
-            font-size: 0.875em;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Nuevo Código Catalítico</h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <p class="text-xs text-white/60">{{ field.help_text }}</p>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <p class="error-message">{{ error }}</p>
-                    {% endfor %}
+<style>
+/* Estilos para validación en tiempo real */
+.codigo-disponible {
+    border-color: #10b981 !important;
+    background-color: rgba(240, 253, 244, 0.3) !important;
+}
+
+.codigo-duplicado {
+    border-color: #ef4444 !important;
+    background-color: rgba(254, 242, 242, 0.3) !important;
+}
+
+.mensaje-validacion {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.mensaje-exito {
+    color: #065f46;
+    background-color: rgba(209, 250, 229, 0.3);
+    border: 1px solid #34d399;
+    backdrop-filter: blur(5px);
+}
+
+.mensaje-error {
+    color: #991b1b;
+    background-color: rgba(254, 226, 226, 0.3);
+    border: 1px solid #f87171;
+    backdrop-filter: blur(5px);
+}
+
+.campo-requerido {
+    color: #ef4444;
+}
+
+input, select, textarea {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(5px);
+}
+
+input::placeholder, select::placeholder, textarea::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+label {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+}
+</style>
+
+<div class="max-w-4xl mx-auto p-6 bg-black bg-opacity-20 backdrop-filter backdrop-blur-sm rounded-xl shadow-xl border border-white border-opacity-20">
+    <h1 class="text-3xl font-bold mb-6 text-white text-center">➕ Crear Nuevo Catalítico</h1>
+    
+    <!-- Mensajes de Django -->
+    {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+                <div class="p-4 rounded-lg mb-3 backdrop-filter backdrop-blur-sm {% if message.tags == 'success' %}bg-green-500 bg-opacity-30 border border-green-400 border-opacity-50 text-green-200{% elif message.tags == 'error' %}bg-red-500 bg-opacity-30 border border-red-400 border-opacity-50 text-red-200{% else %}bg-blue-500 bg-opacity-30 border border-blue-400 border-opacity-50 text-blue-200{% endif %}">
+                    {{ message }}
                 </div>
             {% endfor %}
-            <button type="submit">Guardar código</button>
-        </form>
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6" onsubmit="return validarFormulario()">
+        {% csrf_token %}
+        
+        <!-- Errores generales del formulario -->
+        {% if form.non_field_errors %}
+            <div class="bg-red-500 bg-opacity-30 border border-red-400 border-opacity-50 rounded-lg p-4 mb-4 backdrop-filter backdrop-blur-sm">
+                <h3 class="font-bold text-red-200 mb-2">⚠️ Errores en el formulario:</h3>
+                {% for error in form.non_field_errors %}
+                    <p class="text-red-200 text-sm">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Información Básica -->
+        <div class="bg-white bg-opacity-15 backdrop-filter backdrop-blur-sm rounded-lg p-6 border border-white border-opacity-20">
+            <h2 class="text-xl font-semibold mb-4 text-white">📋 Información Básica</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Código -->
+                <div>
+                    <label for="{{ form.codigo.id_for_label }}">
+                        {{ form.codigo.label }} <span class="campo-requerido">*</span>
+                    </label>
+                    {{ form.codigo }}
+                    <div id="codigo-validacion" class="mensaje-validacion" style="display: none;"></div>
+                    {% if form.codigo.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.codigo.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">El código debe ser único y se convertirá automáticamente a mayúsculas</p>
+                </div>
+                
+                <!-- Descripción -->
+                <div>
+                    <label for="{{ form.descripcion.id_for_label }}">
+                        {{ form.descripcion.label }} <span class="campo-requerido">*</span>
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.descripcion.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Valor -->
+                <div class="md:col-span-2">
+                    <label for="{{ form.valor.id_for_label }}">
+                        {{ form.valor.label }} <span class="campo-requerido">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <input type="number" name="valor" id="{{ form.valor.id_for_label }}" 
+                               class="pl-8 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Ej: 15000" min="0" value="{{ form.valor.value|default:'' }}">
+                    </div>
+                    <div id="valor-preview" class="text-sm text-gray-600 mt-1"></div>
+                    {% if form.valor.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.valor.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Imágenes -->
+        <div class="bg-gray-50 rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">🖼️ Imágenes</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.imagen_principal.id_for_label }}">{{ form.imagen_principal.label }}</label>
+                    {{ form.imagen_principal }}
+                    {% if form.imagen_principal.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.imagen_principal.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.imagen2.id_for_label }}">{{ form.imagen2.label }}</label>
+                    {{ form.imagen2 }}
+                    {% if form.imagen2.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.imagen2.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.imagen3.id_for_label }}">{{ form.imagen3.label }}</label>
+                    {{ form.imagen3 }}
+                    {% if form.imagen3.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.imagen3.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.imagen4.id_for_label }}">{{ form.imagen4.label }}</label>
+                    {{ form.imagen4 }}
+                    {% if form.imagen4.errors %}
+                        <div class="mensaje-validacion mensaje-error">
+                            {% for error in form.imagen4.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex flex-col md:flex-row gap-3 pt-4">
+            <button type="submit" 
+                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                ✅ Crear Catalítico
+            </button>
+            <a href="{% url 'cataliticos:listado' %}" 
+               class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center transition duration-200">
+                ❌ Cancelar
+            </a>
+        </div>
+    </form>
+
+    <!-- Información adicional -->
+    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <h3 class="font-semibold text-blue-800 mb-2">ℹ️ Instrucciones:</h3>
+        <ul class="text-sm text-blue-700 space-y-1">
+            <li>• Los campos marcados con <span class="campo-requerido">*</span> son obligatorios</li>
+            <li>• El código debe ser único en todo el sistema</li>
+            <li>• El código se convertirá automáticamente a mayúsculas</li>
+            <li>• Las imágenes son opcionales pero recomendadas para identificación</li>
+            <li>• El valor se guardará en pesos chilenos (CLP)</li>
+        </ul>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+let codigoTimeout;
+
+// Validación en tiempo real del código
+document.addEventListener('DOMContentLoaded', function() {
+    const codigoInput = document.getElementById('id_codigo');
+    const valorInput = document.getElementById('id_valor');
+    
+    if (codigoInput) {
+        // Convertir a mayúsculas automáticamente
+        codigoInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+            
+            // Limpiar timeout anterior
+            clearTimeout(codigoTimeout);
+            
+            // Limpiar estilos previos
+            this.classList.remove('codigo-disponible', 'codigo-duplicado');
+            const validacionDiv = document.getElementById('codigo-validacion');
+            validacionDiv.style.display = 'none';
+            
+            // Verificar después de 500ms de inactividad
+            if (this.value.trim()) {
+                codigoTimeout = setTimeout(() => {
+                    verificarCodigoUnico(this.value.trim());
+                }, 500);
+            }
+        });
+    }
+    
+    if (valorInput) {
+        valorInput.addEventListener('input', function() {
+            actualizarPreviewValor(this.value);
+        });
+        
+        // Actualizar preview inicial
+        if (valorInput.value) {
+            actualizarPreviewValor(valorInput.value);
+        }
+    }
+});
+
+async function verificarCodigoUnico(codigo) {
+    if (!codigo) return;
+    
+    try {
+        const response = await fetch(`/api/verificar-codigo/?codigo=${encodeURIComponent(codigo)}`);
+        const data = await response.json();
+        
+        const codigoInput = document.getElementById('id_codigo');
+        const validacionDiv = document.getElementById('codigo-validacion');
+        
+        if (data.existe) {
+            codigoInput.classList.add('codigo-duplicado');
+            codigoInput.classList.remove('codigo-disponible');
+            validacionDiv.className = 'mensaje-validacion mensaje-error';
+            validacionDiv.textContent = `❌ ${data.mensaje}`;
+        } else {
+            codigoInput.classList.add('codigo-disponible');
+            codigoInput.classList.remove('codigo-duplicado');
+            validacionDiv.className = 'mensaje-validacion mensaje-exito';
+            validacionDiv.textContent = `✅ ${data.mensaje}`;
+        }
+        
+        validacionDiv.style.display = 'block';
+    } catch (error) {
+        console.error('Error al verificar código:', error);
+    }
+}
+
+function actualizarPreviewValor(valor) {
+    const previewDiv = document.getElementById('valor-preview');
+    if (valor && !isNaN(valor)) {
+        const valorFormateado = new Intl.NumberFormat('es-CL', {
+            style: 'currency',
+            currency: 'CLP',
+            minimumFractionDigits: 0
+        }).format(valor);
+        previewDiv.textContent = `Vista previa: ${valorFormateado}`;
+    } else {
+        previewDiv.textContent = '';
+    }
+}
+
+function validarFormulario() {
+    const codigoInput = document.getElementById('id_codigo');
+    const descripcionInput = document.getElementById('id_descripcion');
+    const valorInput = document.getElementById('id_valor');
+    
+    // Verificar campos requeridos
+    if (!codigoInput.value.trim()) {
+        alert('⚠️ El código es obligatorio');
+        codigoInput.focus();
+        return false;
+    }
+    
+    if (!descripcionInput.value.trim()) {
+        alert('⚠️ La descripción es obligatoria');
+        descripcionInput.focus();
+        return false;
+    }
+    
+    if (!valorInput.value || valorInput.value <= 0) {
+        alert('⚠️ El valor debe ser mayor a 0');
+        valorInput.focus();
+        return false;
+    }
+    
+    // Verificar si el código está marcado como duplicado
+    if (codigoInput.classList.contains('codigo-duplicado')) {
+        alert('❌ No se puede crear un catalítico con un código duplicado');
+        codigoInput.focus();
+        return false;
+    }
+    
+    return true;
+}
+</script>
 
 {% endblock %}

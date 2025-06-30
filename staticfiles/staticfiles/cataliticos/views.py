@@ -4,6 +4,7 @@ from django.utils.http import urlencode
 from django.db.models import Count, Q
 from django.utils.timezone import now, timedelta
 from urllib.parse import quote
+from decimal import Decimal
 from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico
 from .forms import CataliticoForm, ClienteForm, CompraForm
 from .views_compras import listado_compras
@@ -22,7 +23,7 @@ def dashboard(request):
     top_valores = [t['total'] for t in top]
     total_ventas = sum(ventas)
 
-    return render(request, 'cataliticos/dashboard.html', {
+    return render(request, 'dashboard.html', {
         'dias': dias,
         'ventas': ventas,
         'top_clientes': top_clientes,
@@ -68,24 +69,27 @@ def editar_catalitico(request, pk):
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('cataliticos:listado')
-    return render(request, 'cataliticos/editar.html', {'form': form, 'catalitico': catalitico})
+    return render(request, 'editar.html', {'form': form, 'catalitico': catalitico})
 
 def crear_catalitico(request):
     form = CataliticoForm(request.POST or None, request.FILES or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('cataliticos:listado')
-    return render(request, 'cataliticos/crear.html', {'form': form})
+    return render(request, 'crear.html', {'form': form})
 
 def crear_cliente(request):
     form = ClienteForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('cataliticos:compra_multiple')
-    return render(request, 'cataliticos/crear_cliente.html', {'form': form})
+    return render(request, 'crear_cliente.html', {'form': form})
+
 
 def crear_compra_multiple(request):
     cataliticos = Catalitico.objects.all()
+    form = ClienteForm()  # ✅ Asegura que siempre tengas el formulario disponible
+
     if request.method == 'POST':
         cliente_id = request.POST.get('cliente')
         if cliente_id:
@@ -97,16 +101,23 @@ def crear_compra_multiple(request):
             telefono = request.POST.get('cliente_telefono')
             if not (nombre and rut):
                 error = 'Debes seleccionar un cliente o ingresar nombre y RUT.'
-                return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos, 'error': error})
+                return render(request, 'crear_compra_multiple.html', {
+                    'cataliticos': cataliticos,
+                    'form': form,
+                    'error': error
+                })
             cliente, _ = Cliente.objects.get_or_create(
                 rut=rut,
                 defaults={'nombre': nombre, 'apellido': apellido, 'telefono': telefono}
             )
 
-        compra = CompraCatalitico.objects.create(cliente_nombre=f"{cliente.nombre} {cliente.apellido}", cliente_rut=cliente.rut)
+        compra = CompraCatalitico.objects.create(
+            cliente_nombre=f"{cliente.nombre} {cliente.apellido}",
+            cliente_rut=cliente.rut
+        )
 
         codigos = request.POST.getlist('codigo[]')
-        cantidades = request.POST.getlist('cantidad[]')
+        cantidad=Decimal(cantidad),
         valores = request.POST.getlist('valor_unitario[]')
 
         for codigo, cantidad, precio in zip(codigos, cantidades, valores):
@@ -121,20 +132,13 @@ def crear_compra_multiple(request):
             except Catalitico.DoesNotExist:
                 continue
 
-        mensaje = (
-            "📄 *Atlanta Reciclajes Spa*%0A"
-            "🧾 *Recibo de Compra*%0A%0A"
-            f"👤 Cliente: {cliente.nombre} {cliente.apellido}%0A"
-            f"🛒 Detalle:%0A"
-        )
-        for detalle in compra.detalles.all():
-            subtotal = detalle.subtotal()
-            mensaje += f"• {detalle.catalitico.codigo} - {detalle.cantidad} x ${detalle.precio_unitario:,} = ${subtotal:,}%0A"
-        mensaje += f"%0A💰 Total: ${compra.total():,}%0A"
-        mensaje += "✅ ¡Gracias por preferirnos!"
-        return redirect(f"https://wa.me/?text={quote(mensaje)}")
+        return redirect('cataliticos:listado_compras')
 
-    return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos})
+    return render(request, 'crear_compra_multiple.html', {
+        'cataliticos': cataliticos,
+        'form': form  # ✅ Este es el que faltaba
+    })
+
 
 def api_buscar_catalitico(request):
     q = request.GET.get('term', '').strip()

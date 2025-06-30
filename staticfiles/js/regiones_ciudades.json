@@ -1,0 +1,41 @@
+{
+  "Región Metropolitana": [
+    "Santiago",
+    "Puente Alto",
+    "Maipú",
+    "La Florida",
+    "Pudahuel"
+  ],
+  "Valparaíso": [
+    "Valparaíso",
+    "Viña del Mar",
+    "Quilpué",
+    "Villa Alemana"
+  ],
+  "Biobío": [
+    "Concepción",
+    "Talcahuano",
+    "Chiguayante",
+    "San Pedro de la Paz"
+  ],
+  "Antofagasta": [
+    "Antofagasta",
+    "Calama",
+    "Mejillones"
+  ],
+  "Araucanía": [
+    "Temuco",
+    "Padre Las Casas",
+    "Villarrica"
+  ],
+  "Los Lagos": [
+    "Puerto Montt",
+    "Castro",
+    "Osorno"
+  ],
+  "Coquimbo": [
+    "La Serena",
+    "Coquimbo",
+    "Ovalle"
+  ]
+}

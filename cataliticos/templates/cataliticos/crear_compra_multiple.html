@@ -1,5 +1,4 @@
-
-{% extends 'cataliticos/base.html' %}
+{% extends 'base.html' %}
 {% block title %}Crear Compra{% endblock %}
 {% block content %}
 
@@ -12,7 +11,7 @@
         <!-- Cliente -->
         <label for="cliente-select" class="block font-bold text-white">👤 Cliente</label>
         <div class="flex gap-2 items-center mb-4">
-            <select id="cliente-select" name="cliente" class="select2 flex-grow p-2 rounded bg-slate-800 bg-opacity-60 text-white border border-cyan-400">
+            <select id="cliente-select" name="cliente" class="select2 flex-grow p-2 rounded border border-cyan-400" style="background-color:#000 !important; color:#fff !important;">
                 <option value="">Buscar cliente...</option>
             </select>
             <a href="{% url 'cataliticos:crear_cliente' %}"
@@ -58,21 +57,41 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
-input, select, textarea {
-    background-color: #1e293b !important;
-    color: #ffffff !important;
-    border: 1px solid #22d3ee !important;
+input, select, textarea,
+.select2-container--default .select2-selection--single,
+.select2-dropdown, .select2-search__field,
+.select2-container--default .select2-selection--multiple,
+.select2-container--default .select2-selection--single .select2-selection__rendered,
+.select2-results__option,
+select option {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: 1px solid #38bdf8 !important;
 }
+
 ::placeholder {
-    color: #cbd5e1 !important;
+    color: #94a3b8 !important;
 }
+
 .select2-container .select2-dropdown {
-    background-color: #1e293b;
-    color: #ffffff;
+    background-color: #000 !important;
+    color: #fff !important;
 }
+
 .select2-container--default .select2-results__option--highlighted {
-    background-color: #22d3ee;
-    color: #000;
+    background-color: #38bdf8 !important;
+    color: #000 !important;
+}
+
+#tabla-cataliticos th, #tabla-cataliticos td {
+    background: transparent;
+    color: #fff;
+}
+
+#tabla-cataliticos input, #tabla-cataliticos select {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: 1px solid #38bdf8 !important;
 }
 </style>
 
@@ -90,6 +109,10 @@ $(document).ready(function () {
         },
         minimumInputLength: 1,
     });
+    // Agregar una fila vacía al cargar la página
+    agregarCataliticoFila();
+    // Delegar eventos para recalcular total en cualquier cambio
+    $(document).on('input change', '.cantidad, .valor_unitario', calcularTotal);
 });
 
 function agregarCataliticoFila() {
@@ -99,17 +122,15 @@ function agregarCataliticoFila() {
                 <input type="text" class="codigo-input w-full p-2 rounded border" name="codigo[]" placeholder="Código">
             </td>
             <td class="p-2 descripcion">-</td>
-            <td class="p-2"><input type="number" name="cantidad[]" class="cantidad w-20 p-2 rounded border text-right" value="1"></td>
-            <td class="p-2"><input type="number" name="valor_unitario[]" class="valor_unitario w-28 p-2 rounded border text-right" value="0"></td>
+            <td class="p-2"><input type="number" step="any" name="cantidad[]" class="cantidad w-20 p-2 rounded border text-right" value="1"></td>
+            <td class="p-2"><input type="number" step="any" name="valor_unitario[]" class="valor_unitario w-28 p-2 rounded border text-right" value="0"></td>
             <td class="p-2 subtotal">$0</td>
             <td class="p-2 text-right"><button type="button" onclick="$(this).closest('tr').remove(); calcularTotal();">❌</button></td>
         </tr>
     `);
     $("#tabla-cataliticos tbody").append(row);
-
-    row.find("input").on("input", calcularTotal);
-
-    row.find(".codigo-input").on("change", function () {
+    // Evento blur para autocompletar valor al salir del input de código
+    row.find("input[name='codigo[]']").off("blur").on("blur", function () {
         const input = $(this);
         const codigo = input.val().trim();
         const fila = input.closest('tr');
@@ -123,15 +144,16 @@ function agregarCataliticoFila() {
                     );
                     if (match) {
                         fila.find('.descripcion').text(match.descripcion || '-');
-                        fila.find('.valor_unitario').val(match.valor || 0);
-                        calcularTotal();
+                        fila.find("input[name='valor_unitario[]']").val(parseFloat(match.valor) || 0).trigger('input');
                     } else {
                         fila.find('.descripcion').text('Código no encontrado');
+                        fila.find("input[name='valor_unitario[]']").val(0).trigger('input');
                     }
                 }
             });
         } else {
             fila.find('.descripcion').text('-');
+            fila.find("input[name='valor_unitario[]']").val(0).trigger('input');
         }
     });
 }
@@ -139,8 +161,8 @@ function agregarCataliticoFila() {
 function calcularTotal() {
     let total = 0;
     $("#tabla-cataliticos tbody tr").each(function () {
-        const cantidad = parseInt($(this).find(".cantidad").val()) || 0;
-        const valor = parseInt($(this).find(".valor_unitario").val()) || 0;
+        const cantidad = parseFloat($(this).find(".cantidad").val()) || 0;
+        const valor = parseFloat($(this).find(".valor_unitario").val()) || 0;
         const subtotal = cantidad * valor;
         $(this).find(".subtotal").text(`$${subtotal.toLocaleString("es-CL")}`);
         total += subtotal;

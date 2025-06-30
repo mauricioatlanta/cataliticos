@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load formato_moneda %}
+
+{% block title %}Prueba Template Tag{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-xl">
+    <h1 class="text-2xl font-bold mb-4">Prueba de Template Tag</h1>
+    
+    <div class="space-y-2">
+        <p>Valor 15000: {{ 15000|formato_pesos }}</p>
+        <p>Valor 25000: {{ 25000|formato_pesos }}</p>
+        <p>Valor sin signo 15000: {{ 15000|formato_pesos_sin_signo }}</p>
+        <p>Valor None: {{ none_value|formato_pesos }}</p>
+    </div>
+    
+    <a href="{% url 'cataliticos:listado' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded">
+        Volver al listado
+    </a>
+</div>
+{% endblock %}

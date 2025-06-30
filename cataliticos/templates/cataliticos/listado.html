@@ -1,53 +1,51 @@
-{% extends 'cataliticos/base.html' %}
+{% extends 'base.html' %}
 {% load humanize %}
 {% block title %}Listado de Catalíticos{% endblock %}
 {% block content %}
 
-<div class="max-w-xl mx-auto bg-gradient-to-br from-cyan-800 to-emerald-700 p-6 rounded-2xl shadow-lg text-white font-[Orbitron]">
+<div class="max-w-xl mx-auto bg-white/5 backdrop-blur-md p-6 rounded-2xl shadow-lg text-white font-[Orbitron]" style="background:rgba(0,0,0,0.15);">
 
     <h1 class="text-2xl font-bold mb-6 text-center">Listado de Catalíticos</h1>
 
     <!-- Buscador -->
     <form method="GET" action="{% url 'cataliticos:listado' %}" class="mb-4">
-        <input type="text" name="q" placeholder="Buscar código..." value="{{ codigo }}"
-            class="w-full p-3 rounded-xl bg-transparent border border-white placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-cyan-300">
+        <input type="text" id="busqueda-codigo" name="q" placeholder="Buscar código..." value="{{ codigo }}"
+            class="w-full p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/30 placeholder-black/70 text-black focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15" autocomplete="off">
     </form>
+    <div id="resultados-busqueda"></div>
 
     {% if codigo and resultado %}
         <!-- Ficha del catalítico -->
-        <div class="bg-cyan-700/30 rounded-xl p-4 shadow-md space-y-2">
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 shadow-md space-y-2">
             <h2 class="text-xl font-bold">🔧 {{ resultado.codigo }}</h2>
             <p class="text-white/80 text-sm">Marca/Descripción: {{ resultado.descripcion|default:"Sin descripción" }}</p>
             <p class="text-white/90 text-sm">Valor: ${{ resultado.valor|floatformat:0|intcomma }}</p>
             {% if resultado.imagen_principal %}
-    <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white">
+                <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mx-auto">
+            {% endif %}
 
-{% if resultado.galeria %}
-    <img src="{{ resultado.galeria.url }}" alt="Foto 2"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-
-
-    <img src="" alt="Foto 3"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-{% endif %}
-
-    <img src="" alt="Foto 4"
-         class="rounded-xl mt-3 w-full max-h-60 object-cover border border-white mt-2">
-{% endif %}
+            {% if resultado.galeria %}
+                <img src="{{ resultado.galeria.url }}" alt="Foto 2"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+                <img src="" alt="Foto 3"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+                <img src="" alt="Foto 4"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+            {% endif %}
 
             <a href="{% url 'cataliticos:editar' resultado.id %}" 
-               class="inline-block mt-4 bg-white text-cyan-800 font-semibold px-4 py-2 rounded-lg hover:bg-cyan-200 transition">
+               class="inline-block mt-4 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold px-4 py-2 rounded-lg hover:bg-white/30 transition">
                Editar Catalítico
             </a>
         </div>
 
     {% elif codigo and not resultado %}
         <!-- No se encontró -->
-        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded-xl text-center">
+        <div class="bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/40 text-white p-4 rounded-xl text-center">
             <p class="mb-2">El código <strong>{{ codigo }}</strong> no está registrado.</p>
             <a href="{% url 'cataliticos:crear' %}?codigo={{ codigo }}" 
-               class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+               class="inline-block bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 text-white px-4 py-2 rounded-lg hover:bg-blue-500/40 transition">
                Crear este catalítico
             </a>
         </div>
@@ -56,14 +54,12 @@
         <!-- Listado completo -->
         <div class="space-y-3">
             {% for catalitico in cataliticos %}
-                <div class="bg-cyan-700/30 rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 flex items-center justify-between hover:bg-white/15 transition">
                     <div>
                         <p class="font-bold text-lg">🔧 {{ catalitico.codigo }}</p>
                         <p class="text-sm uppercase text-white/70">{{ catalitico.descripcion|default:"Sin marca" }}</p>
                     </div>
-                    <div class="flex items-center">
-                        <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300">Editar</a>
-                    </div>
+                    <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300 bg-white/20 px-3 py-1 rounded-lg border border-white/30 hover:bg-white/30 transition">Editar</a>
                 </div>
             {% empty %}
                 <p class="text-white text-center mt-4">No hay catalíticos registrados aún.</p>
@@ -73,8 +69,45 @@
 
     <!-- Botón flotante -->
     <a href="{% url 'cataliticos:crear' %}" 
-       class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition text-xl">+</a>
+       class="fixed bottom-6 right-6 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 hover:bg-blue-500/40 text-white p-4 rounded-full shadow-lg transition text-xl">+</a>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('busqueda-codigo');
+    const resultadosDiv = document.getElementById('resultados-busqueda');
+    let timeout = null;
+    input.addEventListener('input', function() {
+        clearTimeout(timeout);
+        const valor = this.value.trim();
+        if (valor.length === 0) {
+            resultadosDiv.innerHTML = '';
+            return;
+        }
+        resultadosDiv.innerHTML = '<div class="text-center text-black/70 py-4">Buscando...</div>';
+        timeout = setTimeout(() => {
+            fetch(`{% url 'cataliticos:api_buscar_catalitico' %}?term=${encodeURIComponent(valor)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.results.length === 0) {
+                        resultadosDiv.innerHTML = '<div class="text-center text-black/70 py-4">No se encontraron resultados.</div>';
+                        return;
+                    }
+                    resultadosDiv.innerHTML = data.results.map(c => `
+                        <div class='bg-white/80 backdrop-blur-sm border border-white/20 rounded-xl p-3 flex items-center justify-between hover:bg-white/90 transition mb-2'>
+                            <div>
+                                <p class='font-bold text-lg text-black'>🔧 ${c.text}</p>
+                                <p class='text-sm uppercase text-black/70'>${c.descripcion || 'Sin marca'}</p>
+                                <p class='text-sm text-black/80'>Valor: $${c.valor.toLocaleString('es-CL')}</p>
+                            </div>
+                            <a href='{% url 'cataliticos:editar' 0 %}'.replace('0', c.id) class='text-sm text-black hover:text-cyan-700 bg-white/40 px-3 py-1 rounded-lg border border-white/30 hover:bg-white/60 transition'>Editar</a>
+                        </div>
+                    `).join('');
+                });
+        }, 350);
+    });
+});
+</script>
 
 {% endblock %}

@@ -22,7 +22,7 @@ def dashboard(request):
     top_valores = [t['total'] for t in top]
     total_ventas = sum(ventas)
 
-    return render(request, 'cataliticos/dashboard.html', {
+    return render(request, 'dashboard.html', {
         'dias': dias,
         'ventas': ventas,
         'top_clientes': top_clientes,
@@ -68,21 +68,21 @@ def editar_catalitico(request, pk):
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('cataliticos:listado')
-    return render(request, 'cataliticos/editar.html', {'form': form, 'catalitico': catalitico})
+    return render(request, 'editar.html', {'form': form, 'catalitico': catalitico})
 
 def crear_catalitico(request):
     form = CataliticoForm(request.POST or None, request.FILES or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('cataliticos:listado')
-    return render(request, 'cataliticos/crear.html', {'form': form})
+    return render(request, 'crear.html', {'form': form})
 
 def crear_cliente(request):
     form = ClienteForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('cataliticos:compra_multiple')
-    return render(request, 'cataliticos/crear_cliente.html', {'form': form})
+    return render(request, 'crear_cliente.html', {'form': form})
 
 def crear_compra_multiple(request):
     cataliticos = Catalitico.objects.all()
@@ -97,7 +97,7 @@ def crear_compra_multiple(request):
             telefono = request.POST.get('cliente_telefono')
             if not (nombre and rut):
                 error = 'Debes seleccionar un cliente o ingresar nombre y RUT.'
-                return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos, 'error': error})
+                return render(request, 'crear_compra_multiple.html', {'cataliticos': cataliticos, 'error': error})
             cliente, _ = Cliente.objects.get_or_create(
                 rut=rut,
                 defaults={'nombre': nombre, 'apellido': apellido, 'telefono': telefono}
@@ -134,7 +134,7 @@ def crear_compra_multiple(request):
         mensaje += "✅ ¡Gracias por preferirnos!"
         return redirect(f"https://wa.me/?text={quote(mensaje)}")
 
-    return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos})
+    return render(request, 'crear_compra_multiple.html', {'cataliticos': cataliticos})
 
 def api_buscar_catalitico(request):
     q = request.GET.get('term', '').strip()

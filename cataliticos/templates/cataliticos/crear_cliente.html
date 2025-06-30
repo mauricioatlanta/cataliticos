@@ -1,40 +1,140 @@
-
-{% extends 'cataliticos/base.html' %}
+{% extends 'base.html' %}
 {% block title %}Nuevo Cliente{% endblock %}
 {% block content %}
-<div class="max-w-xl mx-auto p-6 bg-white/10 text-white rounded-xl font-orbitron">
-  <h1 class="text-2xl font-bold mb-4">Crear Nuevo Cliente</h1>
-  <form method="post">
+<div class="max-w-2xl mx-auto p-6 bg-white/5 backdrop-blur-md rounded-2xl shadow-xl text-white font-[Orbitron]" style="background:rgba(0,0,0,0.15);">
+  <h1 class="text-3xl font-bold mb-6 text-center">👤 Crear Nuevo Cliente</h1>
+  <div class="mb-4 p-3 bg-blue-500/10 backdrop-blur-sm border border-blue-400/30 rounded-lg">
+    <p class="text-sm text-blue-200">
+      <strong>Nota:</strong> Solo el campo <strong>Nombre</strong> marcado con <span class="text-red-400">*</span> es obligatorio. Todos los demás campos son opcionales.
+    </p>
+  </div>
+  <form method="post" class="space-y-4">
     {% csrf_token %}
+    {% if form.errors %}
+      <div class="bg-red-500/10 border border-red-400/30 rounded-lg p-4 mb-4 text-red-200">
+        <h3 class="font-bold mb-2">⚠️ Errores en el formulario:</h3>
+        {% for field, errors in form.errors.items %}
+          <ul class="text-sm">
+            {% for error in errors %}
+              <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </div>
+    {% endif %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        {{ form.nombre.label_tag }}{{ form.nombre }}
+        <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-black mb-1">
+          {{ form.nombre.label }} <span class="text-red-400">*</span>
+        </label>
+        <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}" 
+               value="{{ form.nombre.value|default:'' }}"
+               class="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15"
+               placeholder="Nombre del cliente" required>
       </div>
       <div>
-        {{ form.apellido.label_tag }}{{ form.apellido }}
+        <label for="{{ form.apellido.id_for_label }}" class="block text-sm font-medium text-black mb-1">
+          {{ form.apellido.label }}
+        </label>
+        <input type="text" name="{{ form.apellido.name }}" id="{{ form.apellido.id_for_label }}" 
+               value="{{ form.apellido.value|default:'' }}"
+               class="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15"
+               placeholder="Apellido (opcional)">
       </div>
       <div>
-        {{ form.rut.label_tag }}{{ form.rut }}
+        <label for="{{ form.rut.id_for_label }}" class="block text-sm font-medium text-black mb-1">
+          {{ form.rut.label }}
+        </label>
+        <input type="text" name="{{ form.rut.name }}" id="{{ form.rut.id_for_label }}" 
+               value="{{ form.rut.value|default:'' }}"
+               class="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15"
+               placeholder="12345678-9 (opcional)">
       </div>
       <div>
-        {{ form.telefono.label_tag }}{{ form.telefono }}
-      </div>
-      <div>
-        {{ form.correo.label_tag }}{{ form.correo }}
+        <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-black mb-1">
+          {{ form.telefono.label }}
+        </label>
+        <input type="text" name="{{ form.telefono.name }}" id="{{ form.telefono.id_for_label }}" 
+               value="{{ form.telefono.value|default:'' }}"
+               class="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15"
+               placeholder="Teléfono (opcional)">
       </div>
       <div class="md:col-span-2">
-        {{ form.direccion.label_tag }}{{ form.direccion }}
+        <label for="{{ form.correo.id_for_label }}" class="block text-sm font-medium text-black mb-1">
+          {{ form.correo.label }}
+        </label>
+        <input type="email" name="{{ form.correo.name }}" id="{{ form.correo.id_for_label }}" 
+               value="{{ form.correo.value|default:'' }}"
+               class="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15"
+               placeholder="correo@ejemplo.com (opcional)">
+      </div>
+      <div class="md:col-span-2">
+        <label for="{{ form.direccion.id_for_label }}" class="block text-sm font-medium text-black mb-1">
+          {{ form.direccion.label }}
+        </label>
+        <input type="text" name="{{ form.direccion.name }}" id="{{ form.direccion.id_for_label }}" 
+               value="{{ form.direccion.value|default:'' }}"
+               class="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15"
+               placeholder="Dirección completa (opcional)">
       </div>
       <div>
-        {{ form.region.label_tag }}{{ form.region }}
+        <label for="region-select" class="block text-sm font-medium text-black mb-1">
+          Región <span class="text-red-400">*</span>
+        </label>
+        <select name="region" id="region-select"
+                class="w-full px-3 py-2 border border-white/30 rounded-lg bg-black/30 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-black/50">
+          <option value="">Selecciona una región</option>
+        </select>
       </div>
       <div>
-        {{ form.ciudad.label_tag }}{{ form.ciudad }}
+        <label for="ciudad-select" class="block text-sm font-medium text-black mb-1">
+          Ciudad <span class="text-red-400">*</span>
+        </label>
+        <select name="ciudad" id="ciudad-select"
+                class="w-full px-3 py-2 border border-white/30 rounded-lg bg-black/30 backdrop-blur-sm text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-black/50">
+          <option value="">Selecciona una ciudad</option>
+        </select>
       </div>
     </div>
-    <button type="submit" class="mt-6 w-full bg-green-400 hover:bg-green-300 text-black font-bold py-2 px-4 rounded">
-      Guardar Cliente
-    </button>
+    <div class="flex gap-3 mt-6">
+      <button type="submit" 
+              class="flex-1 bg-green-500/30 hover:bg-green-500/50 text-white font-bold py-3 px-4 rounded-lg transition duration-200 backdrop-blur-sm border border-green-400/30">
+        ✅ Guardar Cliente
+      </button>
+      <a href="{% url 'cataliticos:listado' %}" 
+         class="flex-1 bg-gray-500/30 hover:bg-gray-500/50 text-white font-bold py-3 px-4 rounded-lg text-center transition duration-200 backdrop-blur-sm border border-gray-400/30">
+        ❌ Cancelar
+      </a>
+    </div>
   </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('/api/regiones-ciudades/')
+        .then(response => response.json())
+        .then(data => {
+          const regionSelect = document.getElementById('region-select');
+          const ciudadSelect = document.getElementById('ciudad-select');
+          // Poblar regiones
+          Object.keys(data).forEach(region => {
+            const option = document.createElement('option');
+            option.value = region;
+            option.textContent = region;
+            regionSelect.appendChild(option);
+          });
+          // Al cambiar región, poblar ciudades
+          regionSelect.addEventListener('change', function() {
+            ciudadSelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+            if (data[this.value]) {
+              data[this.value].slice(0, 10).forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+              });
+            }
+          });
+        });
+    });
+  </script>
 {% endblock %}

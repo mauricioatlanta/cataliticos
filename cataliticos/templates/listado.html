@@ -1,0 +1,75 @@
+{% extends 'cataliticos/base.html' %}
+{% load humanize %}
+{% block title %}Listado de Catalíticos{% endblock %}
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-gradient-to-br from-cyan-800 to-emerald-700 p-6 rounded-2xl shadow-lg text-white font-[Orbitron]">
+
+    <h1 class="text-2xl font-bold mb-6 text-center">Listado de Catalíticos</h1>
+
+    <!-- Buscador -->
+    <form method="GET" action="{% url 'cataliticos:listado' %}" class="mb-4">
+        <input type="text" name="q" placeholder="Buscar código..." value="{{ codigo }}"
+            class="w-full p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/30 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15">
+    </form>
+
+    {% if codigo and resultado %}
+        <!-- Ficha del catalítico -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 shadow-md space-y-2">
+            <h2 class="text-xl font-bold">🔧 {{ resultado.codigo }}</h2>
+            <p class="text-white/80 text-sm">Marca/Descripción: {{ resultado.descripcion|default:"Sin descripción" }}</p>
+            <p class="text-white/90 text-sm">Valor: ${{ resultado.valor|floatformat:0|intcomma }}</p>
+            {% if resultado.imagen_principal %}
+                <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mx-auto">
+            {% endif %}
+
+            {% if resultado.galeria %}
+                <img src="{{ resultado.galeria.url }}" alt="Foto 2"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+                <img src="" alt="Foto 3"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+                <img src="" alt="Foto 4"
+                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+            {% endif %}
+
+            <a href="{% url 'cataliticos:editar' resultado.id %}" 
+               class="inline-block mt-4 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold px-4 py-2 rounded-lg hover:bg-white/30 transition">
+               Editar Catalítico
+            </a>
+        </div>
+
+    {% elif codigo and not resultado %}
+        <!-- No se encontró -->
+        <div class="bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/40 text-white p-4 rounded-xl text-center">
+            <p class="mb-2">El código <strong>{{ codigo }}</strong> no está registrado.</p>
+            <a href="{% url 'cataliticos:crear' %}?codigo={{ codigo }}" 
+               class="inline-block bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 text-white px-4 py-2 rounded-lg hover:bg-blue-500/40 transition">
+               Crear este catalítico
+            </a>
+        </div>
+
+    {% else %}
+        <!-- Listado completo -->
+        <div class="space-y-3">
+            {% for catalitico in cataliticos %}
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 flex items-center justify-between hover:bg-white/15 transition">
+                    <div>
+                        <p class="font-bold text-lg">🔧 {{ catalitico.codigo }}</p>
+                        <p class="text-sm uppercase text-white/70">{{ catalitico.descripcion|default:"Sin marca" }}</p>
+                    </div>
+                    <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300 bg-white/20 px-3 py-1 rounded-lg border border-white/30 hover:bg-white/30 transition">Editar</a>
+                </div>
+            {% empty %}
+                <p class="text-white text-center mt-4">No hay catalíticos registrados aún.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Botón flotante -->
+    <a href="{% url 'cataliticos:crear' %}" 
+       class="fixed bottom-6 right-6 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 hover:bg-blue-500/40 text-white p-4 rounded-full shadow-lg transition text-xl">+</a>
+
+</div>
+
+{% endblock %}

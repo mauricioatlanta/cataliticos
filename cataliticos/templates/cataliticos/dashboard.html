@@ -1,65 +1,506 @@
-{% extends 'cataliticos/base.html' %}
+{% extends 'base.html' %}
+{% load formato_moneda %}
 {% load humanize %}
-{% block title %}Dashboard de Catalíticos{% endblock %}
+{% load static %}
+
+{% block title %}Dashboard - Atlanta Reciclajes{% endblock %}
+
 {% block content %}
+<style>
+/* Estilos para el dashboard moderno */
+.dashboard-container {
+    /* Eliminamos el fondo gradiente para que se vea el fondo de la página */
+    min-height: 100vh;
+    padding: 2rem;
+}
 
-<div class="max-w-4xl mx-auto bg-gradient-to-br from-cyan-900 to-emerald-800 p-8 rounded-2xl shadow-2xl text-white font-[Orbitron]">
-    <h1 class="text-3xl font-bold text-cyan-300 text-center mb-6">📊 Dashboard de Actividad</h1>
+.glass-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    <!-- Tarjetas resumen -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-white">
-        <div class="bg-cyan-700 rounded-2xl p-6 shadow-lg text-center">
-            <h2 class="text-lg uppercase text-cyan-200">Total catalíticos</h2>
-            <p class="text-3xl font-bold mt-2">{{ codigos|length }}</p>
-        </div>
-        <div class="bg-green-700 rounded-2xl p-6 shadow-lg text-center">
-            <h2 class="text-lg uppercase text-green-200">Ventas (últimos 7 días)</h2>
-            <p class="text-3xl font-bold mt-2">{{ total_ventas }}</p>
-        </div>
-        <div class="bg-yellow-600 rounded-2xl p-6 shadow-lg text-center">
-            <h2 class="text-lg uppercase text-yellow-200">Top vendidos</h2>
-            <p class="text-lg mt-2 text-yellow-100">+{{ top_codigos|length }} códigos más populares</p>
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+}
+
+.metric-card {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chart-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.table-modern {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.table-modern thead {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.table-modern th,
+.table-modern td {
+    color: white;
+    border: none;
+    padding: 1rem;
+}
+
+.table-modern tbody tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-large {
+    font-size: 3rem;
+    opacity: 0.7;
+    margin-bottom: 1rem;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #FFD700, #FF6B6B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.neon-glow {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Animaciones para las cards */
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<div class="dashboard-container">
+    <!-- Header del Dashboard -->
+    <div class="glass-card fade-in">
+        <div class="text-center">
+            <h1 class="gradient-text" style="font-size: 3rem; margin-bottom: 0.5rem;">📊 Dashboard Analítico</h1>
+            <p class="text-white opacity-75" style="font-size: 1.2rem;">Panel de Control - Atlanta Reciclajes</p>
+            <div class="text-white opacity-60" style="font-size: 0.9rem;">
+                <i class="fas fa-clock"></i> Actualizado: {{ "now"|date:"d/m/Y H:i" }}
+            </div>
         </div>
     </div>
 
-    <!-- Gráfico semanal -->
-    <div class="bg-cyan-800 rounded-2xl p-6 shadow-xl mt-8">
-        <h2 class="text-xl font-bold text-cyan-100 mb-4">📈 Ventas de la semana</h2>
-        <canvas id="graficoVentas" height="120"></canvas>
+    <!-- Métricas principales -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-card metric-card fade-in pulse">
+                <div class="icon-large">🔧</div>
+                <div class="metric-value">{{ total_cataliticos }}</div>
+                <div class="metric-label">Catalíticos Totales</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-card metric-card fade-in pulse">
+                <div class="icon-large">👥</div>
+                <div class="metric-value">{{ total_clientes }}</div>
+                <div class="metric-label">Clientes Registrados</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-card metric-card fade-in pulse">
+                <div class="icon-large">🛒</div>
+                <div class="metric-value">{{ total_compras }}</div>
+                <div class="metric-label">Compras Realizadas</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-card metric-card fade-in pulse">
+                <div class="icon-large">💰</div>
+                <div class="metric-value">{{ valor_total_inventario|formato_pesos }}</div>
+                <div class="metric-label">Valor Inventario</div>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('graficoVentas').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ dias|safe }},
-                datasets: [{
-                    label: 'Ventas',
-                    data: {{ ventas|safe }},
-                    borderColor: 'rgba(34,211,238,1)',
-                    backgroundColor: 'rgba(34,211,238,0.3)',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-    </script>
 
-    <!-- Top catalíticos -->
-    <div class="bg-emerald-800 rounded-2xl p-6 shadow-xl mt-8">
-        <h2 class="text-xl font-bold text-emerald-100 mb-4">⭐ Top 5 catalíticos más vendidos</h2>
-        <ul class="list-disc list-inside text-white/90">
-            {% for codigo, total in top_cataliticos %}
-                <li><strong>{{ codigo }}</strong>: {{ total }} ventas</li>
-            {% endfor %}
-        </ul>
+    <!-- Métricas secundarias -->
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-card metric-card fade-in">
+                <div class="icon-large">📈</div>
+                <div class="metric-value">{{ total_ventas }}</div>
+                <div class="metric-label">Ventas (7 días)</div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-card metric-card fade-in">
+                <div class="icon-large">💵</div>
+                <div class="metric-value">{{ total_ingresos_semana|formato_pesos }}</div>
+                <div class="metric-label">Ingresos (7 días)</div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-card metric-card fade-in">
+                <div class="icon-large">📊</div>
+                <div class="metric-value">{{ valor_promedio_catalitico|floatformat:0|formato_pesos }}</div>
+                <div class="metric-label">Precio Promedio</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="glass-card fade-in">
+                <h3 class="text-white mb-4">📈 Tendencia de Ventas (7 días)</h3>
+                <div class="chart-container">
+                    <canvas id="ventasChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card fade-in">
+                <h3 class="text-white mb-4">🏆 Top Catalíticos</h3>
+                <div class="chart-container">
+                    <canvas id="topCataliticosChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top clientes y productos -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="glass-card fade-in">
+                <h3 class="text-white mb-4">👑 Top Clientes</h3>
+                <div class="table-modern table-responsive">
+                    <table class="table table-transparent">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Compras</th>
+                                <th>Total Gastado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente in top_clientes %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary rounded-circle p-2 me-3" style="width: 40px; height: 40px;">
+                                            <span class="text-white fw-bold">{{ cliente.nombre|first|upper }}</span>
+                                        </div>
+                                        {{ cliente.nombre }}
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-info">{{ cliente.compras }}</span></td>
+                                <td class="text-success fw-bold">{{ cliente.gastado|formato_pesos }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-white opacity-75">No hay datos disponibles</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card fade-in">
+                <h3 class="text-white mb-4">🔥 Catalíticos Más Vendidos</h3>
+                <div class="table-modern table-responsive">
+                    <table class="table table-transparent">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Vendidos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in top_cataliticos %}
+                            <tr>
+                                <td><span class="badge bg-warning text-dark">{{ cat.catalitico__codigo }}</span></td>
+                                <td>{{ cat.catalitico__descripcion|truncatechars:30 }}</td>
+                                <td class="text-success fw-bold">{{ cat.total_vendido }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-white opacity-75">No hay datos disponibles</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Records y compras recientes -->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="glass-card fade-in neon-glow">
+                <h4 class="text-white mb-3">🏅 Records</h4>
+                {% if catalitico_mas_caro %}
+                <div class="mb-3">
+                    <strong class="text-warning">💎 Más Caro:</strong><br>
+                    <span class="text-white">{{ catalitico_mas_caro.codigo }}</span><br>
+                    <span class="text-success">{{ catalitico_mas_caro.valor_actual|formato_pesos }}</span>
+                </div>
+                {% endif %}
+                {% if catalitico_mas_barato %}
+                <div>
+                    <strong class="text-info">💸 Más Barato:</strong><br>
+                    <span class="text-white">{{ catalitico_mas_barato.codigo }}</span><br>
+                    <span class="text-success">{{ catalitico_mas_barato.valor_actual|formato_pesos }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="glass-card fade-in">
+                <h4 class="text-white mb-3">🕒 Compras Recientes</h4>
+                <div class="table-modern table-responsive">
+                    <table class="table table-transparent">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compra in compras_recientes %}
+                            <tr>
+                                <td>{{ compra.fecha|date:"d/m H:i" }}</td>
+                                <td>{{ compra.cliente_nombre }}</td>
+                                <td class="text-success fw-bold">{{ compra.total|formato_pesos }}</td>
+                                <td><span class="badge bg-success">Completada</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-white opacity-75">No hay compras recientes</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlaces de navegación -->
+    <div class="glass-card fade-in">
+        <div class="text-center">
+            <h4 class="text-white mb-4">🚀 Acciones Rápidas</h4>
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="{% url 'cataliticos:listado' %}" class="btn btn-outline-light btn-lg mb-2 w-100">
+                        📋 Ver Catalíticos
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'cataliticos:crear' %}" class="btn btn-outline-light btn-lg mb-2 w-100">
+                        ➕ Crear Catalítico
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'cataliticos:listado_compras' %}" class="btn btn-outline-light btn-lg mb-2 w-100">
+                        🛒 Ver Compras
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'cataliticos:crear_compra_multiple' %}" class="btn btn-outline-light btn-lg mb-2 w-100">
+                        🆕 Nueva Compra
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-{% endblock %}
+<!-- Scripts para los gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/dashboard-advanced.js' %}"></script>
+<script>
+// Datos del backend
+const chartData = {{ chart_data_json|safe }};
+
+// Configuración común para gráficos
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            labels: {
+                color: 'white'
+            }
+        }
+    },
+    scales: {
+        y: {
+            ticks: {
+                color: 'white'
+            },
+            grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+            }
+        },
+        x: {
+            ticks: {
+                color: 'white'
+            },
+            grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+            }
+        }
+    }
+};
+
+// Gráfico de ventas diarias
+const ventasCtx = document.getElementById('ventasChart').getContext('2d');
+new Chart(ventasCtx, {
+    type: 'line',
+    data: {
+        labels: chartData.ventas_diarias.labels,
+        datasets: [{
+            label: 'Ventas',
+            data: chartData.ventas_diarias.data,
+            borderColor: '#FFD700',
+            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Ingresos ($)',
+            data: chartData.ventas_diarias.ingresos,
+            borderColor: '#FF6B6B',
+            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y1'
+        }]
+    },
+    options: {
+        ...commonOptions,
+        scales: {
+            ...commonOptions.scales,
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                ticks: {
+                    color: 'white'
+                },
+                grid: {
+                    drawOnChartArea: false,
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            }
+        }
+    }
+});
+
+// Gráfico de top catalíticos
+const topCtx = document.getElementById('topCataliticosChart').getContext('2d');
+new Chart(topCtx, {
+    type: 'doughnut',
+    data: {
+        labels: chartData.top_cataliticos.labels,
+        datasets: [{
+            data: chartData.top_cataliticos.data,
+            backgroundColor: [
+                '#FF6B6B',
+                '#4ECDC4',
+                '#45B7D1',
+                '#96CEB4',
+                '#FFEAA7'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: 'white',
+                    padding: 20
+                }
+            }
+        }
+    }
+});
+
+// Animación de entrada para las cards
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.fade-in');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+// Auto-refresh cada 5 minutos
+setTimeout(() => {
+    location.reload();
+}, 300000);
+</script>
+
+{% endblock content %}

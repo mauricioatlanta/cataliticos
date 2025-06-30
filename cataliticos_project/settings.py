@@ -26,6 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'cataliticos',
+    'background_task',
+]
+
+CRON_CLASSES = [
+    'cataliticos.crons.CargarPreciosCron',
 ]
 
 MIDDLEWARE = [
@@ -44,7 +49,7 @@ ROOT_URLCONF = 'cataliticos_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+            'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

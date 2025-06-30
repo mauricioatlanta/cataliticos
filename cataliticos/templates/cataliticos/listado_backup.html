@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+{% load formato_moneda %}
+
+{% block title %}Listado de Catalíticos - Atlanta Reciclajes{% endblock %}
+
+{% block content %}
+<style>
+/* Botones transparentes con efectos sutiles */
+.btn-search, 
+.btn-search:visited, 
+.btn-search:link {
+    background: transparent !important;
+    border: 2px solid rgba(236, 72, 153, 0.5) !important;
+    color: #ec4899 !important;
+    transition: all 0.3s ease !important;
+}
+.btn-search:hover, 
+.btn-search:focus {
+    background: rgba(236, 72, 153, 0.1) !important;
+    border-color: #ec4899 !important;
+    color: #ec4899 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(236, 72, 153, 0.2) !important;
+}
+
+.btn-edit, 
+.btn-edit:visited, 
+.btn-edit:link {
+    background: transparent !important;
+    border: 2px solid rgba(239, 68, 68, 0.5) !important;
+    color: #ef4444 !important;
+    transition: all 0.3s ease !important;
+}
+.btn-edit:hover, 
+.btn-edit:focus {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2) !important;
+}
+
+.btn-create, 
+.btn-create:visited, 
+.btn-create:link {
+    background: transparent !important;
+    border: 2px solid rgba(16, 185, 129, 0.5) !important;
+    color: #10b981 !important;
+    transition: all 0.3s ease !important;
+}
+.btn-create:hover, 
+.btn-create:focus {
+    background: rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2) !important;
+}
+
+.btn-dashboard, 
+.btn-dashboard:visited, 
+.btn-dashboard:link {
+    background: transparent !important;
+    border: 2px solid rgba(139, 92, 246, 0.5) !important;
+    color: #8b5cf6 !important;
+    transition: all 0.3s ease !important;
+}
+.btn-dashboard:hover, 
+.btn-dashboard:focus {
+    background: rgba(139, 92, 246, 0.1) !important;
+    border-color: #8b5cf6 !important;
+    color: #8b5cf6 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(139, 92, 246, 0.2) !important;
+}
+
+.btn-compras, 
+.btn-compras:visited, 
+.btn-compras:link {
+    background: transparent !important;
+    border: 2px solid rgba(245, 158, 11, 0.5) !important;
+    color: #f59e0b !important;
+    transition: all 0.3s ease !important;
+}
+.btn-compras:hover, 
+.btn-compras:focus {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.2) !important;
+}
+
+.btn-view-all, 
+.btn-view-all:visited, 
+.btn-view-all:link {
+    background: transparent !important;
+    border: 2px solid rgba(6, 182, 212, 0.5) !important;
+    color: #06b6d4 !important;
+    transition: all 0.3s ease !important;
+}
+.btn-view-all:hover, 
+.btn-view-all:focus {
+    background: rgba(6, 182, 212, 0.1) !important;
+    border-color: #06b6d4 !important;
+    color: #06b6d4 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(6, 182, 212, 0.2) !important;
+}
+
+.btn-create-new, 
+.btn-create-new:visited, 
+.btn-create-new:link {
+    background: transparent !important;
+    border: 2px solid rgba(34, 197, 94, 0.5) !important;
+    color: #22c55e !important;
+    transition: all 0.3s ease !important;
+}
+.btn-create-new:hover, 
+.btn-create-new:focus {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: #22c55e !important;
+    color: #22c55e !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(34, 197, 94, 0.2) !important;
+}
+
+/* Neutralizar Tailwind completamente */
+.btn-search, .btn-edit, .btn-create, .btn-dashboard, .btn-compras, .btn-view-all, .btn-create-new {
+    background-image: none !important;
+    background-color: transparent !important;
+    --tw-bg-opacity: 0 !important;
+}
+
+/* Estilos para búsqueda en tiempo real */
+.search-results {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ec4899;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+// Búsqueda en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const allCataliticos = document.getElementById('all-cataliticos');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    let searchTimeout;
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            // Limpiar timeout anterior
+            clearTimeout(searchTimeout);
+            
+            // Mostrar spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'inline-block';
+            }
+            
+            // Agregar delay para no hacer muchas peticiones
+            searchTimeout = setTimeout(() => {
+                if (query.length > 0) {
+                    realizarBusqueda(query);
+                } else {
+                    mostrarTodos();
+                }
+            }, 300); // 300ms de delay
+        });
+
+        // También agregar búsqueda al presionar Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = this.value.trim();
+                if (query.length > 0) {
+                    realizarBusqueda(query);
+                } else {
+                    mostrarTodos();
+                }
+            }
+        });
+    }
+
+    function realizarBusqueda(query) {
+        fetch(`/listado/?q=${encodeURIComponent(query)}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Crear un parser temporal para extraer los resultados
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, 'text/html');
+            
+            // Actualizar término de búsqueda en tiempo real
+            const searchTermElements = document.querySelectorAll('#search-term, .search-term');
+            searchTermElements.forEach(el => {
+                el.textContent = query;
+            });
+            
+            // Extraer y actualizar la sección de resultados de búsqueda
+            const newSearchResults = doc.querySelector('#search-results');
+            if (newSearchResults && searchResults) {
+                searchResults.innerHTML = newSearchResults.innerHTML;
+                searchResults.style.display = 'block';
+            }
+            
+            // Extraer y actualizar el listado completo
+            const newAllCataliticos = doc.querySelector('#all-cataliticos');
+            if (newAllCataliticos && allCataliticos) {
+                // Actualizar el contenido del listado
+                const newContent = newAllCataliticos.innerHTML;
+                allCataliticos.innerHTML = newContent;
+                
+                // Mostrar mensaje si no hay resultados
+                if (newContent.includes('No se encontraron catalíticos')) {
+                    allCataliticos.querySelector('h2').innerHTML = `Resultados de búsqueda para "${query}" (0)`;
+                }
+            }
+            
+            // Ocultar spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+            
+            console.log(`Búsqueda completada para: "${query}"`);
+        })
+        .catch(error => {
+            console.error('Error en búsqueda:', error);
+            
+            // Mostrar mensaje de error en la interfaz
+            if (allCataliticos) {
+                allCataliticos.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-red-300 text-lg">❌ Error al buscar. Intenta de nuevo.</p>
+                        <p class="text-gray-400 text-sm">${error.message}</p>
+                    </div>
+                `;
+            }
+            
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    }
+
+    function mostrarTodos() {
+        // Ocultar resultados de búsqueda específica
+        if (searchResults) {
+            searchResults.style.display = 'none';
+        }
+        
+        // Recargar todos los catalíticos
+        fetch('/listado/', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar los datos');
+            }
+            return response.text();
+        })
+        .then(data => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, 'text/html');
+            const newAllCataliticos = doc.querySelector('#all-cataliticos');
+            
+            if (newAllCataliticos && allCataliticos) {
+                allCataliticos.innerHTML = newAllCataliticos.innerHTML;
+            }
+            
+            // Ocultar spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+            
+            console.log('Mostrando todos los catalíticos');
+        })
+        .catch(error => {
+            console.error('Error al cargar todos:', error);
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    }
+
+    // Función para enfocar el campo de búsqueda (vinculada al botón)
+    window.enfocarBusqueda = function() {
+        if (searchInput) {
+            searchInput.focus();
+        }
+    }
+});
+</script>
+
+<div class="rounded-lg shadow-xl p-6 text-white bg-white/10 backdrop-blur-sm border border-white/20">
+    
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-white mb-4 md:mb-0">📋 Listado de Catalíticos</h1>
+        
+        <!-- Formulario de búsqueda -->
+        <div class="flex gap-2 relative">
+            <input 
+                type="text" 
+                id="search-input"
+                name="q" 
+                value="{{ codigo }}" 
+                placeholder="Buscar por código en tiempo real..." 
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/20 backdrop-blur-sm text-white placeholder-gray-300"
+                autocomplete="off"
+            >
+            <div id="loading-spinner" class="loading-spinner absolute right-3 top-3" style="display: none;"></div>
+            <button 
+                type="button" 
+                class="btn-search px-4 py-2 rounded-lg transition duration-300 shadow-sm"
+                onclick="enfocarBusqueda()"
+                title="Hacer clic para enfocar el campo de búsqueda"
+            >
+                🔍 Buscar
+            </button>
+        </div>
+    </div>
+
+    <!-- Mostrar resultado de búsqueda específica -->
+    <div id="search-results" style="display: {% if codigo %}block{% else %}none{% endif %};">
+    {% if codigo %}
+        <div class="mb-6 p-4 bg-blue-500/30 rounded-lg border border-blue-400/50 backdrop-blur-sm">
+            <h2 class="text-xl font-semibold mb-2 text-white">Búsqueda: "<span id="search-term">{{ codigo }}</span>"</h2>
+            
+            {% if resultado %}
+                <div class="bg-green-500/30 border border-green-400/50 rounded-lg p-4 backdrop-blur-sm">
+                    <h3 class="font-bold text-lg text-green-200">✅ Catalítico encontrado:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div class="text-white">
+                            <p><strong>Código:</strong> {{ resultado.codigo }}</p>
+                            <p><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
+                            <p><strong>Valor:</strong> {{ resultado.valor|formato_pesos }}</p>
+                            <p><strong>Valor Actual:</strong> {{ resultado.valor_actual|formato_pesos }}</p>
+                        </div>
+                        {% if resultado.imagen_principal %}
+                        <div>
+                            <img src="{{ resultado.imagen_principal.url }}" alt="{{ resultado.codigo }}" 
+                                 class="max-w-full h-32 object-cover rounded-lg">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif creado %}
+                <div class="bg-green-500/30 border border-green-400/50 rounded-lg p-4 backdrop-blur-sm">
+                    <h3 class="font-bold text-lg text-green-200">✅ Nuevo catalítico creado exitosamente</h3>
+                </div>
+            {% else %}
+                <div class="bg-yellow-500/30 border border-yellow-400/50 rounded-lg p-4 backdrop-blur-sm">
+                    <h3 class="font-bold text-lg text-yellow-200">⚠️ No se encontró el código "<span class="search-term">{{ codigo }}</span>"</h3>
+                    <p class="text-gray-200 mt-2">¿Deseas crear un nuevo catalítico con este código?</p>
+                    
+                    <!-- Formulario para crear nuevo catalítico -->
+                    <form method="POST" enctype="multipart/form-data" class="mt-4">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-200 mb-1">Código:</label>
+                                <input type="text" name="codigo" value="{{ codigo }}" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm text-white placeholder-gray-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-200 mb-1">Descripción:</label>
+                                <input type="text" name="descripcion" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm text-white placeholder-gray-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-200 mb-1">Valor:</label>
+                                <input type="number" name="valor" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm text-white placeholder-gray-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-200 mb-1">Valor Actual:</label>
+                                <input type="number" name="valor_actual" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm text-white placeholder-gray-300">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-200 mb-1">Imagen:</label>
+                                <input type="file" name="imagen_principal" accept="image/*"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm text-white">
+                            </div>
+                        </div>
+                        <button type="submit" 
+                                class="mt-4 btn-create-new px-4 py-2 rounded-lg transition duration-300 shadow-sm">
+                            ➕ Crear Catalítico
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    </div>
+
+    <!-- Listado completo -->
+    <div id="all-cataliticos" class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 search-results">
+        <h2 class="text-xl font-semibold mb-4 text-white">
+            {% if codigo %}
+                Resultados de búsqueda ({{ cataliticos.count }})
+            {% else %}
+                Todos los Catalíticos ({{ cataliticos.count }})
+            {% endif %}
+        </h2>
+
+        {% if cataliticos %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for catalitico in cataliticos %}
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg shadow-md p-4 hover:bg-white/15 transition duration-200 border border-white/20">
+                    {% if catalitico.imagen_principal %}
+                    <img src="{{ catalitico.imagen_principal.url }}" alt="{{ catalitico.codigo }}" 
+                         class="w-full h-32 object-cover rounded-lg mb-3">
+                    {% else %}
+                    <div class="w-full h-32 bg-gray-400 bg-opacity-30 rounded-lg mb-3 flex items-center justify-center backdrop-filter backdrop-blur-sm">
+                        <span class="text-gray-200">📷 Sin imagen</span>
+                    </div>
+                    {% endif %}
+                    
+                    <h3 class="font-bold text-lg text-white">{{ catalitico.codigo }}</h3>
+                    <p class="text-gray-200 text-sm mb-2">{{ catalitico.descripcion|truncatechars:50 }}</p>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm">
+                            <p class="text-gray-300">Valor: {{ catalitico.valor|formato_pesos }}</p>
+                            <p class="text-green-300 font-semibold">Actual: {{ catalitico.valor_actual|formato_pesos }}</p>
+                        </div>
+                        {% if catalitico.pk %}
+                        <a href="{% url 'cataliticos:editar' catalitico.pk %}" 
+                           class="btn-edit px-3 py-1 rounded-lg text-sm transition duration-300 shadow-sm">
+                            ✏️ Editar
+                        </a>
+                        {% else %}
+                        <span class="text-gray-400 px-3 py-1 text-sm italic">
+                            Sin ID válido
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-200 text-lg">No se encontraron catalíticos</p>
+                {% if codigo %}
+                    <a href="{% url 'cataliticos:listado' %}" 
+                       class="mt-2 inline-block btn-view-all px-4 py-2 rounded-lg transition duration-300 shadow-sm">
+                        Ver todos los catalíticos
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Enlaces de acción -->
+    <div class="flex flex-wrap gap-3 justify-center mt-6">
+        <a href="{% url 'cataliticos:crear' %}" 
+           class="btn-create px-4 py-2 rounded-lg transition duration-300 shadow-sm transform hover:scale-105">
+            ➕ Crear Nuevo Catalítico
+        </a>
+        <a href="{% url 'cataliticos:dashboard' %}" 
+           class="btn-dashboard px-4 py-2 rounded-lg transition duration-300 shadow-sm transform hover:scale-105">
+            📈 Ver Dashboard
+        </a>
+        <a href="{% url 'cataliticos:listado_compras' %}" 
+           class="btn-compras px-4 py-2 rounded-lg transition duration-300 shadow-sm transform hover:scale-105">
+            🧾 Ver Compras
+        </a>
+    </div>
+
+</div>
+{% endblock %}
