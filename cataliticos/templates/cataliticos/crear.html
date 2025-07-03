@@ -98,10 +98,8 @@ label {
             </div>
         {% endif %}
 
-        <!-- Información Básica -->
-        <div class="bg-white bg-opacity-15 backdrop-filter backdrop-blur-sm rounded-lg p-6 border border-white border-opacity-20">
-            <h2 class="text-xl font-semibold mb-4 text-white">📋 Información Básica</h2>
-            
+        <!-- Información Básica (sin cuadro blanco) -->
+        <div class="mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Código -->
                 <div>
@@ -119,7 +117,6 @@ label {
                     {% endif %}
                     <p class="text-xs text-gray-500 mt-1">El código debe ser único y se convertirá automáticamente a mayúsculas</p>
                 </div>
-                
                 <!-- Descripción -->
                 <div>
                     <label for="{{ form.descripcion.id_for_label }}">
@@ -134,7 +131,6 @@ label {
                         </div>
                     {% endif %}
                 </div>
-                
                 <!-- Valor -->
                 <div class="md:col-span-2">
                     <label for="{{ form.valor.id_for_label }}">
@@ -158,10 +154,8 @@ label {
             </div>
         </div>
 
-        <!-- Imágenes -->
-        <div class="bg-gray-50 rounded-lg p-6">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">🖼️ Imágenes</h2>
-            
+        <!-- Imágenes (sin cuadro blanco) -->
+        <div class="mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="{{ form.imagen_principal.id_for_label }}">{{ form.imagen_principal.label }}</label>
@@ -174,7 +168,6 @@ label {
                         </div>
                     {% endif %}
                 </div>
-                
                 <div>
                     <label for="{{ form.imagen2.id_for_label }}">{{ form.imagen2.label }}</label>
                     {{ form.imagen2 }}
@@ -186,7 +179,6 @@ label {
                         </div>
                     {% endif %}
                 </div>
-                
                 <div>
                     <label for="{{ form.imagen3.id_for_label }}">{{ form.imagen3.label }}</label>
                     {{ form.imagen3 }}
@@ -198,7 +190,6 @@ label {
                         </div>
                     {% endif %}
                 </div>
-                
                 <div>
                     <label for="{{ form.imagen4.id_for_label }}">{{ form.imagen4.label }}</label>
                     {{ form.imagen4 }}
@@ -226,17 +217,7 @@ label {
         </div>
     </form>
 
-    <!-- Información adicional -->
-    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h3 class="font-semibold text-blue-800 mb-2">ℹ️ Instrucciones:</h3>
-        <ul class="text-sm text-blue-700 space-y-1">
-            <li>• Los campos marcados con <span class="campo-requerido">*</span> son obligatorios</li>
-            <li>• El código debe ser único en todo el sistema</li>
-            <li>• El código se convertirá automáticamente a mayúsculas</li>
-            <li>• Las imágenes son opcionales pero recomendadas para identificación</li>
-            <li>• El valor se guardará en pesos chilenos (CLP)</li>
-        </ul>
-    </div>
+    <!-- Información adicional eliminada -->
 </div>
 
 <script>

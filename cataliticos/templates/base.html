@@ -21,10 +21,10 @@
 
             <!-- Menú -->
             <nav class="hidden md:flex space-x-6 text-sm">
-                <a href="{% url 'cataliticos:listado' %}" class="hover:text-cyan-400 transition">🔍 Buscar</a>
-                <a href="{% url 'cataliticos:crear' %}" class="hover:text-cyan-400 transition">➕ Agregar</a>
-                <a href="{% url 'cataliticos:crear_compra_multiple' %}" class="hover:text-cyan-400 transition">🧾 Compras</a>
                 <a href="{% url 'cataliticos:dashboard' %}" class="hover:text-cyan-400 transition">📊 Dashboard</a>
+                <a href="{% url 'cataliticos:listado' %}" class="hover:text-cyan-400 transition">🔍 Buscar Catalitico</a>
+                <a href="{% url 'cataliticos:crear' %}" class="hover:text-cyan-400 transition">➕ + Agregar catalitico</a>
+                <a href="{% url 'cataliticos:listado_compras' %}" class="hover:text-cyan-400 transition">🧾 Listado de Compras</a>
             </nav>
         </div>
     </header>
