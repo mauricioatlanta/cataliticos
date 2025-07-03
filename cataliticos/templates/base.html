@@ -8,6 +8,53 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+      /* Ajustes rápidos para navegación compacta si el CSS externo falla */
+      @media (max-width: 768px) {
+        .futur-btn {
+          padding-top: 0.25rem !important;
+          padding-bottom: 0.25rem !important;
+          padding-left: 0.75rem !important;
+          padding-right: 0.75rem !important;
+          font-size: 0.95rem !important;
+          min-width: 0;
+          border-radius: 0.75rem !important;
+        }
+        .futur-btn .material-symbols-outlined,
+        .futur-btn span {
+          font-size: 1.1rem !important;
+          margin-right: 0.2rem !important;
+        }
+        header .text-xl {
+          font-size: 1.1rem !important;
+        }
+        header img {
+          height: 2rem !important;
+          width: auto !important;
+        }
+        header .flex.flex-wrap.gap-2.items-center {
+          gap: 0.3rem !important;
+        }
+      }
+      @media (max-width: 480px) {
+        .futur-btn {
+          font-size: 0.85rem !important;
+          padding-left: 0.5rem !important;
+          padding-right: 0.5rem !important;
+          border-radius: 0.6rem !important;
+        }
+        .futur-btn .material-symbols-outlined,
+        .futur-btn span {
+          font-size: 1rem !important;
+        }
+        header .text-xl {
+          font-size: 1rem !important;
+        }
+        header img {
+          height: 1.5rem !important;
+        }
+      }
+    </style>
 </head>
 <body class="bg-gray-900 text-white font-sans">
 
