@@ -9,6 +9,9 @@ from django.db import models
 from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico
 from .forms import CataliticoForm, ClienteForm, CompraForm, DetalleCataliticoFormSet
 
+def index(request):
+    return render(request, 'index.html')
+
 def dashboard(request):
     from django.db.models import Sum, Avg, Max, Min, Count, Q
     from django.utils import timezone

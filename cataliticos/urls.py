@@ -4,6 +4,7 @@ from . import views
 app_name = 'cataliticos'
 
 urlpatterns = [
+    path('', views.index, name='index'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('api/cliente/', views.api_buscar_cliente, name='api_buscar_cliente'),
     path('api/catalitico/', views.api_buscar_catalitico, name='api_buscar_catalitico'),

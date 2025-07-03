@@ -1,22 +1,37 @@
 {% extends "base.html" %}
-{% block title %}Inicio - Catalíticos{% endblock %}
+{% block title %}Bienvenido - Atlanta Reciclajes{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto mt-10 text-center space-y-6">
-    <h1 class="text-4xl font-bold text-cyan-300 font-[Orbitron]">Bienvenido a Atlanta Reciclajes</h1>
-    <p class="text-lg text-gray-300">Plataforma de gestión de convertidores catalíticos</p>
+<div class="max-w-3xl mx-auto mt-16 text-center space-y-8">
+    <h1 class="text-5xl font-extrabold text-cyan-300 drop-shadow-lg font-[Orbitron]">¡Bienvenido a Atlanta Reciclajes!</h1>
+    <p class="text-lg text-gray-200">La plataforma más moderna para la gestión de convertidores catalíticos en Chile.</p>
 
-    <div class="mt-8 space-x-4">
-        <a href="{% url 'cataliticos:listado' %}" class="inline-block bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-6 rounded shadow">
-            Buscar Catalíticos
-        </a>
-        <a href="{% url 'cataliticos:crear' %}" class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-6 rounded shadow">
-            Agregar Nuevo
-        </a>
+    <div class="bg-black bg-opacity-40 rounded-2xl shadow-xl p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="flex-1 text-left">
+            <h2 class="text-2xl font-bold text-cyan-200 mb-2">🎉 ¡Prueba gratis por 30 días!</h2>
+            <p class="text-gray-300 mb-4">Regístrate y accede a todas las funciones premium sin costo. Gestiona tu inventario, clientes y compras de manera profesional.</p>
+            <a href="#prueba" class="inline-block bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-6 rounded shadow transition">Probar la App</a>
+        </div>
+        <div class="flex-1 text-left">
+            <h2 class="text-2xl font-bold text-emerald-200 mb-2">📝 ¿Ya tienes cuenta?</h2>
+            <p class="text-gray-300 mb-4">Inicia sesión para acceder a tu panel y continuar gestionando tus catalíticos.</p>
+            <a href="/accounts/login/" class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-6 rounded shadow transition">Iniciar Sesión</a>
+        </div>
     </div>
 
-    <div class="mt-16 text-gray-400 text-sm">
-        ¿Necesitas ayuda? Contáctanos por WhatsApp o revisa los recursos.
+    <div class="mt-10">
+        <h3 class="text-xl font-semibold text-cyan-300 mb-2">🚀 ¿Por qué elegirnos?</h3>
+        <ul class="text-gray-200 space-y-2 text-left mx-auto max-w-xl">
+            <li>• Gestión avanzada de inventario y compras</li>
+            <li>• Panel de control moderno y visual</li>
+            <li>• Seguridad y respaldo de tus datos</li>
+            <li>• Soporte personalizado y rápido</li>
+            <li>• Actualizaciones constantes y nuevas funciones</li>
+        </ul>
+    </div>
+
+    <div class="mt-12 text-gray-400 text-sm">
+        ¿Tienes dudas? <a href="https://wa.me/56912345678" class="text-cyan-400 underline hover:text-cyan-200">Contáctanos por WhatsApp</a> o revisa los recursos de ayuda.
     </div>
 </div>
 {% endblock %}

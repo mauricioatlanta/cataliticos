@@ -5,73 +5,69 @@
 
 {% block content %}
 <style>
-/* Estilos para validación en tiempo real */
-.codigo-disponible {
-    border-color: #10b981 !important;
-    background-color: rgba(240, 253, 244, 0.3) !important;
+body {
+    background: linear-gradient(120deg, #0f2027, #2c5364 60%, #232526 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
-
-.codigo-duplicado {
-    border-color: #ef4444 !important;
-    background-color: rgba(254, 242, 242, 0.3) !important;
+.dashboard-container, .form-card, .glass-card, .main-card, .max-w-4xl {
+    background: rgba(30, 30, 60, 0.55) !important;
+    backdrop-filter: blur(18px) saturate(180%) !important;
+    border-radius: 22px !important;
+    border: 1.5px solid rgba(0,255,255,0.18) !important;
+    box-shadow: 0 8px 40px 0 rgba(0,255,255,0.12), 0 1.5px 8px 0 rgba(255,0,255,0.10) !important;
+    color: #e0eaff !important;
 }
-
+.campo-requerido {
+    color: #ef4444;
+}
+input, select, textarea {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.10) !important;
+    border: 1px solid rgba(0,255,255,0.18) !important;
+    border-radius: 0.7rem !important;
+    padding: 0.75rem !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s cubic-bezier(.4,2,.6,1);
+    backdrop-filter: blur(8px);
+}
+input::placeholder, select::placeholder, textarea::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    border-color: #00fff7 !important;
+    box-shadow: 0 0 0 3px rgba(0,255,255,0.18) !important;
+    background-color: rgba(255, 255, 255, 0.18) !important;
+}
+label {
+    color: #b388ff !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+    letter-spacing: 1px;
+}
 .mensaje-validacion {
     font-size: 0.75rem;
     margin-top: 0.25rem;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
 }
-
 .mensaje-exito {
-    color: #065f46;
-    background-color: rgba(209, 250, 229, 0.3);
-    border: 1px solid #34d399;
+    color: #00fff7;
+    background-color: rgba(0,255,255,0.08);
+    border: 1px solid #00fff7;
     backdrop-filter: blur(5px);
 }
-
 .mensaje-error {
-    color: #991b1b;
-    background-color: rgba(254, 226, 226, 0.3);
-    border: 1px solid #f87171;
+    color: #ff4b7d;
+    background-color: rgba(255,0,128,0.08);
+    border: 1px solid #ff4b7d;
     backdrop-filter: blur(5px);
-}
-
-.campo-requerido {
-    color: #ef4444;
-}
-
-input, select, textarea {
-    color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 0.5rem !important;
-    padding: 0.75rem !important;
-    font-size: 0.875rem !important;
-    transition: all 0.2s ease-in-out;
-    backdrop-filter: blur(5px);
-}
-
-input::placeholder, select::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
-}
-
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
-    background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-label {
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
 }
 </style>
 
-<div class="max-w-4xl mx-auto p-6 bg-black bg-opacity-20 backdrop-filter backdrop-blur-sm rounded-xl shadow-xl border border-white border-opacity-20">
+<div class="max-w-4xl mx-auto p-6 form-card">
     <h1 class="text-3xl font-bold mb-6 text-white text-center">➕ Crear Nuevo Catalítico</h1>
     
     <!-- Mensajes de Django -->
