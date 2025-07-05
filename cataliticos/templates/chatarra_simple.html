@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vende tu Chatarra Electrónica | Atlanta Reciclajes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        color: white;
+      }
+      .neon-green {
+        color: #00ff41;
+        text-shadow: 0 0 15px #00ff41;
+      }
+      .glass-tech {
+        background: rgba(10, 20, 40, 0.3);
+        border-radius: 1rem;
+        border: 1px solid rgba(0, 255, 100, 0.2);
+        padding: 2rem;
+        margin: 1rem;
+      }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <header class="text-center py-8">
+            <h1 class="text-6xl font-bold neon-green mb-4">CHATARRA ELECTRÓNICA</h1>
+            <p class="text-xl text-green-300">Compramos todos tus componentes electrónicos</p>
+        </header>
+
+        <div class="glass-tech">
+            <h2 class="text-3xl neon-green font-bold mb-4">💎 Componentes de Alto Valor</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-tech">
+                    <h3 class="text-lg font-bold text-green-300">Procesador Cerámico con Chapa</h3>
+                    <p class="text-gray-300">Procesadores cerámicos con cubierta metálica</p>
+                    <div class="bg-green-500 text-black px-4 py-2 rounded-full font-bold mt-2">$18.000/kg</div>
+                </div>
+                
+                <div class="glass-tech">
+                    <h3 class="text-lg font-bold text-green-300">Pin Dorado</h3>
+                    <p class="text-gray-300">Conectores eléctricos con chapado en oro</p>
+                    <div class="bg-green-500 text-black px-4 py-2 rounded-full font-bold mt-2">$15.000/kg</div>
+                </div>
+                
+                <div class="glass-tech">
+                    <h3 class="text-lg font-bold text-green-300">Memorias RAM</h3>
+                    <p class="text-gray-300">Módulos de memoria RAM usados</p>
+                    <div class="bg-green-500 text-black px-4 py-2 rounded-full font-bold mt-2">$15.000/kg</div>
+                </div>
+                
+                <div class="glass-tech">
+                    <h3 class="text-lg font-bold text-green-300">Procesador Cerámico Negro</h3>
+                    <p class="text-gray-300">Procesadores cerámicos con pines dorados</p>
+                    <div class="bg-green-500 text-black px-4 py-2 rounded-full font-bold mt-2">$14.000/kg</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-tech text-center">
+            <h2 class="text-3xl neon-green font-bold mb-4">¡Vende Ahora!</h2>
+            <p class="text-xl mb-6">No dejes que tu tecnología se vuelva obsoleta</p>
+            <a href="https://wa.me/56963607348?text=¡Hola!%20Tengo%20chatarra%20electrónica%20para%20vender" 
+               class="bg-green-500 text-black px-8 py-4 rounded-lg font-bold text-xl hover:bg-green-400 transition">
+                📱 WhatsApp Directo
+            </a>
+        </div>
+    </div>
+</body>
+</html>

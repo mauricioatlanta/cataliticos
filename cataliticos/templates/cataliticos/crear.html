@@ -6,69 +6,89 @@
 {% block content %}
 <style>
 body {
-    background: linear-gradient(120deg, #0f2027, #2c5364 60%, #232526 100%);
     min-height: 100vh;
+    background: #0f2027;
+    background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
     overflow-x: hidden;
 }
-.dashboard-container, .form-card, .glass-card, .main-card, .max-w-4xl {
-    background: rgba(30, 30, 60, 0.55) !important;
-    backdrop-filter: blur(18px) saturate(180%) !important;
-    border-radius: 22px !important;
-    border: 1.5px solid rgba(0,255,255,0.18) !important;
-    box-shadow: 0 8px 40px 0 rgba(0,255,255,0.12), 0 1.5px 8px 0 rgba(255,0,255,0.10) !important;
-    color: #e0eaff !important;
+#futuristic-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    background: transparent;
 }
-.campo-requerido {
-    color: #ef4444;
+.glass {
+    background: rgba(20, 30, 60, 0.25) !important;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.17);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.10);
+    z-index: 2;
+}
+.card-glass {
+    background: rgba(0,255,255,0.08) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 1rem !important;
+    border: 1.5px solid #00fff7a0 !important;
+    box-shadow: 0 4px 16px 0 #00fff740, 0 0 12px 1px #00fff7a0 !important;
 }
 input, select, textarea {
+    background: rgba(0,0,0,0.18) !important;
     color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.10) !important;
-    border: 1px solid rgba(0,255,255,0.18) !important;
-    border-radius: 0.7rem !important;
+    border: 1.5px solid #00fff7a0 !important;
+    border-radius: 0.75rem !important;
     padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s cubic-bezier(.4,2,.6,1);
-    backdrop-filter: blur(8px);
+    font-size: 1rem !important;
+    backdrop-filter: blur(4px) !important;
+    box-shadow: 0 0 8px 0 #00fff7a0 !important;
 }
 input::placeholder, select::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
-}
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    border-color: #00fff7 !important;
-    box-shadow: 0 0 0 3px rgba(0,255,255,0.18) !important;
-    background-color: rgba(255, 255, 255, 0.18) !important;
+    color: #00fff7b0 !important;
 }
 label {
-    color: #b388ff !important;
+    color: #00fff7 !important;
     font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-    letter-spacing: 1px;
+    letter-spacing: 0.03em;
+    text-shadow: 0 0 8px #00fff7a0;
 }
-.mensaje-validacion {
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+.btn-primary, .btn-secondary {
+    background: linear-gradient(90deg, #00fff7 0%, #0ff 100%) !important;
+    color: #0f2027 !important;
+    border: 1.5px solid #00fff7a0 !important;
+    border-radius: 0.75rem !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 12px 2px #00fff7a0;
+    transition: all 0.2s;
+    text-shadow: 0 0 8px #fff;
 }
-.mensaje-exito {
+.btn-primary:hover, .btn-secondary:hover {
+    background: linear-gradient(90deg, #0ff 0%, #00fff7 100%) !important;
+    color: #0f2027 !important;
+    box-shadow: 0 0 24px 4px #00fff7a0;
+}
+.mensaje-validacion, .mensaje-exito, .mensaje-error {
+    background: rgba(0,255,255,0.10) !important;
+    color: #fff !important;
+    border: 1.5px solid #00fff7a0 !important;
+    border-radius: 0.5rem !important;
+    backdrop-filter: blur(4px) !important;
+    box-shadow: 0 0 8px 0 #00fff7a0 !important;
+}
+.text-neon {
     color: #00fff7;
-    background-color: rgba(0,255,255,0.08);
-    border: 1px solid #00fff7;
-    backdrop-filter: blur(5px);
+    text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
 }
-.mensaje-error {
-    color: #ff4b7d;
-    background-color: rgba(255,0,128,0.08);
-    border: 1px solid #ff4b7d;
-    backdrop-filter: blur(5px);
+.campo-requerido {
+    color: #ff00c8;
+    text-shadow: 0 0 8px #ff00c8a0;
 }
 </style>
 
-<div class="max-w-4xl mx-auto p-6 form-card">
-    <h1 class="text-3xl font-bold mb-6 text-white text-center">➕ Crear Nuevo Catalítico</h1>
+<div id="futuristic-bg"></div>
+
+<div class="max-w-4xl mx-auto p-6 glass relative" style="z-index:1;">
+    <h1 class="text-3xl font-bold mb-6 text-neon text-center" style="letter-spacing:0.04em;">➕ Crear Nuevo Catalítico</h1>
     
     <!-- Mensajes de Django -->
     {% if messages %}
@@ -94,8 +114,10 @@ label {
             </div>
         {% endif %}
 
-        <!-- Información Básica (sin cuadro blanco) -->
-        <div class="mb-6">
+        <!-- Información Básica -->
+        <div class="card-glass p-6 mb-4">
+            <h2 class="text-xl font-semibold mb-4 text-neon">📋 Información Básica</h2>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Código -->
                 <div>
@@ -113,6 +135,7 @@ label {
                     {% endif %}
                     <p class="text-xs text-gray-500 mt-1">El código debe ser único y se convertirá automáticamente a mayúsculas</p>
                 </div>
+                
                 <!-- Descripción -->
                 <div>
                     <label for="{{ form.descripcion.id_for_label }}">
@@ -127,6 +150,7 @@ label {
                         </div>
                     {% endif %}
                 </div>
+                
                 <!-- Valor -->
                 <div class="md:col-span-2">
                     <label for="{{ form.valor.id_for_label }}">
@@ -150,8 +174,10 @@ label {
             </div>
         </div>
 
-        <!-- Imágenes (sin cuadro blanco) -->
-        <div class="mb-6">
+        <!-- Imágenes -->
+        <div class="card-glass p-6 mb-4">
+            <h2 class="text-xl font-semibold mb-4 text-neon">🖼️ Imágenes</h2>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="{{ form.imagen_principal.id_for_label }}">{{ form.imagen_principal.label }}</label>
@@ -164,6 +190,7 @@ label {
                         </div>
                     {% endif %}
                 </div>
+                
                 <div>
                     <label for="{{ form.imagen2.id_for_label }}">{{ form.imagen2.label }}</label>
                     {{ form.imagen2 }}
@@ -175,6 +202,7 @@ label {
                         </div>
                     {% endif %}
                 </div>
+                
                 <div>
                     <label for="{{ form.imagen3.id_for_label }}">{{ form.imagen3.label }}</label>
                     {{ form.imagen3 }}
@@ -186,6 +214,7 @@ label {
                         </div>
                     {% endif %}
                 </div>
+                
                 <div>
                     <label for="{{ form.imagen4.id_for_label }}">{{ form.imagen4.label }}</label>
                     {{ form.imagen4 }}
@@ -202,18 +231,66 @@ label {
 
         <!-- Botones de Acción -->
         <div class="flex flex-col md:flex-row gap-3 pt-4">
-            <button type="submit" 
-                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+            <button type="submit" class="btn-primary flex-1">
                 ✅ Crear Catalítico
             </button>
-            <a href="{% url 'cataliticos:listado' %}" 
-               class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center transition duration-200">
+            <a href="{% url 'cataliticos:listado' %}" class="btn-secondary flex-1 text-center">
                 ❌ Cancelar
             </a>
         </div>
     </form>
 
-    <!-- Información adicional eliminada -->
+    <!-- Información adicional eliminada para coherencia futurista -->
+</style>
+<!-- Fondo animado de partículas tipo futurista -->
+<script>
+// Fondo animado de partículas (simple, sin librerías externas)
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<60;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+1.5,
+            dx: (Math.random()-0.5)*0.7,
+            dy: (Math.random()-0.5)*0.7,
+            c: `rgba(0,255,255,${Math.random()*0.5+0.5})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=12;
+            ctx.fill();
+        }
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
+    });
+});
+</script>
 </div>
 
 <script>

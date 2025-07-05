@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Futurista - Catalíticos{% endblock %}
+{% block content %}
+<div id="futuristic-bg"></div>
+<div class="max-w-6xl mx-auto py-8 px-2">
+  <h1 class="text-4xl md:text-5xl font-bold neon text-center mb-10 tracking-widest" style="letter-spacing:0.08em;">Dashboard Tecnológico</h1>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <div class="glass p-8 text-center relative overflow-hidden" style="background: linear-gradient(135deg, #0ff2, #00fff7cc 60%, #0f2027 100%); box-shadow: 0 0 40px #00fff7a0, 0 0 120px #0ff inset;">
+      <div class="text-2xl neon font-extrabold mb-4 text-center tracking-widest animate-pulse w-full py-2 rounded-xl bg-cyan-900/40 border border-cyan-400 shadow" style="letter-spacing:0.12em;">Catalíticos registrados</div>
+      <div class="text-5xl font-extrabold neon mb-2 mt-4" id="total-cataliticos">0</div>
+    </div>
+    <div class="glass p-8 text-center relative overflow-hidden" style="background: linear-gradient(135deg, #0ff2, #00fff7cc 60%, #0f2027 100%); box-shadow: 0 0 40px #00fff7a0, 0 0 120px #0ff inset;">
+      <div class="text-2xl neon font-extrabold mb-4 text-center tracking-widest animate-pulse w-full py-2 rounded-xl bg-cyan-900/40 border border-cyan-400 shadow" style="letter-spacing:0.12em;">Compras realizadas</div>
+      <div class="text-5xl font-extrabold neon mb-2 mt-4" id="total-compras">0</div>
+    </div>
+    <div class="glass p-8 text-center relative overflow-hidden" style="background: linear-gradient(135deg, #0ff2, #00fff7cc 60%, #0f2027 100%); box-shadow: 0 0 40px #00fff7a0, 0 0 120px #0ff inset;">
+      <div class="text-2xl neon font-extrabold mb-4 text-center tracking-widest animate-pulse w-full py-2 rounded-xl bg-cyan-900/40 border border-cyan-400 shadow" style="letter-spacing:0.12em;">Valor total gestionado</div>
+      <div class="text-4xl font-extrabold neon mb-2 mt-4" id="valor-total">$0</div>
+    </div>
+  </div>
+    <!-- Se eliminó la sección de HiperGráfica 3D Interactiva -->
+  <div class="glass p-6 mt-8">
+    <h2 class="text-xl neon font-bold mb-4 text-center">Tecnologías en esta App</h2>
+    <div class="flex flex-wrap justify-center gap-6 text-lg">
+      <span class="px-4 py-2 rounded-lg bg-cyan-900/40 border border-cyan-400 text-cyan-200 font-bold shadow">Django</span>
+      <span class="px-4 py-2 rounded-lg bg-cyan-900/40 border border-cyan-400 text-cyan-200 font-bold shadow">Tailwind CSS</span>
+      <span class="px-4 py-2 rounded-lg bg-cyan-900/40 border border-cyan-400 text-cyan-200 font-bold shadow">Chart.js</span>
+      <span class="px-4 py-2 rounded-lg bg-cyan-900/40 border border-cyan-400 text-cyan-200 font-bold shadow">Fetch API</span>
+      <span class="px-4 py-2 rounded-lg bg-cyan-900/40 border border-cyan-400 text-cyan-200 font-bold shadow">Glassmorphism</span>
+      <span class="px-4 py-2 rounded-lg bg-cyan-900/40 border border-cyan-400 text-cyan-200 font-bold shadow">Animación Canvas</span>
+    </div>
+  </div>
+</div>
+<style>
+.neon {
+  color: #00fff7;
+  text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
+  font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+  letter-spacing: 0.08em;
+}
+.glass {
+  background: rgba(20, 30, 60, 0.25) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.17);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.10);
+  z-index: 2;
+}
+#futuristic-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: transparent;
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Fondo animado de partículas tipo futurista
+document.addEventListener('DOMContentLoaded', function() {
+    // Fondo animado
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<80;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+2,
+            dx: (Math.random()-0.5)*1.2,
+            dy: (Math.random()-0.5)*1.2,
+            c: `rgba(0,255,255,${Math.random()*0.7+0.3})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=24;
+            ctx.fill();
+        }
+        // Líneas entre partículas
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                let a=particles[i],b=particles[j];
+                let dist=Math.hypot(a.x-b.x,a.y-b.y);
+                if(dist<120){
+                    ctx.save();
+                    ctx.globalAlpha = 1 - dist/120;
+                    ctx.strokeStyle = '#00fff7';
+                    ctx.lineWidth = 1.2;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x,a.y);
+                    ctx.lineTo(b.x,b.y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
+    });
+
+    // Simulación de datos (puedes conectar con tu API real)
+    document.getElementById('total-cataliticos').textContent = 128;
+    document.getElementById('total-compras').textContent = 57;
+    document.getElementById('valor-total').textContent = '$12.500.000';
+
+    // HIPERGRÁFICA ULTRA FUTURISTA
+    const ctxUltra = document.getElementById('ultra-futuristic-chart').getContext('2d');
+    const grad = ctxUltra.createLinearGradient(0,0,400,0);
+    grad.addColorStop(0, '#00fff7');
+    grad.addColorStop(0.3, '#7f5fff');
+    grad.addColorStop(0.6, '#0ff');
+    grad.addColorStop(1, '#fff');
+    new Chart(ctxUltra, {
+      type: 'radar',
+      data: {
+        labels: ['Innovación','Velocidad','Eficiencia','Futurismo','Impacto','Tecnología','Diseño'],
+        datasets: [{
+          label: 'Nivel',
+          data: [98, 92, 95, 100, 97, 99, 100],
+          fill: true,
+          backgroundColor: 'rgba(0,255,247,0.18)',
+          borderColor: grad,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#00fff7',
+          pointRadius: 8,
+          pointHoverRadius: 14,
+          pointStyle: 'rectRounded',
+          borderWidth: 5,
+          tension: 0.5
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#00fff7',
+              font: { family: 'Orbitron', size: 20, weight: 'bold' },
+              textStrokeColor: '#fff',
+              textStrokeWidth: 2
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0ff',
+            titleColor: '#0f2027',
+            bodyColor: '#0f2027',
+            borderColor: '#00fff7',
+            borderWidth: 2,
+            caretSize: 10,
+            padding: 16,
+            cornerRadius: 12
+          }
+        },
+        scales: {
+          r: {
+            angleLines: { color: '#00fff7', lineWidth: 2 },
+            grid: { color: '#7f5fff', lineWidth: 1.5 },
+            pointLabels: {
+              color: '#fff',
+              font: { family: 'Orbitron', size: 18, weight: 'bold' }
+            },
+            ticks: {
+              color: '#00fff7',
+              font: { family: 'Orbitron', size: 16 },
+              backdropColor: 'rgba(0,0,0,0.2)',
+              showLabelBackdrop: true
+            },
+            min: 80,
+            max: 110
+          }
+        },
+        responsive: true,
+        animation: {
+          duration: 2200,
+          easing: 'easeInOutElastic'
+        },
+        elements: {
+          line: { borderJoinStyle: 'round' }
+        }
+      }
+    });
+
+    // Neon Glow animado detrás de la gráfica
+    const neonBg = document.getElementById('neon-glow-bg');
+    if(neonBg){
+      neonBg.innerHTML = '<svg width="100%" height="100%" style="position:absolute;top:0;left:0;z-index:0;filter:blur(32px);pointer-events:none;" viewBox="0 0 600 300"><ellipse cx="300" cy="150" rx="260" ry="80" fill="#00fff7" fill-opacity="0.18"/><ellipse cx="300" cy="150" rx="180" ry="50" fill="#7f5fff" fill-opacity="0.12"/></svg>';
+    }
+});
+</script>
+{% endblock %}

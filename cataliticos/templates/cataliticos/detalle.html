@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Detalle de Catalítico{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-12 p-8 glass text-white">
+    <h1 class="text-3xl neon font-bold mb-6 text-center">Detalle de Catalítico</h1>
+    <div class="mb-4">
+        <span class="font-bold neon">Código:</span> <span class="text-lg">{{ catalitico.codigo }}</span>
+    </div>
+    <div class="mb-4">
+        <span class="font-bold neon">Descripción:</span> <span>{{ catalitico.descripcion }}</span>
+    </div>
+    <div class="mb-4">
+        <span class="font-bold neon">Valor:</span> <span>${{ catalitico.valor_actual|default:catalitico.valor|floatformat:0|intcomma }}</span>
+    </div>
+    {% if catalitico.imagen_principal %}
+        <img src="{{ catalitico.imagen_principal.url }}" alt="Imagen principal" class="img-catalitico mx-auto mb-4">
+    {% endif %}
+    {% if catalitico.imagen2 %}
+        <img src="{{ catalitico.imagen2.url }}" alt="Imagen 2" class="img-catalitico mx-auto mb-4">
+    {% endif %}
+    {% if catalitico.imagen3 %}
+        <img src="{{ catalitico.imagen3.url }}" alt="Imagen 3" class="img-catalitico mx-auto mb-4">
+    {% endif %}
+    {% if catalitico.imagen4 %}
+        <img src="{{ catalitico.imagen4.url }}" alt="Imagen 4" class="img-catalitico mx-auto mb-4">
+    {% endif %}
+    <div class="flex gap-4 mt-8 justify-center">
+        <a href="{% url 'cataliticos:editar' catalitico.id %}" class="futur-btn">Editar</a>
+        <a href="{% url 'cataliticos:listado' %}" class="futur-btn">Volver al listado</a>
+    </div>
+</div>
+<style>
+body {
+  min-height: 100vh;
+  background: #0f2027;
+  background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
+  overflow-x: hidden;
+}
+#futuristic-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: transparent;
+}
+.glass {
+  background: rgba(20, 30, 60, 0.25) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.17);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.10);
+  z-index: 2;
+}
+.futur-btn {
+  background: linear-gradient(90deg, #00fff7 0%, #0ff 100%) !important;
+  color: #0f2027 !important;
+  font-weight: bold;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px 0 #00fff7a0;
+  padding: 0.7rem 2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  z-index: 2;
+  border: 1.5px solid #00fff7a0;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 8px #fff;
+}
+.futur-btn:hover {
+  background: linear-gradient(90deg, #0ff 0%, #00fff7 100%) !important;
+  color: #0f2027 !important;
+  box-shadow: 0 4px 24px 0 #00fff7a0;
+  transform: scale(1.04);
+}
+.neon {
+  color: #00fff7;
+  text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
+  font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+  letter-spacing: 0.08em;
+}
+.img-catalitico {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 1rem;
+  margin: 0.5rem auto 0.5rem auto;
+  box-shadow: 0 2px 16px 0 #00fff7a0;
+  background: rgba(0,0,0,0.12);
+  display: block;
+}
+</style>
+<div id="futuristic-bg"></div>
+<script>
+// Fondo animado de partículas tipo futurista
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<60;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+1.5,
+            dx: (Math.random()-0.5)*0.7,
+            dy: (Math.random()-0.5)*0.7,
+            c: `rgba(0,255,255,${Math.random()*0.5+0.5})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=12;
+            ctx.fill();
+        }
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
+    });
+});
+</script>
+{% endblock %}

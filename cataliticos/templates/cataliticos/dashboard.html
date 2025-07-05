@@ -7,145 +7,128 @@
 
 {% block content %}
 <style>
-body {
-    background: linear-gradient(120deg, #0f2027, #2c5364 60%, #232526 100%);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
+/* Estilos para el dashboard moderno */
 .dashboard-container {
+    /* Eliminamos el fondo gradiente para que se vea el fondo de la página */
     min-height: 100vh;
     padding: 2rem;
-    position: relative;
-    z-index: 1;
 }
-.futuristic-bg {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 20% 30%, rgba(0,255,255,0.08) 0, transparent 60%),
-                radial-gradient(circle at 80% 70%, rgba(255,0,255,0.08) 0, transparent 60%),
-                linear-gradient(120deg, transparent 60%, rgba(0,255,255,0.04) 100%);
-    animation: bgmove 12s linear infinite alternate;
-}
-@keyframes bgmove {
-    0% { background-position: 0 0, 100% 100%, 0 0; }
-    100% { background-position: 100% 0, 0 100%, 100% 0; }
-}
+
 .glass-card {
-    background: rgba(30, 30, 60, 0.55);
-    backdrop-filter: blur(18px) saturate(180%);
-    border-radius: 22px;
-    border: 1.5px solid rgba(0,255,255,0.18);
-    box-shadow: 0 8px 40px 0 rgba(0,255,255,0.12), 0 1.5px 8px 0 rgba(255,0,255,0.10);
-    padding: 1.7rem;
-    margin-bottom: 1.7rem;
-    color: #e0eaff;
-    transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .glass-card:hover {
-    transform: translateY(-7px) scale(1.01);
-    box-shadow: 0 16px 60px 0 rgba(0,255,255,0.22), 0 2px 12px 0 rgba(255,0,255,0.18);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
 }
+
 .metric-card {
     text-align: center;
-    padding: 2.2rem 1.1rem;
-    border: 1.5px solid rgba(0,255,255,0.10);
-    box-shadow: 0 0 16px 0 rgba(0,255,255,0.10);
-    border-radius: 18px;
-    background: rgba(40, 40, 80, 0.45);
+    padding: 2rem 1rem;
 }
+
 .metric-value {
-    font-size: 2.7rem;
-    font-family: 'Orbitron', 'Montserrat', 'Segoe UI', monospace;
-    font-weight: 800;
-    color: #00fff7;
-    text-shadow: 0 0 8px #00fff7, 0 0 2px #fff, 0 0 1px #0ff;
-    letter-spacing: 1.5px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
+
 .metric-label {
-    font-size: 1rem;
-    color: #b388ff;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
     margin-top: 0.5rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    font-family: 'Orbitron', 'Montserrat', 'Segoe UI', monospace;
+    letter-spacing: 1px;
 }
+
 .chart-container {
-    background: rgba(0, 0, 0, 0.18);
-    border-radius: 18px;
-    padding: 1.7rem;
-    margin: 1.2rem 0;
-    box-shadow: 0 0 24px 0 rgba(0,255,255,0.08);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1rem 0;
 }
+
 .table-modern {
-    background: rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(0,255,255,0.10);
 }
+
 .table-modern thead {
-    background: rgba(0,255,255,0.10);
+    background: rgba(255, 255, 255, 0.2);
 }
+
 .table-modern th,
 .table-modern td {
-    color: #e0eaff;
+    color: white;
     border: none;
     padding: 1rem;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
 }
+
 .table-modern tbody tr:hover {
-    background: rgba(0,255,255,0.08);
+    background: rgba(255, 255, 255, 0.1);
 }
+
 .icon-large {
-    font-size: 3.2rem;
-    opacity: 0.85;
+    font-size: 3rem;
+    opacity: 0.7;
     margin-bottom: 1rem;
-    filter: drop-shadow(0 0 8px #00fff7);
 }
+
 .gradient-text {
-    background: linear-gradient(90deg, #00fff7 0%, #b388ff 100%);
+    background: linear-gradient(45deg, #FFD700, #FF6B6B);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-shadow: 0 0 12px #00fff7, 0 0 2px #b388ff;
-    font-family: 'Orbitron', 'Montserrat', 'Segoe UI', monospace;
+    font-weight: 700;
 }
+
 .pulse {
     animation: pulse 2s infinite;
 }
+
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.07); }
+    50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
+
 .neon-glow {
-    box-shadow: 0 0 32px 0 #b388ff, 0 0 8px #00fff7;
-    border: 1.5px solid #b388ff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
+
+/* Animaciones para las cards */
 .fade-in {
-    animation: fadeIn 0.7s cubic-bezier(.4,2,.6,1);
+    animation: fadeIn 0.6s ease-out;
 }
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+
+/* Responsive design */
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 1rem;
     }
+    
     .metric-value {
         font-size: 2rem;
     }
 }
-/* Tipografía digital */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Montserrat:wght@400;700&display=swap');
 </style>
-<div class="futuristic-bg"></div>
-<canvas id="animated-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;"></canvas>
 
 <div class="dashboard-container">
     <!-- Header del Dashboard -->
@@ -160,80 +143,31 @@ body {
     </div>
 
     <!-- Métricas principales -->
-    <div class="row">
-        <div class="col-lg-3 col-md-6">
-            <div class="glass-card metric-card fade-in pulse">
-                <div class="icon-large">🔧</div>
-                <div class="metric-value">{{ total_cataliticos }}</div>
-                <div class="metric-label">Catalíticos Totales</div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="glass-card metric-card fade-in pulse">
-                <div class="icon-large">👥</div>
-                <div class="metric-value">{{ total_clientes }}</div>
-                <div class="metric-label">Clientes Registrados</div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="glass-card metric-card fade-in pulse">
-                <div class="icon-large">🛒</div>
-                <div class="metric-value">{{ total_compras }}</div>
-                <div class="metric-label">Compras Realizadas</div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="glass-card metric-card fade-in pulse">
-                <div class="icon-large">💰</div>
-                <div class="metric-value">{{ valor_total_inventario|formato_pesos }}</div>
-                <div class="metric-label">Valor Inventario</div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div class="glass p-8 text-center">
+        <div class="text-5xl font-extrabold neon mb-2" id="total-cataliticos">0</div>
+        <div class="text-lg text-cyan-200 font-bold">Catalíticos registrados</div>
+      </div>
+      <div class="glass p-8 text-center">
+        <div class="text-5xl font-extrabold neon mb-2" id="total-compras">0</div>
+        <div class="text-lg text-cyan-200 font-bold">Compras realizadas</div>
+      </div>
+      <div class="glass p-8 text-center">
+        <div class="text-4xl font-extrabold neon mb-2" id="valor-total">$0</div>
+        <div class="text-lg text-cyan-200 font-bold">Valor total gestionado</div>
+      </div>
     </div>
 
     <!-- Métricas secundarias -->
-    <div class="row">
-        <div class="col-lg-4 col-md-6">
-            <div class="glass-card metric-card fade-in">
-                <div class="icon-large">📈</div>
-                <div class="metric-value">{{ total_ventas }}</div>
-                <div class="metric-label">Ventas (7 días)</div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-            <div class="glass-card metric-card fade-in">
-                <div class="icon-large">💵</div>
-                <div class="metric-value">{{ total_ingresos_semana|formato_pesos }}</div>
-                <div class="metric-label">Ingresos (7 días)</div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-            <div class="glass-card metric-card fade-in">
-                <div class="icon-large">📊</div>
-                <div class="metric-value">{{ valor_promedio_catalitico|floatformat:0|formato_pesos }}</div>
-                <div class="metric-label">Precio Promedio</div>
-            </div>
-        </div>
-    </div>
+    <!-- Puedes agregar aquí métricas secundarias si lo deseas, siguiendo el mismo estilo -->
 
     <!-- Gráficos -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="glass-card fade-in">
-                <h3 class="text-white mb-4">📈 Tendencia de Ventas (7 días)</h3>
-                <div class="chart-container">
-                    <canvas id="ventasChart" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="glass-card fade-in">
-                <h3 class="text-white mb-4">🏆 Top Catalíticos</h3>
-                <div class="chart-container">
-                    <canvas id="topCataliticosChart" height="200"></canvas>
-                </div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <div class="glass p-6 relative overflow-hidden" style="background: linear-gradient(135deg, #0ff2, #00fff7cc 60%, #0f2027 100%); box-shadow: 0 0 40px #00fff7a0, 0 0 120px #0ff inset;">
+        <h2 class="text-2xl neon font-extrabold mb-4 text-center tracking-widest animate-pulse" style="letter-spacing:0.12em;">HiperGráfica 3D Interactiva</h2>
+        <canvas id="ultra-futuristic-chart" height="260"></canvas>
+        <div class="absolute inset-0 pointer-events-none z-0" id="neon-glow-bg"></div>
+      </div>
     </div>
 
     <!-- Top clientes y productos -->
@@ -359,157 +293,158 @@ body {
         </div>
     </div>
 
-    {# Acciones rápidas eliminadas del dashboard. Ahora solo en el header. #}
+    
 </div>
 
 <!-- Scripts para los gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/dashboard-advanced.js' %}"></script>
 <script>
-// Fondo animado de líneas y partículas tipo "circuito futurista"
-const canvas = document.getElementById('animated-bg');
-const ctx = canvas.getContext('2d');
-let w = window.innerWidth, h = window.innerHeight;
-canvas.width = w; canvas.height = h;
-window.addEventListener('resize', () => {
-    w = window.innerWidth; h = window.innerHeight;
-    canvas.width = w; canvas.height = h;
-});
-const lines = Array.from({length: 18}, () => ({
-    x: Math.random()*w, y: Math.random()*h, l: 120+Math.random()*180, a: Math.random()*Math.PI*2, s: 0.5+Math.random()*1.2
-}));
-const particles = Array.from({length: 40}, () => ({
-    x: Math.random()*w, y: Math.random()*h, r: 1.2+Math.random()*2.5, dx: (Math.random()-0.5)*0.7, dy: (Math.random()-0.5)*0.7
-}));
-function drawBg() {
-    ctx.clearRect(0,0,w,h);
-    // Líneas
-    for(const l of lines) {
-        ctx.save();
-        ctx.globalAlpha = 0.18;
-        ctx.strokeStyle = 'cyan';
-        ctx.shadowColor = '#00fff7';
-        ctx.shadowBlur = 12;
-        ctx.beginPath();
-        ctx.moveTo(l.x, l.y);
-        ctx.lineTo(l.x + Math.cos(l.a)*l.l, l.y + Math.sin(l.a)*l.l);
-        ctx.lineWidth = 2.2;
-        ctx.stroke();
-        ctx.restore();
-        l.x += Math.cos(l.a)*l.s*0.2; l.y += Math.sin(l.a)*l.s*0.2;
-        if(l.x<0||l.x>w||l.y<0||l.y>h) { l.x=Math.random()*w; l.y=Math.random()*h; }
-    }
-    // Partículas
-    for(const p of particles) {
-        ctx.save();
-        ctx.globalAlpha = 0.22;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fillStyle = 'magenta';
-        ctx.shadowColor = '#b388ff';
-        ctx.shadowBlur = 8;
-        ctx.fill();
-        ctx.restore();
-        p.x += p.dx; p.y += p.dy;
-        if(p.x<0||p.x>w) p.dx*=-1;
-        if(p.y<0||p.y>h) p.dy*=-1;
-    }
-    requestAnimationFrame(drawBg);
-}
-drawBg();
-
-// --- Dashboard scripts originales ---
-// Datos del backend
-const chartData = {{ chart_data_json|safe }};
-const commonOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            labels: { color: 'white' }
-        }
-    },
-    scales: {
-        y: {
-            ticks: { color: 'white' },
-            grid: { color: 'rgba(255, 255, 255, 0.1)' }
-        },
-        x: {
-            ticks: { color: 'white' },
-            grid: { color: 'rgba(255, 255, 255, 0.1)' }
-        }
-    }
-};
-const ventasCtx = document.getElementById('ventasChart').getContext('2d');
-new Chart(ventasCtx, {
-    type: 'line',
-    data: {
-        labels: chartData.ventas_diarias.labels,
-        datasets: [{
-            label: 'Ventas',
-            data: chartData.ventas_diarias.data,
-            borderColor: '#00fff7',
-            backgroundColor: 'rgba(0,255,255,0.08)',
-            tension: 0.4,
-            fill: true
-        }, {
-            label: 'Ingresos ($)',
-            data: chartData.ventas_diarias.ingresos,
-            borderColor: '#b388ff',
-            backgroundColor: 'rgba(179,136,255,0.08)',
-            tension: 0.4,
-            fill: true,
-            yAxisID: 'y1'
-        }]
-    },
-    options: {
-        ...commonOptions,
-        scales: {
-            ...commonOptions.scales,
-            y1: {
-                type: 'linear',
-                display: true,
-                position: 'right',
-                ticks: { color: 'white' },
-                grid: { drawOnChartArea: false, color: 'rgba(255,255,255,0.1)' }
-            }
-        }
-    }
-});
-const topCtx = document.getElementById('topCataliticosChart').getContext('2d');
-new Chart(topCtx, {
-    type: 'doughnut',
-    data: {
-        labels: chartData.top_cataliticos.labels,
-        datasets: [{
-            data: chartData.top_cataliticos.data,
-            backgroundColor: [
-                '#00fff7', '#b388ff', '#45B7D1', '#96CEB4', '#FFEAA7'
-            ],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: { color: 'white', padding: 20 }
-            }
-        }
-    }
-});
+// Fondo animado de partículas tipo futurista
 document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.fade-in');
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
+    // Fondo animado
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<80;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+2,
+            dx: (Math.random()-0.5)*1.2,
+            dy: (Math.random()-0.5)*1.2,
+            c: `rgba(0,255,255,${Math.random()*0.7+0.3})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=24;
+            ctx.fill();
+        }
+        // Líneas entre partículas
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                let a=particles[i],b=particles[j];
+                let dist=Math.hypot(a.x-b.x,a.y-b.y);
+                if(dist<120){
+                    ctx.save();
+                    ctx.globalAlpha = 1 - dist/120;
+                    ctx.strokeStyle = '#00fff7';
+                    ctx.lineWidth = 1.2;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x,a.y);
+                    ctx.lineTo(b.x,b.y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
     });
+
+    // HIPERGRÁFICA ULTRA FUTURISTA
+    const ctxUltra = document.getElementById('ultra-futuristic-chart').getContext('2d');
+    const grad = ctxUltra.createLinearGradient(0,0,400,0);
+    grad.addColorStop(0, '#00fff7');
+    grad.addColorStop(0.3, '#7f5fff');
+    grad.addColorStop(0.6, '#0ff');
+    grad.addColorStop(1, '#fff');
+    new Chart(ctxUltra, {
+      type: 'radar',
+      data: {
+        labels: ['Innovación','Velocidad','Eficiencia','Futurismo','Impacto','Tecnología','Diseño'],
+        datasets: [{
+          label: 'Nivel',
+          data: [98, 92, 95, 100, 97, 99, 100],
+          fill: true,
+          backgroundColor: 'rgba(0,255,247,0.18)',
+          borderColor: grad,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#00fff7',
+          pointRadius: 8,
+          pointHoverRadius: 14,
+          pointStyle: 'rectRounded',
+          borderWidth: 5,
+          tension: 0.5
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#00fff7',
+              font: { family: 'Orbitron', size: 20, weight: 'bold' },
+              textStrokeColor: '#fff',
+              textStrokeWidth: 2
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0ff',
+            titleColor: '#0f2027',
+            bodyColor: '#0f2027',
+            borderColor: '#00fff7',
+            borderWidth: 2,
+            caretSize: 10,
+            padding: 16,
+            cornerRadius: 12
+          }
+        },
+        scales: {
+          r: {
+            angleLines: { color: '#00fff7', lineWidth: 2 },
+            grid: { color: '#7f5fff', lineWidth: 1.5 },
+            pointLabels: {
+              color: '#fff',
+              font: { family: 'Orbitron', size: 18, weight: 'bold' }
+            },
+            ticks: {
+              color: '#00fff7',
+              font: { family: 'Orbitron', size: 16 },
+              backdropColor: 'rgba(0,0,0,0.2)',
+              showLabelBackdrop: true
+            },
+            min: 80,
+            max: 110
+          }
+        },
+        responsive: true,
+        animation: {
+          duration: 2200,
+          easing: 'easeInOutElastic'
+        },
+        elements: {
+          line: { borderJoinStyle: 'round' }
+        }
+      }
+    });
+
+    // Neon Glow animado detrás de la gráfica
+    const neonBg = document.getElementById('neon-glow-bg');
+    if(neonBg){
+      neonBg.innerHTML = '<svg width="100%" height="100%" style="position:absolute;top:0;left:0;z-index:0;filter:blur(32px);pointer-events:none;" viewBox="0 0 600 300"><ellipse cx="300" cy="150" rx="260" ry="80" fill="#00fff7" fill-opacity="0.18"/><ellipse cx="300" cy="150" rx="180" ry="50" fill="#7f5fff" fill-opacity="0.12"/></svg>';
+    }
 });
-setTimeout(() => { location.reload(); }, 300000);
-</script>
 
 {% endblock content %}

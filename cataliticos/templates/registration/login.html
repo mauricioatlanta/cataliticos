@@ -1,44 +1,342 @@
-{% extends "base.html" %}
-{% block title %}Iniciar Sesión - Atlanta Reciclajes{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso de Empleados - Atlanta Reciclajes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-neon: #00ff41;
+            --secondary-neon: #00d4ff;
+            --accent-neon: #ff0080;
+            --bg-dark: #0a0a0a;
+            --glass-bg: rgba(10, 20, 40, 0.25);
+            --glass-border: rgba(0, 255, 100, 0.3);
+        }
 
-{% block content %}
-<div class="min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-cyan-900 bg-opacity-80 rounded-2xl shadow-2xl p-8">
-    <div class="w-full max-w-md mx-auto glassmorphism p-8 rounded-2xl shadow-xl border border-cyan-400 border-opacity-30 bg-black bg-opacity-60 backdrop-blur-lg">
-        <h1 class="text-3xl font-extrabold text-cyan-300 text-center mb-6 font-[Orbitron] tracking-widest drop-shadow">Bienvenido</h1>
-        <p class="text-center text-gray-300 mb-8">Accede a tu cuenta para gestionar tus catalíticos con tecnología de vanguardia.</p>
-        {% if form.errors %}
-            <div class="mb-4 p-3 rounded-lg bg-red-600 bg-opacity-20 border border-red-400 text-red-200 text-sm text-center">
-                Usuario o contraseña incorrectos. Intenta nuevamente.
-            </div>
-        {% endif %}
-        <form method="post" class="space-y-6">
-            {% csrf_token %}
-            <div>
-                <label for="id_username" class="block text-cyan-200 font-semibold mb-1">Usuario</label>
-                <input type="text" name="username" autofocus required id="id_username" class="w-full px-4 py-3 rounded-lg bg-black bg-opacity-40 border border-cyan-400 border-opacity-30 text-cyan-100 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition" placeholder="Tu usuario">
-            </div>
-            <div>
-                <label for="id_password" class="block text-cyan-200 font-semibold mb-1">Contraseña</label>
-                <input type="password" name="password" required id="id_password" class="w-full px-4 py-3 rounded-lg bg-black bg-opacity-40 border border-cyan-400 border-opacity-30 text-cyan-100 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition" placeholder="••••••••">
-            </div>
-            <button type="submit" class="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-lg shadow-lg transition text-lg tracking-widest">Iniciar Sesión</button>
-        </form>
-        <div class="mt-8 text-center text-gray-400 text-sm">
-            ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}" class="text-cyan-300 underline hover:text-cyan-100">Recupérala aquí</a>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #0a0a0a 100%);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .neon-text {
+            color: var(--primary-neon);
+            text-shadow: 
+                0 0 5px var(--primary-neon),
+                0 0 15px var(--primary-neon),
+                0 0 25px var(--primary-neon);
+            animation: neonPulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from { text-shadow: 0 0 5px var(--primary-neon), 0 0 15px var(--primary-neon), 0 0 25px var(--primary-neon); }
+            to { text-shadow: 0 0 10px var(--primary-neon), 0 0 25px var(--primary-neon), 0 0 40px var(--primary-neon); }
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 12px 48px rgba(0, 255, 65, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: var(--primary-neon);
+        }
+
+        .input-field {
+            background: rgba(10, 20, 40, 0.3);
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            border-radius: 0.5rem;
+            color: white;
+            padding: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            background: rgba(10, 20, 40, 0.5);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+            color: black;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+            text-shadow: none;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 65, 0.5);
+            background: linear-gradient(135deg, var(--secondary-neon), var(--primary-neon));
+        }
+
+        .logo-glow {
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.3));
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(10, 20, 40, 0.3);
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            border-radius: 0.5rem;
+            color: var(--primary-neon);
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: var(--primary-neon);
+            transform: translateY(-2px);
+        }
+
+        .link-glow {
+            color: var(--secondary-neon);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .link-glow:hover {
+            color: var(--primary-neon);
+            text-shadow: 0 0 10px var(--primary-neon);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 100, 0.1);
+            border-color: var(--primary-neon);
+            color: var(--primary-neon);
+        }
+
+        .alert-error {
+            background: rgba(255, 0, 128, 0.1);
+            border-color: var(--accent-neon);
+            color: var(--accent-neon);
+        }
+
+        .security-badge {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--primary-neon);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: var(--primary-neon);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <!-- Botón de regreso -->
+    <a href="{% url 'cataliticos:catalíticos_home' %}" class="back-btn">
+        ← Volver al inicio
+    </a>
+
+    <!-- Contenedor principal -->
+    <div class="glass-card p-8 w-full max-w-md mx-4">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <img src="{% static 'img/logo.png' %}" alt="Atlanta Reciclajes" class="mx-auto h-16 w-auto mb-4 logo-glow">
+            <h1 class="text-2xl font-bold neon-text font-mono">ACCESO DE EMPLEADOS</h1>
+            <p class="text-gray-300 mt-2">Sistema de Gestión Interna</p>
         </div>
-        <div class="mt-2 text-center text-gray-400 text-xs">
-            &copy; {{ now|date:"Y" }} Atlanta Reciclajes. Plataforma segura y futurista.
+
+        <!-- Insignia de seguridad -->
+        <div class="text-center mb-6">
+            <div class="security-badge">
+                <span>🔒</span>
+                <span>Área Restringida</span>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Formulario de login -->
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label for="id_username" class="block text-sm font-medium text-gray-300 mb-2">
+                    Usuario
+                </label>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="id_username" 
+                    class="input-field"
+                    placeholder="Ingresa tu usuario"
+                    required
+                    autocomplete="username"
+                >
+                {% if form.username.errors %}
+                    <div class="text-red-400 text-sm mt-1">
+                        {{ form.username.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                <label for="id_password" class="block text-sm font-medium text-gray-300 mb-2">
+                    Contraseña
+                </label>
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="id_password" 
+                    class="input-field"
+                    placeholder="Ingresa tu contraseña"
+                    required
+                    autocomplete="current-password"
+                >
+                {% if form.password.errors %}
+                    <div class="text-red-400 text-sm mt-1">
+                        {{ form.password.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="login-btn">
+                🔓 INGRESAR AL SISTEMA
+            </button>
+        </form>
+
+        <!-- Enlaces adicionales -->
+        <div class="mt-6 text-center">
+            <a href="{% url 'cataliticos:password_reset' %}" class="link-glow text-sm">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </div>
+
+        <!-- Información de contacto -->
+        <div class="mt-8 text-center text-xs text-gray-400">
+            <p>Para solicitar acceso, contacta al administrador del sistema</p>
+            <p class="mt-1">📞 +56 9 6360 7348</p>
         </div>
     </div>
-</div>
-<style>
-.glassmorphism {
-    background: rgba(17, 24, 39, 0.7);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 20px;
-    border: 1px solid rgba(0, 255, 255, 0.18);
-}
-</style>
-{% endblock %}
+
+    <!-- Partículas de fondo -->
+    <div id="particles-bg"></div>
+
+    <script>
+        // Efecto de partículas minimalista
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'particles-bg';
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.zIndex = '-1';
+            canvas.style.pointerEvents = 'none';
+            document.body.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            let w = window.innerWidth, h = window.innerHeight;
+            canvas.width = w; canvas.height = h;
+            
+            let particles = [];
+            for(let i = 0; i < 30; i++){
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.5 + 0.5,
+                    dx: (Math.random() - 0.5) * 0.3,
+                    dy: (Math.random() - 0.5) * 0.3,
+                    c: `rgba(0,255,${Math.floor(Math.random() * 100 + 100)},${Math.random() * 0.3 + 0.1})`
+                });
+            }
+            
+            function draw(){
+                ctx.clearRect(0, 0, w, h);
+                for(let p of particles){
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = p.c;
+                    ctx.shadowColor = 'rgba(0,255,255,0.3)';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+            }
+            
+            function update(){
+                for(let p of particles){
+                    p.x += p.dx; p.y += p.dy;
+                    if(p.x < 0 || p.x > w) p.dx *= -1;
+                    if(p.y < 0 || p.y > h) p.dy *= -1;
+                }
+            }
+            
+            function loop(){
+                draw(); update(); requestAnimationFrame(loop);
+            }
+            loop();
+            
+            window.addEventListener('resize', () => {
+                w = window.innerWidth; h = window.innerHeight;
+                canvas.width = w; canvas.height = h;
+            });
+        });
+    </script>
+</body>
+</html>

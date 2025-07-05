@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Precios de Catalíticos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap">
+    <style>
+      body {
+        min-height: 100vh;
+        background: #0f2027;
+        background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
+        overflow-x: hidden;
+      }
+      #futuristic-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 0;
+        pointer-events: none;
+        background: transparent;
+      }
+      .glass {
+        background: rgba(20, 30, 60, 0.15) !important;
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.05);
+        z-index: 2;
+      }
+      .futur-btn {
+        background: linear-gradient(90deg, #00fff7 0%, #0ff 100%) !important;
+        color: #0f2027 !important;
+        font-weight: bold;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px 0 #00fff7a0;
+        padding: 0.7rem 2rem;
+        font-size: 1.1rem;
+        letter-spacing: 0.05em;
+        transition: all 0.3s;
+        z-index: 2;
+        border: 1px solid rgba(0,255,255,0.3);
+        backdrop-filter: blur(2px);
+        text-shadow: 0 0 4px rgba(255,255,255,0.8);
+      }
+      .futur-btn:hover {
+        background: linear-gradient(90deg, #0ff 0%, #00fff7 100%) !important;
+        color: #0f2027 !important;
+        box-shadow: 0 4px 16px 0 #00fff7a0;
+        transform: scale(1.02);
+      }
+      .neon {
+        color: #00fff7;
+        text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
+        font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+        letter-spacing: 0.08em;
+      }
+      .input-transp {
+        background: rgba(20,30,60,0.12) !important;
+        color: #fff !important;
+        border: 1px solid rgba(0,255,255,0.3);
+        backdrop-filter: blur(2px);
+      }
+      .input-transp:focus {
+        border: 1px solid #00fff7;
+        background: rgba(20,30,60,0.18) !important;
+      }
+      .img-catalitico {
+        max-width: 100%;
+        max-height: 180px;
+        border-radius: 1rem;
+        margin: 0.5rem auto 0.5rem auto;
+        box-shadow: 0 2px 16px 0 #00fff7a0;
+        background: rgba(0,0,0,0.12);
+        display: block;
+      }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center">
+    <div id="futuristic-bg"></div>
+    <header class="w-full flex justify-between px-6 pt-6 z-10">
+      <a href="{% url 'cataliticos:catalíticos_home' %}" class="futur-btn text-base font-bold">🚗 Cataliticos</a>
+      <a href="{% url 'home' %}" class="futur-btn text-base font-bold">🏠 Atlanta Reciclajes</a>
+    </header>
+    <div class="w-full max-w-md mx-auto mt-8 p-8 glass relative" style="z-index:1;">
+        <h1 class="text-2xl md:text-3xl neon text-center mb-6 font-bold" style="letter-spacing:0.04em;">🔍 Consulta el Precio de tu Catalítico</h1>
+        <form id="consulta-form" class="flex flex-col gap-4">
+            <label for="codigo" class="font-semibold" style="color:#00eaff;">Código de Catalítico</label>
+            <input type="text" id="codigo" name="codigo" class="rounded-lg px-4 py-2 input-transp focus:outline-none focus:ring-2 focus:ring-cyan-400 text-lg tracking-wider placeholder-cyan-300" placeholder="Ingresa tu código aquí..." autocomplete="off" required>
+            <button type="submit" class="futur-btn mt-2">💰 Consultar Precio</button>
+        </form>
+        <div id="resultado" class="mt-8 text-center"></div>
+    </div>
+    <script>
+      document.getElementById('consulta-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const codigoInput = document.getElementById('codigo');
+        const codigo = codigoInput.value.trim();
+        const resultado = document.getElementById('resultado');
+        resultado.innerHTML = '<span class="text-cyan-300 animate-pulse">Buscando...</span>';
+        try {
+          const res = await fetch(`/cataliticos/api/catalitico/?codigo=${encodeURIComponent(codigo)}`);
+          const data = await res.json();
+          if (data.success) {
+            // Buscar imágenes asociadas al catalítico
+            let imagenesHtml = '';
+            if (data.imagenes && data.imagenes.length > 0) {
+              imagenesHtml = data.imagenes.map(url => `<img src="${url}" class="img-catalitico" alt="Imagen catalítico">`).join('');
+            }
+            // Mensaje para WhatsApp
+            const mensajeWA = encodeURIComponent(`Hola, quiero vender mi catalítico\nCódigo: ${data.codigo}\nDescripción: ${data.descripcion || ''}\nPrecio estimado: $${Number(data.valor).toLocaleString('es-CL')}`);
+            const whatsappBtn = `<a href="https://wa.me/?text=${mensajeWA}" target="_blank" rel="noopener" class="futur-btn mt-4 inline-block">💬 Vender vía WhatsApp</a>`;
+            resultado.innerHTML = `
+              <div class="glass p-4 mt-2">
+                <div class="text-lg font-bold" style="color:#00eaff;">${data.codigo}</div>
+                <div class="mb-2" style="color:#00eaff;">${data.descripcion || ''}</div>
+                <div class="text-xl font-extrabold" style="color:#00eaff;">$${Number(data.valor).toLocaleString('es-CL')}</div>
+                ${imagenesHtml}
+                <div class="mt-4">${whatsappBtn}</div>
+              </div>
+            `;
+          } else {
+            // WhatsApp para consulta con foto
+            const mensajeWA = encodeURIComponent(`Hola, no encontré mi catalítico en la web.\nQuiero cotizarlo, adjunto foto.\n¿Me pueden ayudar?`);
+            const whatsappBtn = `<a href="https://wa.me/?text=${mensajeWA}" target="_blank" rel="noopener" class="futur-btn mt-4 inline-block">📸 Enviar foto por WhatsApp para cotizar</a>`;
+            resultado.innerHTML = `
+              <div class="text-pink-400 font-bold mb-4">${data.error || 'No se encontró el catalítico con ese código.'}</div>
+              <div class="mb-2 text-white">¿No encuentras tu catalítico? Puedes enviarnos una foto por WhatsApp y te ayudamos a cotizarlo.</div>
+              <div>${whatsappBtn}</div>
+            `;
+          }
+          // Limpiar el campo de búsqueda después de consultar
+          codigoInput.value = '';
+        } catch (err) {
+          resultado.innerHTML = '<div class="text-pink-400 font-bold">Error de conexión</div>';
+        }
+      });
+    </script>
+    <script>
+    // Fondo animado de partículas elegante
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'futuristic-bg';
+        document.body.prepend(canvas);
+        const ctx = canvas.getContext('2d');
+        let w = window.innerWidth, h = window.innerHeight;
+        canvas.width = w; canvas.height = h;
+        let particles = [];
+        for(let i=0;i<45;i++){
+            particles.push({
+                x: Math.random()*w,
+                y: Math.random()*h,
+                r: Math.random()*1.5+1,
+                dx: (Math.random()-0.5)*0.5,
+                dy: (Math.random()-0.5)*0.5,
+                c: `rgba(0,255,255,${Math.random()*0.3+0.2})`
+            });
+        }
+        function draw(){
+            ctx.clearRect(0,0,w,h);
+            for(let p of particles){
+                ctx.beginPath();
+                ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+                ctx.fillStyle=p.c;
+                ctx.shadowColor='rgba(0,255,255,0.3)';
+                ctx.shadowBlur=8;
+                ctx.fill();
+            }
+        }
+        function update(){
+            for(let p of particles){
+                p.x+=p.dx; p.y+=p.dy;
+                if(p.x<0||p.x>w) p.dx*=-1;
+                if(p.y<0||p.y>h) p.dy*=-1;
+            }
+        }
+        function loop(){
+            draw(); update(); requestAnimationFrame(loop);
+        }
+        loop();
+        window.addEventListener('resize',()=>{
+            w=window.innerWidth; h=window.innerHeight;
+            canvas.width=w; canvas.height=h;
+        });
+    });
+    </script>
+</body>
+</html>

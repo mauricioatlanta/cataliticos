@@ -3,151 +3,175 @@
 {% block title %}Listado de Catalíticos{% endblock %}
 {% block content %}
 
-<style>
-body {
-    background: linear-gradient(120deg, #0f2027, #2c5364 60%, #232526 100%);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-.dashboard-container, .form-card, .glass-card, .main-card, .max-w-xl, .max-w-4xl {
-    background: rgba(30, 30, 60, 0.55) !important;
-    backdrop-filter: blur(18px) saturate(180%) !important;
-    border-radius: 22px !important;
-    border: 1.5px solid rgba(0,255,255,0.18) !important;
-    box-shadow: 0 8px 40px 0 rgba(0,255,255,0.12), 0 1.5px 8px 0 rgba(255,0,255,0.10) !important;
-    color: #e0eaff !important;
-}
-input, select, textarea {
-    color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.10) !important;
-    border: 1px solid rgba(0,255,255,0.18) !important;
-    border-radius: 0.7rem !important;
-    padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s cubic-bezier(.4,2,.6,1);
-    backdrop-filter: blur(8px);
-}
-input::placeholder, select::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
-}
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    border-color: #00fff7 !important;
-    box-shadow: 0 0 0 3px rgba(0,255,255,0.18) !important;
-    background-color: rgba(255, 255, 255, 0.18) !important;
-}
-label {
-    color: #b388ff !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-    letter-spacing: 1px;
-}
-</style>
-
-<div class="max-w-xl mx-auto p-6 main-card">
-
-    <h1 class="text-2xl font-bold mb-6 text-center">Listado de Catalíticos</h1>
-
+<div id="futuristic-bg"></div>
+<div class="max-w-2xl mx-auto p-6 glass relative mt-8 mb-8" style="z-index:1;">
+    <h1 class="text-3xl md:text-4xl neon text-center mb-8 font-bold tracking-widest">Listado de Catalíticos</h1>
     <!-- Buscador -->
-    <form method="GET" action="{% url 'cataliticos:listado' %}" class="mb-4">
-        <input type="text" id="busqueda-codigo" name="q" placeholder="Buscar código..." value="{{ codigo }}"
-            class="w-full p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/30 placeholder-black/70 text-black focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white/15" autocomplete="off">
+    <form method="GET" action="{% url 'cataliticos:listado' %}" class="mb-6 relative z-10">
+        <input type="text" name="q" placeholder="Buscar código..." value="{{ codigo }}"
+            class="w-full p-4 rounded-2xl input-transp focus:outline-none focus:ring-2 focus:ring-cyan-400 text-lg tracking-wider placeholder-cyan-300 font-mono">
     </form>
-    <div id="resultados-busqueda"></div>
 
     {% if codigo and resultado %}
-        <!-- Ficha del catalítico -->
-        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 shadow-md space-y-2">
-            <h2 class="text-xl font-bold">🔧 {{ resultado.codigo }}</h2>
-            <p class="text-white/80 text-sm">Marca/Descripción: {{ resultado.descripcion|default:"Sin descripción" }}</p>
-            <p class="text-white/90 text-sm">Valor: ${{ resultado.valor|floatformat:0|intcomma }}</p>
+        <div class="glass p-6 mt-2 text-center z-10">
+            <div class="text-2xl font-bold neon">{{ resultado.codigo }}</div>
+            <div class="mb-2 neon" style="font-size:1.1em;">{{ resultado.descripcion|default:"Sin descripción" }}</div>
+            <div class="text-2xl font-extrabold neon">${{ resultado.valor|floatformat:0|intcomma }}</div>
             {% if resultado.imagen_principal %}
-                <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1"
-                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mx-auto">
+                <img src="{{ resultado.imagen_principal.url }}" alt="Foto 1" class="img-catalitico mx-auto mt-4">
             {% endif %}
-
             {% if resultado.galeria %}
-                <img src="{{ resultado.galeria.url }}" alt="Foto 2"
-                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
-                <img src="" alt="Foto 3"
-                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
-                <img src="" alt="Foto 4"
-                     class="rounded-xl mt-3 max-w-[200px] max-h-[200px] object-cover border-0 mt-2 mx-auto">
+                <img src="{{ resultado.galeria.url }}" alt="Foto 2" class="img-catalitico mx-auto mt-2">
             {% endif %}
-
-            <a href="{% url 'cataliticos:editar' resultado.id %}" 
-               class="inline-block mt-4 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold px-4 py-2 rounded-lg hover:bg-white/30 transition">
-               Editar Catalítico
-            </a>
+            <a href="{% url 'cataliticos:editar' resultado.id %}" class="futur-btn mt-6">Editar Catalítico</a>
         </div>
-
     {% elif codigo and not resultado %}
-        <!-- No se encontró -->
-        <div class="bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/40 text-white p-4 rounded-xl text-center">
+        <div class="glass p-6 text-center neon">
             <p class="mb-2">El código <strong>{{ codigo }}</strong> no está registrado.</p>
-            <a href="{% url 'cataliticos:crear' %}?codigo={{ codigo }}" 
-               class="inline-block bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 text-white px-4 py-2 rounded-lg hover:bg-blue-500/40 transition">
-               Crear este catalítico
-            </a>
+            <a href="{% url 'cataliticos:crear' %}?codigo={{ codigo }}" class="futur-btn mt-2">Crear este catalítico</a>
         </div>
-
     {% else %}
-        <!-- Listado completo -->
-        <div class="space-y-3">
+        <div class="space-y-4 z-10">
             {% for catalitico in cataliticos %}
-                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 flex items-center justify-between hover:bg-white/15 transition">
+                <div class="glass p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:bg-cyan-900/30 transition rounded-2xl shadow-md">
                     <div>
-                        <p class="font-bold text-lg">🔧 {{ catalitico.codigo }}</p>
-                        <p class="text-sm uppercase text-white/70">{{ catalitico.descripcion|default:"Sin marca" }}</p>
+                        <p class="font-bold text-lg neon">{{ catalitico.codigo }}</p>
+                        <p class="text-sm uppercase text-cyan-200 font-mono">{{ catalitico.descripcion|default:"Sin marca" }}</p>
                     </div>
-                    <a href="{% url 'cataliticos:editar' catalitico.id %}" class="text-sm text-white hover:text-cyan-300 bg-white/20 px-3 py-1 rounded-lg border border-white/30 hover:bg-white/30 transition">Editar</a>
+                    <div class="flex gap-2 justify-end">
+                        <a href="{% url 'cataliticos:detalle' catalitico.id %}" class="futur-btn text-xs px-3 py-1">Ver</a>
+                        <a href="{% url 'cataliticos:editar' catalitico.id %}" class="futur-btn text-xs px-3 py-1">Editar</a>
+                        <form method="post" action="{% url 'cataliticos:eliminar' catalitico.id %}" onsubmit="return confirm('¿Seguro que deseas borrar este catalítico?');">
+                            {% csrf_token %}
+                            <button type="submit" class="futur-btn text-xs px-3 py-1">Borrar</button>
+                        </form>
+                    </div>
                 </div>
             {% empty %}
                 <p class="text-white text-center mt-4">No hay catalíticos registrados aún.</p>
             {% endfor %}
         </div>
     {% endif %}
-
-    <!-- Botón flotante -->
-    <a href="{% url 'cataliticos:crear' %}" 
-       class="fixed bottom-6 right-6 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 hover:bg-blue-500/40 text-white p-4 rounded-full shadow-lg transition text-xl">+</a>
-
+    <div class="flex justify-end mt-8">
+      <a href="{% url 'cataliticos:crear' %}" class="futur-btn text-3xl p-5 shadow-xl">+</a>
+    </div>
 </div>
 
+<style>
+body {
+  min-height: 100vh;
+  background: #0f2027;
+  background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
+  overflow-x: hidden;
+}
+#futuristic-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: transparent;
+}
+.glass {
+  background: rgba(20, 30, 60, 0.25) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.17);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.10);
+  z-index: 2;
+}
+.futur-btn {
+  background: linear-gradient(90deg, #00fff7 0%, #0ff 100%) !important;
+  color: #0f2027 !important;
+  font-weight: bold;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px 0 #00fff7a0;
+  padding: 0.7rem 2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  z-index: 2;
+  border: 1.5px solid #00fff7a0;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 8px #fff;
+}
+.futur-btn:hover {
+  background: linear-gradient(90deg, #0ff 0%, #00fff7 100%) !important;
+  color: #0f2027 !important;
+  box-shadow: 0 4px 24px 0 #00fff7a0;
+  transform: scale(1.04);
+}
+.neon {
+  color: #00fff7;
+  text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
+  font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+  letter-spacing: 0.08em;
+}
+.input-transp {
+  background: rgba(20,30,60,0.18) !important;
+  color: #fff !important;
+  border: 1.5px solid #00fff7a0;
+  backdrop-filter: blur(2px);
+}
+.input-transp:focus {
+  border: 2px solid #00fff7;
+  background: rgba(20,30,60,0.28) !important;
+}
+.img-catalitico {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 1rem;
+  margin: 0.5rem auto 0.5rem auto;
+  box-shadow: 0 2px 16px 0 #00fff7a0;
+  background: rgba(0,0,0,0.12);
+  display: block;
+}
+</style>
+
 <script>
+// Fondo animado de partículas tipo futurista
 document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('busqueda-codigo');
-    const resultadosDiv = document.getElementById('resultados-busqueda');
-    let timeout = null;
-    input.addEventListener('input', function() {
-        clearTimeout(timeout);
-        const valor = this.value.trim();
-        if (valor.length === 0) {
-            resultadosDiv.innerHTML = '';
-            return;
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<60;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+1.5,
+            dx: (Math.random()-0.5)*0.7,
+            dy: (Math.random()-0.5)*0.7,
+            c: `rgba(0,255,255,${Math.random()*0.5+0.5})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=12;
+            ctx.fill();
         }
-        resultadosDiv.innerHTML = '<div class="text-center text-black/70 py-4">Buscando...</div>';
-        timeout = setTimeout(() => {
-            fetch(`{% url 'cataliticos:api_buscar_catalitico' %}?term=${encodeURIComponent(valor)}`)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.results.length === 0) {
-                        resultadosDiv.innerHTML = '<div class="text-center text-black/70 py-4">No se encontraron resultados.</div>';
-                        return;
-                    }
-                    resultadosDiv.innerHTML = data.results.map(c => `
-                        <div class='bg-white/80 backdrop-blur-sm border border-white/20 rounded-xl p-3 flex items-center justify-between hover:bg-white/90 transition mb-2'>
-                            <div>
-                                <p class='font-bold text-lg text-black'>🔧 ${c.text}</p>
-                                <p class='text-sm uppercase text-black/70'>${c.descripcion || 'Sin marca'}</p>
-                                <p class='text-sm text-black/80'>Valor: $${c.valor.toLocaleString('es-CL')}</p>
-                            </div>
-                            <a href='{% url 'cataliticos:editar' 0 %}'.replace('0', c.id) class='text-sm text-black hover:text-cyan-700 bg-white/40 px-3 py-1 rounded-lg border border-white/30 hover:bg-white/60 transition'>Editar</a>
-                        </div>
-                    `).join('');
-                });
-        }, 350);
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
     });
 });
 </script>

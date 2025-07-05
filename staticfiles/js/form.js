@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function () {
     cargarRegiones();
 
@@ -6,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td><input type="text" name="codigo[]" class="codigo-input w-full bg-black text-white p-1 border rounded"></td>
-            <td><input type="number" name="cantidad[]" value="1" class="cantidad-input w-full bg-black text-white p-1 border rounded"></td>
+            <td><input type="number" step="0.01" name="cantidad[]" value="1" class="cantidad-input w-full bg-black text-white p-1 border rounded"></td>
             <td><input type="number" name="valor_unitario[]" readonly class="valor-input w-full bg-black text-white p-1 border rounded"></td>
             <td><input type="number" name="subtotal[]" readonly class="subtotal-input w-full bg-black text-white p-1 border rounded"></td>
             <td><button type="button" class="eliminar-fila text-red-500 hover:underline">🗑️</button></td>
@@ -23,23 +24,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('tabla-cataliticos').addEventListener('input', function (e) {
         const fila = e.target.closest('tr');
-        const cantidad = parseFloat(fila.querySelector('.cantidad-input').value) || 0;
-        const valor = parseFloat(fila.querySelector('.valor-input').value) || 0;
-        fila.querySelector('.subtotal-input').value = (cantidad * valor).toFixed(0);
-        actualizarTotal();
-    });
 
-    document.getElementById('tabla-cataliticos').addEventListener('blur', function (e) {
         if (e.target.classList.contains('codigo-input')) {
             const codigo = e.target.value.trim();
-            const fila = e.target.closest('tr');
             if (codigo !== '') {
                 fetch(`/api/catalitico/?term=${encodeURIComponent(codigo)}`)
                     .then(response => response.json())
                     .then(data => {
-                        // Buscar el match por código exacto
                         const match = data.results.find(item =>
-                            item.text.toLowerCase() === codigo.toLowerCase()
+                            item.text.toLowerCase().includes(codigo.toLowerCase())
                         );
                         const valor = match ? match.valor : 0;
                         fila.querySelector('input[name="valor_unitario[]"]').value = valor;
@@ -48,8 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         actualizarTotal();
                     });
             }
+        } else {
+            const cantidad = parseFloat(fila.querySelector('.cantidad-input').value) || 0;
+            const valor = parseFloat(fila.querySelector('.valor-input').value) || 0;
+            fila.querySelector('.subtotal-input').value = (cantidad * valor).toFixed(0);
+            actualizarTotal();
         }
-    }, true);
+    });
 });
 
 function actualizarTotal() {

@@ -1,48 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Nuevo Cliente{% endblock %}
 {% block content %}
-<style>
-body {
-    background: linear-gradient(120deg, #0f2027, #2c5364 60%, #232526 100%);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-.dashboard-container, .form-card, .glass-card, .main-card, .max-w-xl, .max-w-4xl, .max-w-2xl {
-    background: rgba(30, 30, 60, 0.55) !important;
-    backdrop-filter: blur(18px) saturate(180%) !important;
-    border-radius: 22px !important;
-    border: 1.5px solid rgba(0,255,255,0.18) !important;
-    box-shadow: 0 8px 40px 0 rgba(0,255,255,0.12), 0 1.5px 8px 0 rgba(255,0,255,0.10) !important;
-    color: #e0eaff !important;
-}
-input, select, textarea {
-    color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.10) !important;
-    border: 1px solid rgba(0,255,255,0.18) !important;
-    border-radius: 0.7rem !important;
-    padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s cubic-bezier(.4,2,.6,1);
-    backdrop-filter: blur(8px);
-}
-input::placeholder, select::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
-}
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    border-color: #00fff7 !important;
-    box-shadow: 0 0 0 3px rgba(0,255,255,0.18) !important;
-    background-color: rgba(255, 255, 255, 0.18) !important;
-}
-label {
-    color: #b388ff !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-    letter-spacing: 1px;
-}
-</style>
-<div class="max-w-2xl mx-auto p-6 form-card">
+<div class="max-w-2xl mx-auto p-6 bg-white/5 backdrop-blur-md rounded-2xl shadow-xl text-white font-[Orbitron]" style="background:rgba(0,0,0,0.15);">
   <h1 class="text-3xl font-bold mb-6 text-center">👤 Crear Nuevo Cliente</h1>
   <div class="mb-4 p-3 bg-blue-500/10 backdrop-blur-sm border border-blue-400/30 rounded-lg">
     <p class="text-sm text-blue-200">

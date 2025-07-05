@@ -2,28 +2,127 @@
 {% extends 'base.html' %}
 {% block title %}Confirmar Compra{% endblock %}
 {% block content %}
-<div class="container mx-auto max-w-xl bg-white/10 p-6 rounded-xl shadow-lg text-white mt-8 font-orbitron">
-    <h1 class="text-2xl font-bold mb-4">Confirmar Compra</h1>
+<!-- El fondo animado se crea por JS, no es necesario el div aquí -->
+<div class="container mx-auto max-w-xl glass p-8 rounded-xl shadow-lg text-white mt-12 font-orbitron relative z-10" style="background: transparent !important;">
+    <h1 class="text-3xl neon font-bold mb-6 text-center tracking-widest animate-pulse" style="letter-spacing:0.10em;">Confirmar Compra</h1>
     {% if resultado %}
         <div class="mb-6">
             <p class="text-lg"><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
-            <img src="{{ resultado.foto1.url }}" alt="Imagen catalítico" class="mt-4 rounded-lg max-w-xs">
+            <img src="{{ resultado.foto1.url }}" alt="Imagen catalítico" class="mt-4 rounded-lg max-w-xs mx-auto block shadow-lg">
         </div>
     {% endif %}
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
             <div class="mb-4">
-                <label for="{{ field.id_for_label }}" class="block mb-1 font-semibold">{{ field.label }}</label>
+                <label for="{{ field.id_for_label }}" class="block mb-1 font-semibold neon">{{ field.label }}</label>
                 {{ field }}
                 {% if field.errors %}
                     <p class="text-red-400 text-sm">{{ field.errors }}</p>
                 {% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-bold py-2 px-4 rounded">
-            Confirmar y Enviar por WhatsApp
-        </button>
+        <button type="submit" class="w-full futur-btn text-lg py-3 mt-4">Confirmar y Enviar por WhatsApp</button>
     </form>
 </div>
+<style>
+.neon {
+  color: #00fff7;
+  text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
+  font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+  letter-spacing: 0.08em;
+}
+.glass {
+  background: rgba(20, 30, 60, 0.25) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.17);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.10);
+  z-index: 2;
+}
+.futur-btn {
+  background: linear-gradient(90deg, #00fff7 0%, #0ff 100%) !important;
+  color: #0f2027 !important;
+  font-weight: bold;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px 0 #00fff7a0;
+  border: 1.5px solid #00fff7a0;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 8px #fff;
+  transition: all 0.2s;
+}
+.futur-btn:hover {
+  background: linear-gradient(90deg, #0ff 0%, #00fff7 100%) !important;
+  color: #0f2027 !important;
+  box-shadow: 0 4px 24px 0 #00fff7a0;
+  transform: scale(1.04);
+}
+#futuristic-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: transparent;
+}
+</style>
+<script>
+// Fondo animado de partículas tipo futurista
+document.addEventListener('DOMContentLoaded', function() {
+    // Elimina cualquier canvas existente con el id para evitar duplicados y asegurar el fondo
+    const oldCanvas = document.getElementById('futuristic-bg');
+    if (oldCanvas) {
+        oldCanvas.parentNode.removeChild(oldCanvas);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.zIndex = '0';
+    canvas.style.pointerEvents = 'none';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<60;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+1.5,
+            dx: (Math.random()-0.5)*0.7,
+            dy: (Math.random()-0.5)*0.7,
+            c: `rgba(0,255,255,${Math.random()*0.5+0.5})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=12;
+            ctx.fill();
+        }
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
+    });
+});
+</script>
 {% endblock %}

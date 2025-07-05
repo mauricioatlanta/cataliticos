@@ -1,82 +1,104 @@
+
 {% extends 'base.html' %}
 {% load formato_moneda %}
 
 {% block title %}Editar Catalítico - Atlanta Reciclajes{% endblock %}
 
+
 {% block content %}
 <style>
 body {
-    background: linear-gradient(120deg, #0f2027, #2c5364 60%, #232526 100%);
     min-height: 100vh;
+    background: #0f2027; /* fallback */
+    background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
     overflow-x: hidden;
 }
-.dashboard-container, .form-card, .glass-card, .main-card, .max-w-4xl, .bg-glass, .card-glass {
-    background: rgba(30, 30, 60, 0.55) !important;
-    backdrop-filter: blur(18px) saturate(180%) !important;
-    border-radius: 22px !important;
-    border: 1.5px solid rgba(0,255,255,0.18) !important;
-    box-shadow: 0 8px 40px 0 rgba(0,255,255,0.12), 0 1.5px 8px 0 rgba(255,0,255,0.10) !important;
-    color: #e0eaff !important;
+/* Fondo animado de partículas */
+#futuristic-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    background: transparent;
 }
-.campo-requerido {
-    color: #ef4444;
+.bg-glass {
+    background: rgba(0,0,0,0.18) !important;
+    backdrop-filter: blur(16px) !important;
+    border-radius: 1.5rem !important;
+    border: 1.5px solid rgba(0,255,255,0.18) !important;
+    box-shadow: 0 8px 32px 0 rgba(0,255,255,0.10), 0 0 24px 2px #00fff7a0 !important;
+}
+.card-glass {
+    background: rgba(0,255,255,0.08) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 1rem !important;
+    border: 1.5px solid #00fff7a0 !important;
+    box-shadow: 0 4px 16px 0 #00fff740, 0 0 12px 1px #00fff7a0 !important;
 }
 input, select, textarea {
+    background: rgba(0,0,0,0.18) !important;
     color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.10) !important;
-    border: 1px solid rgba(0,255,255,0.18) !important;
-    border-radius: 0.7rem !important;
+    border: 1.5px solid #00fff7a0 !important;
+    border-radius: 0.75rem !important;
     padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s cubic-bezier(.4,2,.6,1);
-    backdrop-filter: blur(8px);
+    font-size: 1rem !important;
+    backdrop-filter: blur(4px) !important;
+    box-shadow: 0 0 8px 0 #00fff7a0 !important;
 }
 input::placeholder, select::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
-}
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    border-color: #00fff7 !important;
-    box-shadow: 0 0 0 3px rgba(0,255,255,0.18) !important;
-    background-color: rgba(255, 255, 255, 0.18) !important;
+    color: #00fff7b0 !important;
 }
 label {
-    color: #b388ff !important;
+    color: #00fff7 !important;
     font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-    letter-spacing: 1px;
+    letter-spacing: 0.03em;
+    text-shadow: 0 0 8px #00fff7a0;
 }
-.mensaje-validacion {
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+.btn-primary, .btn-secondary, .btn-danger {
+    background: linear-gradient(90deg, #00fff7 0%, #0ff 100%) !important;
+    color: #0f2027 !important;
+    border: 1.5px solid #00fff7a0 !important;
+    border-radius: 0.75rem !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 12px 2px #00fff7a0;
+    transition: all 0.2s;
+    text-shadow: 0 0 8px #fff;
 }
-.mensaje-exito {
+.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+    background: linear-gradient(90deg, #0ff 0%, #00fff7 100%) !important;
+    color: #0f2027 !important;
+    box-shadow: 0 0 24px 4px #00fff7a0;
+}
+.mensaje-validacion, .mensaje-exito, .mensaje-error {
+    background: rgba(0,255,255,0.10) !important;
+    color: #fff !important;
+    border: 1.5px solid #00fff7a0 !important;
+    border-radius: 0.5rem !important;
+    backdrop-filter: blur(4px) !important;
+    box-shadow: 0 0 8px 0 #00fff7a0 !important;
+}
+.text-neon {
     color: #00fff7;
-    background-color: rgba(0,255,255,0.08);
-    border: 1px solid #00fff7;
-    backdrop-filter: blur(5px);
+    text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;
 }
-.mensaje-error {
-    color: #ff4b7d;
-    background-color: rgba(255,0,128,0.08);
-    border: 1px solid #ff4b7d;
-    backdrop-filter: blur(5px);
+.campo-requerido {
+    color: #ff00c8;
+    text-shadow: 0 0 8px #ff00c8a0;
 }
 </style>
 
-<div class="max-w-4xl mx-auto p-6 form-card">
-    <h1 class="text-3xl font-bold mb-6 text-white text-center">✏️ Editar Catalítico</h1>
+<div id="futuristic-bg"></div>
+
+<div class="max-w-4xl mx-auto p-6 bg-glass relative" style="z-index:1;">
+    <h1 class="text-3xl font-bold mb-6 text-neon text-center" style="letter-spacing:0.04em;">✏️ Editar Catalítico</h1>
     
     <div class="mb-6 p-4 card-glass">
         <div class="flex flex-wrap justify-between items-center">
             <div>
-                <p class="text-sm text-blue-200"><strong>Código actual:</strong> {{ catalitico.codigo }}</p>
-                <p class="text-sm text-blue-200"><strong>Valor actual:</strong> {{ catalitico.valor|formato_pesos }}</p>
+                <p class="text-sm text-neon"><strong>Código actual:</strong> {{ catalitico.codigo }}</p>
+                <p class="text-sm text-neon"><strong>Valor actual:</strong> {{ catalitico.valor|formato_pesos }}</p>
             </div>
-            <div class="text-sm text-blue-200">
+            <div class="text-sm text-neon">
                 ID: #{{ catalitico.id }}
             </div>
         </div>
@@ -102,7 +124,7 @@ label {
             </div>
         {% endif %}
         <div class="card-glass p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4 text-white">📋 Información Básica</h2>
+            <h2 class="text-xl font-semibold mb-4 text-neon">📋 Información Básica</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="{{ form.codigo.id_for_label }}">
@@ -156,7 +178,7 @@ label {
         <!-- Imágenes Actuales -->
         {% if catalitico.imagen_principal or catalitico.imagen2 or catalitico.imagen3 or catalitico.imagen4 %}
         <div class="card-glass p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4 text-white">🖼️ Imágenes Actuales</h2>
+            <h2 class="text-xl font-semibold mb-4 text-neon">🖼️ Imágenes Actuales</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {% if catalitico.imagen_principal %}
                     <div class="text-center">
@@ -187,8 +209,8 @@ label {
         {% endif %}
         <!-- Actualizar Imágenes -->
         <div class="card-glass p-6 mb-4">
-            <h2 class="text-xl font-semibold mb-4 text-white">🔄 Actualizar Imágenes</h2>
-            <p class="text-sm text-gray-200 mb-4">Selecciona nuevas imágenes solo si deseas cambiar las actuales</p>
+            <h2 class="text-xl font-semibold mb-4 text-neon">🔄 Actualizar Imágenes</h2>
+            <p class="text-sm text-neon mb-4">Selecciona nuevas imágenes solo si deseas cambiar las actuales</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="{{ form.imagen_principal.id_for_label }}">{{ form.imagen_principal.label }}</label>
@@ -238,7 +260,7 @@ label {
         </div>
         <!-- Información de Uso -->
         <div id="info-uso" class="card-glass p-4 mb-4">
-            <h3 class="font-semibold mb-2">📊 Información de Uso</h3>
+            <h3 class="font-semibold mb-2 text-neon">📊 Información de Uso</h3>
             <div id="contenido-uso">
                 <p class="text-sm text-yellow-200">Cargando información...</p>
             </div>
@@ -256,16 +278,57 @@ label {
             </button>
         </div>
     </form>
-    <!-- Información adicional -->
-    <div class="mt-6 p-4 card-glass">
-        <h3 class="font-semibold mb-2">ℹ️ Instrucciones:</h3>
-        <ul class="text-sm text-white space-y-1">
-            <li>• Los campos marcados con <span class="campo-requerido">*</span> son obligatorios</li>
-            <li>• El código debe ser único en todo el sistema</li>
-            <li>• Solo selecciona nuevas imágenes si deseas cambiar las actuales</li>
-            <li>• Si este catalítico está en uso, no podrá ser eliminado</li>
-        </ul>
-    </div>
+    <!-- Información adicional eliminada para coherencia futurista -->
+</style>
+<!-- Fondo animado de partículas tipo futurista -->
+<script>
+// Fondo animado de partículas (simple, sin librerías externas)
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'futuristic-bg';
+    document.body.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let particles = [];
+    for(let i=0;i<60;i++){
+        particles.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*2+1.5,
+            dx: (Math.random()-0.5)*0.7,
+            dy: (Math.random()-0.5)*0.7,
+            c: `rgba(0,255,255,${Math.random()*0.5+0.5})`
+        });
+    }
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+            ctx.fillStyle=p.c;
+            ctx.shadowColor='#00fff7';
+            ctx.shadowBlur=12;
+            ctx.fill();
+        }
+    }
+    function update(){
+        for(let p of particles){
+            p.x+=p.dx; p.y+=p.dy;
+            if(p.x<0||p.x>w) p.dx*=-1;
+            if(p.y<0||p.y>h) p.dy*=-1;
+        }
+    }
+    function loop(){
+        draw(); update(); requestAnimationFrame(loop);
+    }
+    loop();
+    window.addEventListener('resize',()=>{
+        w=window.innerWidth; h=window.innerHeight;
+        canvas.width=w; canvas.height=h;
+    });
+});
+</script>
 </div>
 <script>
 let codigoTimeout;

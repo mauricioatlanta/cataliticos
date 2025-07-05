@@ -1,0 +1,27 @@
+cd ~/cataliticos_project
+python3 manage.py collectstatic --noinput
+touch ~/cataliticos_project/tmp/restart.txt
+
+
+🔁 ACTUALIZAR TODOS LOS ARCHIVOS: PC → PythonAnywhere
+🖥️ PASO 1 — En tu PC local (VS Code)
+Asegúrate de que tu código esté actualizado:
+
+cd ~/cataliticos_project
+rm -rf cataliticos/templates
+rm -rf cataliticos/static
+rm db.sqlite3
+git pull origin main
+workon venv_cataliticos
+
+
+cd C:\projecto\projecto_1\e_garage
+venv\Scripts\activate
+python manage.py runserver
+
+python manage.py makemigrations taller
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
+python manage.py createsuperuser
