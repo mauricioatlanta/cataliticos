@@ -17,12 +17,13 @@
   <p class="text-lg md:text-xl text-cyan-200 mb-8 font-semibold">¡Obtén el mejor precio del mercado! Evaluación gratuita, pago inmediato y máxima confianza.</p>
 
   <div class="flex flex-col md:flex-row justify-center gap-6 mb-10">
-    <a href="{% url 'cataliticos:consulta_catalitico' %}" class="futur-btn text-xl flex items-center justify-center gap-2 hover:scale-105 transition-all">
-      🔍 Consultar Precio Ahora
+    <a href="{% url 'cataliticos:consulta_catalitico' %}" class="futur-btn text-xl flex items-center justify-center gap-2 hover:scale-110 transition-all shadow-lg animate__animated animate__pulse animate__infinite" style="animation-duration:1.8s;">
+      <span class="material-symbols-outlined" style="font-size:2rem;">search</span>
+      <span>Consultar Precio Ahora</span>
     </a>
-    <a href="https://wa.me/56963607348?text=¡Hola!%20Quiero%20vender%20mi%20catalítico%20al%20mejor%20precio%20💰" target="_blank" class="futur-btn text-xl flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border-green-400 hover:scale-105 transition-all">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.72 11.06a6.5 6.5 0 10-7.44 7.44l.41.09 2.18.47c.27.06.55-.02.75-.21l1.7-1.7a.75.75 0 00-.21-1.21l-1.13-.56a.75.75 0 01-.34-.34l-.56-1.13a.75.75 0 00-1.21-.21l-1.7 1.7c-.19.2-.27.48-.21.75l.47 2.18.09.41z" /></svg>
-      📱 WhatsApp Directo
+    <a href="https://wa.me/56963607348?text=¡Hola!%20Quiero%20vender%20mi%20catalítico%20al%20mejor%20precio%20💰" target="_blank" class="futur-btn text-xl flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border-green-400 hover:scale-110 transition-all shadow-lg animate__animated animate__pulse animate__infinite" style="animation-delay:0.7s;animation-duration:2.2s;">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.72 11.06a6.5 6.5 0 10-7.44 7.44l.41.09 2.18.47c.27.06.55-.02.75-.21l1.7-1.7a.75.75 0 00-.21-1.21l-1.13-.56a.75.75 0 01-.34-.34l-.56-1.13a.75.75 0 00-1.21-.21l-1.7 1.7c-.19.2-.27.48-.21.75l.47 2.18.09.41z" /></svg>
+      <span>WhatsApp Directo</span>
     </a>
     <!-- Botón de acceso para empleados -->
     <a href="{% url 'cataliticos:employee_login' %}" class="employee-btn">
@@ -69,6 +70,8 @@
   </div>
 </div>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
 .neon {
   color: #00fff7;
   text-shadow: 0 0 12px #00fff7, 0 0 24px #00fff7a0;

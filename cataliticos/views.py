@@ -417,13 +417,18 @@ def api_buscar_catalitico(request):
                 'error': f'Error interno: {str(e)}'
             })
     elif term:
-        cataliticos = Catalitico.objects.filter(Q(codigo__icontains=term)).values('id', 'codigo', 'descripcion', 'valor')[:10]
-        resultados = [{
-            'id': c['id'],
-            'text': c['codigo'],
-            'descripcion': c['descripcion'],
-            'valor': c['valor']
-        } for c in cataliticos]
+        # Búsqueda insensible a mayúsculas/minúsculas
+        cataliticos = Catalitico.objects.filter(codigo__icontains=term).values('id', 'codigo', 'descripcion', 'valor')[:10]
+        resultados = [
+            {
+                'id': c['id'],
+                'text': c['codigo'],
+                'descripcion': c['descripcion'],
+                'valor': c['valor']
+            }
+            for c in cataliticos
+            if term.lower() in c['codigo'].lower()
+        ]
         return JsonResponse({'results': resultados})
     else:
         return JsonResponse({'success': False, 'error': 'Debe proporcionar un código o término de búsqueda.'})

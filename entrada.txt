@@ -3,6 +3,59 @@ python3 manage.py collectstatic --noinput
 touch ~/cataliticos_project/tmp/restart.txt
 
 
+Opción 2: Usar Git (recomendado para actualizaciones frecuentes)
+En tu PC:
+
+bash
+Copiar
+Editar
+cd /ruta/del/proyecto
+git init
+git remote add origin https://github.com/tu_usuario/tu_repo.git
+git add .
+git commit -m "Deploy"
+git push origin main
+En PythonAnywhere:
+
+bash
+Copiar
+Editar
+cd ~
+git clone https://github.com/tu_usuario/tu_repo.git cataliticos_folder
+O, si ya lo habías clonado:
+
+bash
+Copiar
+Editar
+cd ~/cataliticos_folder
+git pull origin main
+Luego:
+
+bash
+Copiar
+Editar
+workon venv_cataliticos
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py collectstatic --noinput
+touch /var/www/atlantareciclajes_pythonanywhere_com_wsgi.py
+🚨 Verifica antes de subir:
+config/settings.py debe existir y estar correcto.
+
+manage.py debe estar en ~/cataliticos_folder/
+
+config/wsgi.py debe tener contenido correcto como este:
+
+python
+Copiar
+Editar
+import os
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+application = get_wsgi_application()
+
+
 🔁 ACTUALIZAR TODOS LOS ARCHIVOS: PC → PythonAnywhere
 🖥️ PASO 1 — En tu PC local (VS Code)
 Asegúrate de que tu código esté actualizado:
@@ -15,11 +68,12 @@ git pull origin main
 workon venv_cataliticos
 
 
-cd C:\projecto\projecto_1\e_garage
+cd C:\projecto\cataliticos\cataliticos
 venv\Scripts\activate
 python manage.py runserver
+python manage.py shell
 
-python manage.py makemigrations taller
+python manage.py makemigrations cataliticos
 python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver

@@ -88,11 +88,48 @@
         <form id="consulta-form" class="flex flex-col gap-4">
             <label for="codigo" class="font-semibold" style="color:#00eaff;">Código de Catalítico</label>
             <input type="text" id="codigo" name="codigo" class="rounded-lg px-4 py-2 input-transp focus:outline-none focus:ring-2 focus:ring-cyan-400 text-lg tracking-wider placeholder-cyan-300" placeholder="Ingresa tu código aquí..." autocomplete="off" required>
+            <ul id="sugerencias" class="bg-white rounded-lg shadow-lg mt-1 text-left hidden absolute w-full z-50 max-h-56 overflow-y-auto"></ul>
             <button type="submit" class="futur-btn mt-2">💰 Consultar Precio</button>
         </form>
         <div id="resultado" class="mt-8 text-center"></div>
     </div>
     <script>
+      // Búsqueda en tiempo real de códigos
+      const codigoInput = document.getElementById('codigo');
+      const sugerencias = document.getElementById('sugerencias');
+      let timeout = null;
+      codigoInput.addEventListener('input', function() {
+        clearTimeout(timeout);
+        const term = codigoInput.value.trim();
+        if (term.length < 2) {
+          sugerencias.innerHTML = '';
+          sugerencias.classList.add('hidden');
+          return;
+        }
+        timeout = setTimeout(async () => {
+          try {
+            const res = await fetch(`/cataliticos/api/catalitico/?term=${encodeURIComponent(term)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              sugerencias.innerHTML = data.results.map(item => `<li class='px-4 py-2 hover:bg-cyan-100 cursor-pointer' data-codigo='${item.text}'>${item.text} <span class='text-xs text-gray-500'>${item.descripcion || ''}</span></li>`).join('');
+              sugerencias.classList.remove('hidden');
+            } else {
+              sugerencias.innerHTML = '<li class="px-4 py-2 text-gray-400">Sin coincidencias</li>';
+              sugerencias.classList.remove('hidden');
+            }
+          } catch (e) {
+            sugerencias.innerHTML = '';
+            sugerencias.classList.add('hidden');
+          }
+        }, 200);
+      });
+      sugerencias.addEventListener('mousedown', function(e) {
+        if (e.target && e.target.dataset.codigo) {
+          codigoInput.value = e.target.dataset.codigo;
+          sugerencias.innerHTML = '';
+          sugerencias.classList.add('hidden');
+        }
+      });
       document.getElementById('consulta-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         const codigoInput = document.getElementById('codigo');
