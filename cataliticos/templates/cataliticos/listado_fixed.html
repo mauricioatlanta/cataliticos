@@ -177,8 +177,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="text-white">
                             <p><strong>Código:</strong> {{ resultado.codigo }}</p>
                             <p><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
-                            <p><strong>Valor:</strong> {{ resultado.valor|formato_pesos }}</p>
-                            <p><strong>Valor Actual:</strong> {{ resultado.valor_actual|formato_pesos }}</p>
+                            <p><strong>Valor:</strong> {{ resultado.valor|formato_pesos }} <span class="text-muted">CLP</span></p>
+                            <p><strong>Valor Actual:</strong> {{ resultado.valor_actual|formato_pesos }} <span class="text-muted">CLP</span></p>
                         </div>
                         {% if resultado.imagen_principal %}
                         <div>
@@ -265,8 +265,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     <div class="flex justify-between items-center">
                         <div class="text-sm">
-                            <p class="text-gray-300">Valor: {{ catalitico.valor|formato_pesos }}</p>
-                            <p class="text-green-300 font-semibold">Actual: {{ catalitico.valor_actual|formato_pesos }}</p>
+                            <p class="text-gray-300">Valor: {{ catalitico.valor|formato_pesos }} <span class="text-muted">CLP</span></p>
+                            <p class="text-green-300 font-semibold">Actual: {{ catalitico.valor_actual|formato_pesos }} <span class="text-muted">CLP</span></p>
                         </div>
                         {% if catalitico.pk %}
                         <a href="{% url 'cataliticos:editar' catalitico.pk %}" 

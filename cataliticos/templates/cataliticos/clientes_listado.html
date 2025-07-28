@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Clientes - Centro Futurista{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto p-8 glass shadow-2xl mt-10 mb-16 relative" style="font-family:'Orbitron',sans-serif;">
+  <h1 class="text-4xl neon font-extrabold mb-8 text-center tracking-widest drop-shadow-lg">👥 Centro de Clientes</h1>
+  <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <form method="get" class="flex-1 flex gap-2">
+      <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar cliente por nombre, apellido o RUT..." class="futuristic-input w-full" autocomplete="off">
+      <button type="submit" class="futuristic-btn px-6">🔍 Buscar</button>
+    </form>
+    <a href="{% url 'cataliticos:crear_cliente' %}" class="futuristic-btn px-6">➕ Nuevo Cliente</a>
+  </div>
+  <div class="overflow-x-auto rounded-xl shadow-lg bg-black/30">
+    <table class="min-w-full text-white text-lg">
+      <thead class="bg-cyan-900/80">
+        <tr>
+          <th class="p-3 text-left neon">Nombre</th>
+          <th class="p-3 text-left neon">Apellido</th>
+          <th class="p-3 text-left neon">RUT</th>
+          <th class="p-3 text-left neon">Región</th>
+          <th class="p-3 text-left neon">Ciudad</th>
+          <th class="p-3 text-left neon">Teléfono</th>
+          <th class="p-3 text-left neon">Correo</th>
+          <th class="p-3 text-center neon">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cliente in clientes %}
+        <tr class="border-b border-cyan-800/30 hover:bg-cyan-900/30 transition">
+          <td class="p-3 font-bold">{{ cliente.nombre }}</td>
+          <td class="p-3">{{ cliente.apellido }}</td>
+          <td class="p-3">{{ cliente.rut|default:'-' }}</td>
+          <td class="p-3">{{ cliente.region.nombre|default:'-' }}</td>
+          <td class="p-3">{{ cliente.ciudad.nombre|default:'-' }}</td>
+          <td class="p-3">{{ cliente.telefono|default:'-' }}</td>
+          <td class="p-3">{{ cliente.correo|default:'-' }}</td>
+          <td class="p-3 text-center flex gap-2 justify-center">
+            <a href="{% url 'cataliticos:ver_cliente' cliente.id %}" class="futuristic-btn px-3 py-1 text-xs">👁️ Ver</a>
+            <a href="{% url 'cataliticos:editar_cliente' cliente.id %}" class="futuristic-btn px-3 py-1 text-xs">✏️ Editar</a>
+            <form method="post" action="{% url 'cataliticos:eliminar_cliente' cliente.id %}" style="display:inline;" onsubmit="return confirm('¿Eliminar cliente?');">
+              {% csrf_token %}
+              <button type="submit" class="futuristic-btn px-3 py-1 text-xs bg-red-700 hover:bg-red-800">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-cyan-200 py-8">No hay clientes registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-10 text-center">
+    <a href="#" class="futuristic-btn px-8 py-3 text-lg" onclick="alert('Próximamente: Centro de Clientes con IA 🤖✨');return false;">🤖 Centro de Clientes con IA</a>
+    <p class="text-cyan-300 mt-2 text-sm">¡Próximamente podrás analizar, segmentar y predecir datos de tus clientes con inteligencia artificial!</p>
+  </div>
+</div>
+{% endblock %}

@@ -3,6 +3,24 @@ python3 manage.py collectstatic --noinput
 touch ~/cataliticos_project/tmp/restart.txt
 
 
+cd /home/atlantareciclajes/cataliticos_project
+git pull origin main
+workon venv_cataliticos
+pip install -r /home/atlantareciclajes/cataliticos_project/requirements.txt
+cd /home/atlantareciclajes/cataliticos_project
+python manage.py migrate
+python manage.py collectstatic --noinput
+
+
+
+
+
+git clone https://ghp_TU_TOKEN@github.com/mauricioatlanta/cataliticos.git cataliticos_project
+pip install -r requirements.txt
+
+
+
+
 Opción 2: Usar Git (recomendado para actualizaciones frecuentes)
 En tu PC:
 

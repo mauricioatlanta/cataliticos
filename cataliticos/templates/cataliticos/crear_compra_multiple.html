@@ -99,20 +99,43 @@ select option {
 $(document).ready(function () {
     $('#cliente-select').select2({
         placeholder: 'Buscar cliente...',
+        minimumInputLength: 0,
         ajax: {
-            url: '/api/cliente/',
+            url: '/cataliticos/api/cliente/',
             dataType: 'json',
             delay: 250,
             data: params => ({ term: params.term }),
             processResults: data => ({ results: data.results }),
             cache: true
-        },
-        minimumInputLength: 1,
+        }
+    });
+    // Cargar todos los clientes al abrir el selector por primera vez
+    $('#cliente-select').one('select2:open', function() {
+        $.ajax({
+            url: '/cataliticos/api/cliente/',
+            dataType: 'json',
+            success: function(data) {
+                let select = $('#cliente-select');
+                select.empty();
+                select.append('<option value="">Buscar cliente...</option>');
+                data.results.forEach(function(item) {
+                    select.append('<option value="'+item.id+'">'+item.text+'</option>');
+                });
+            }
+        });
     });
     // Agregar una fila vacía al cargar la página
     agregarCataliticoFila();
+    calcularTotal();
     // Delegar eventos para recalcular total en cualquier cambio
     $(document).on('input change', '.cantidad, .valor_unitario', calcularTotal);
+    // Recalcular total al agregar o eliminar filas
+    $(document).on('click', 'button[onclick*="agregarCataliticoFila"]', function() {
+        setTimeout(calcularTotal, 100);
+    });
+    $(document).on('click', 'button[onclick*="closest(\'tr\').remove"]', function() {
+        setTimeout(calcularTotal, 100);
+    });
 });
 
 function agregarCataliticoFila() {
@@ -129,31 +152,35 @@ function agregarCataliticoFila() {
         </tr>
     `);
     $("#tabla-cataliticos tbody").append(row);
-    // Evento blur para autocompletar valor al salir del input de código
+    // Evento blur para autocompletar valor y descripción al salir del input de código
     row.find("input[name='codigo[]']").off("blur").on("blur", function () {
         const input = $(this);
         const codigo = input.val().trim();
         const fila = input.closest('tr');
         if (codigo.length > 1) {
             $.ajax({
-                url: "/api/catalitico/",
-                data: { term: codigo },
+                url: "/cataliticos/api/catalitico/",
+                data: { codigo: codigo },
                 success: function(data) {
-                    const match = data.results.find(item =>
-                        item.text.toLowerCase() === codigo.toLowerCase()
-                    );
-                    if (match) {
-                        fila.find('.descripcion').text(match.descripcion || '-');
-                        fila.find("input[name='valor_unitario[]']").val(parseFloat(match.valor) || 0).trigger('input');
+                    if (data.success) {
+                        fila.find('.descripcion').text(data.descripcion || '-');
+                        const valor = parseFloat(data.valor) || 0;
+                        fila.find("input[name='valor_unitario[]']").val(valor).trigger('input');
+                        fila.find("input[name='valor_unitario[]']").next('.valor-pesos').remove();
+                        fila.find("input[name='valor_unitario[]']").after(`<span class='valor-pesos text-cyan-300 ml-2'>$${valor.toLocaleString('es-CL')}</span>`);
                     } else {
                         fila.find('.descripcion').text('Código no encontrado');
                         fila.find("input[name='valor_unitario[]']").val(0).trigger('input');
+                        fila.find("input[name='valor_unitario[]']").next('.valor-pesos').remove();
+                        fila.find("input[name='valor_unitario[]']").after(`<span class='valor-pesos text-cyan-300 ml-2'>$0</span>`);
                     }
                 }
             });
         } else {
             fila.find('.descripcion').text('-');
             fila.find("input[name='valor_unitario[]']").val(0).trigger('input');
+            fila.find("input[name='valor_unitario[]']").next('.valor-pesos').remove();
+            fila.find("input[name='valor_unitario[]']").after(`<span class='valor-pesos text-cyan-300 ml-2'>$0</span>`);
         }
     });
 }

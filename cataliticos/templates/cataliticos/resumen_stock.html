@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Resumen de Stock</h2>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total catalíticos en stock</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ stock|length }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Total invertido</div>
+                <div class="card-body">
+                    <h4 class="card-title">${{ total_invertido|floatformat:0 }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Total proyectado de venta</div>
+                <div class="card-body">
+                    <h4 class="card-title">${{ total_venta|floatformat:0 }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Ganancia esperada</div>
+                <div class="card-body">
+                    <h4 class="card-title">${{ ganancia_esperada|floatformat:0 }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Valor compra</th>
+                <th>Valor venta</th>
+                <th>Ganancia/unidad</th>
+                <th>Proveedor</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in stock %}
+            <tr>
+                <td>{{ c.codigo }}</td>
+                <td>{{ c.descripcion|default:'-' }}</td>
+                <td>{{ c.cantidad }}</td>
+                <td>${{ c.valor_compra|floatformat:0 }}</td>
+                <td>{% if c.valor_venta %}${{ c.valor_venta|floatformat:0 }}{% else %}-{% endif %}</td>
+                <td>{% if c.ganancia_unidad %}${{ c.ganancia_unidad|floatformat:0 }}{% else %}-{% endif %}</td>
+                <td>{{ c.proveedor.nombre|default:'-' }}</td>
+                <td>
+                    {% if not c.vendido %}
+                    <form method="post" action="{% url 'cataliticos:marcar_vendido' c.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-success">Marcar como vendido</button>
+                    </form>
+                    {% else %}
+                    <span class="badge badge-success">Vendido</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

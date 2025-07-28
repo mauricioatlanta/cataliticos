@@ -91,7 +91,7 @@
     <div class="campo"><strong>Cliente:</strong> {{ compra.cliente_nombre }}</div>
     <div class="campo"><strong>RUT:</strong> {{ compra.cliente_rut }}</div>
     <div class="campo"><strong>Catalítico:</strong> {{ compra.catalitico.codigo }}</div>
-    <div class="campo"><strong>Valor:</strong> ${{ compra.valor_ofrecido|intcomma }}</div>
+    <div class="campo"><strong>Valor:</strong> ${{ compra.valor_ofrecido|intcomma }} <span class="text-muted">CLP</span></div>
     <div class="campo"><strong>Fecha:</strong> {{ compra.fecha }}</div>
     <a class="btn-whatsapp" href="https://wa.me/?text=Hola%20{{ compra.cliente_nombre }}.%20Confirmamos%20la%20compra%20del%20catal%C3%ADtico%20{{ compra.catalitico.codigo }}%20por%20${{ compra.valor_ofrecido|intcomma }}.%20Gracias%20por%20su%20compra.%20-%20Atlanta%20Reciclajes" target="_blank">
         📲 Enviar por WhatsApp

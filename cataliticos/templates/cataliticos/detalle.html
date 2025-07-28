@@ -11,7 +11,7 @@
         <span class="font-bold neon">Descripción:</span> <span>{{ catalitico.descripcion }}</span>
     </div>
     <div class="mb-4">
-        <span class="font-bold neon">Valor:</span> <span>${{ catalitico.valor_actual|default:catalitico.valor|floatformat:0|intcomma }}</span>
+        <span class="font-bold neon">Valor venta:</span> <span>${{ catalitico.valor_venta|floatformat:0|intcomma }} <span class="text-muted">CLP</span></span>
     </div>
     {% if catalitico.imagen_principal %}
         <img src="{{ catalitico.imagen_principal.url }}" alt="Imagen principal" class="img-catalitico mx-auto mb-4">

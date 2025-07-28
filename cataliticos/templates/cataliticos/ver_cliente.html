@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Ver Cliente{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto p-8 glass shadow-2xl mt-10 mb-16 relative" style="font-family:'Orbitron',sans-serif;">
+  <h1 class="text-3xl neon font-extrabold mb-8 text-center tracking-widest drop-shadow-lg">👤 Detalle del Cliente</h1>
+  <div class="grid grid-cols-1 gap-4 text-lg">
+    <div><span class="neon">Nombre:</span> {{ cliente.nombre }}</div>
+    <div><span class="neon">Apellido:</span> {{ cliente.apellido|default:'-' }}</div>
+    <div><span class="neon">RUT:</span> {{ cliente.rut|default:'-' }}</div>
+    <div><span class="neon">Región:</span> {{ cliente.region.nombre|default:'-' }}</div>
+    <div><span class="neon">Ciudad:</span> {{ cliente.ciudad.nombre|default:'-' }}</div>
+    <div><span class="neon">Teléfono:</span> {{ cliente.telefono|default:'-' }}</div>
+    <div><span class="neon">Correo:</span> {{ cliente.correo|default:'-' }}</div>
+    <div><span class="neon">Dirección:</span> {{ cliente.direccion|default:'-' }}</div>
+  </div>
+  <div class="mt-8 flex gap-4 justify-center">
+    <a href="{% url 'cataliticos:editar_cliente' cliente.id %}" class="futuristic-btn px-6">✏️ Editar</a>
+    <a href="{% url 'cataliticos:clientes_listado' %}" class="futuristic-btn px-6">⬅️ Volver</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,5 +1,25 @@
 
 from django.db import models
+from datetime import date
+from decimal import Decimal
+
+class Region(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Ciudad(models.Model):
+    nombre = models.CharField(max_length=100)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='ciudades')
+
+    class Meta:
+        unique_together = ('nombre', 'region')
+        verbose_name_plural = 'Ciudades'
+
+    def __str__(self):
+        return f"{self.nombre} ({self.region.nombre})"
 
 class PrecioMetal(models.Model):
     fecha = models.DateField(auto_now_add=True)
@@ -11,19 +31,43 @@ class PrecioMetal(models.Model):
         return f"Precio {self.fecha} - Pt: {self.platino}% Pd: {self.paladio}% Rh: {self.rodio}%"
 
 
+class Proveedor(models.Model):
+    nombre = models.CharField(max_length=100)
+    rut = models.CharField(max_length=20, blank=True, null=True)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    correo = models.EmailField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
 class Catalitico(models.Model):
     codigo = models.CharField(max_length=100, unique=True)
-    descripcion = models.CharField(max_length=255)
-    valor = models.PositiveIntegerField(default=0)
-    valor_actual = models.IntegerField(default=0)
+    descripcion = models.TextField(blank=True, null=True)
+    proveedor = models.ForeignKey('Proveedor', on_delete=models.SET_NULL, null=True, blank=True)
+    fecha_compra = models.DateField(auto_now_add=True)
+    valor_compra = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    valor_venta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    cantidad = models.PositiveIntegerField(default=1)
+    vendido = models.BooleanField(default=False)
 
     imagen_principal = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
     imagen2 = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
     imagen3 = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
     imagen4 = models.ImageField(upload_to='cataliticos/', null=True, blank=True)
 
+    def ganancia_unidad(self):
+        if self.valor_venta is not None and self.valor_compra is not None:
+            return self.valor_venta - self.valor_compra
+        return 0
+
+    def valor_total_stock(self):
+        if self.valor_venta is not None and not self.vendido:
+            return self.valor_venta * self.cantidad
+        return 0
+
     def __str__(self):
-        return f"{self.codigo} - ${self.valor_actual}"
+        return self.codigo
 
 
 class Cliente(models.Model):
@@ -33,8 +77,8 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=20, blank=True)
     correo = models.EmailField(blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True)
-    region = models.CharField(max_length=100, blank=True)
-    ciudad = models.CharField(max_length=100, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         rut_display = f"({self.rut})" if self.rut else "(Sin RUT)"

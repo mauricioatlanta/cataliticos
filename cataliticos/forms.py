@@ -1,33 +1,59 @@
 from django import forms
-from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico
+from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico, Region, Ciudad
 
 class CataliticoForm(forms.ModelForm):
     class Meta:
         model = Catalitico
-        fields = ['codigo', 'descripcion', 'valor', 'imagen_principal', 'imagen2', 'imagen3', 'imagen4']
+        fields = [
+            'codigo', 'descripcion', 'proveedor',
+            'valor_compra', 'valor_venta', 'cantidad', 'vendido',
+            'imagen_principal', 'imagen2', 'imagen3', 'imagen4'
+        ]
         widgets = {
             'codigo': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
                 'placeholder': 'Código único del catalítico',
                 'style': 'text-transform: uppercase;'
             }),
-            'descripcion': forms.TextInput(attrs={
+            'descripcion': forms.Textarea(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                'placeholder': 'Descripción del catalítico'
+                'placeholder': 'Descripción del catalítico',
+                'rows': 2
             }),
-            'valor': forms.NumberInput(attrs={
+            'proveedor': forms.Select(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                'placeholder': 'Valor en pesos',
-                'min': '0'
+            }),
+            'valor_compra': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'Valor de compra',
+                'min': '0',
+                'step': '0.01'
+            }),
+            'valor_venta': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'Valor de venta',
+                'min': '0',
+                'step': '0.01'
+            }),
+            'cantidad': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'min': '1',
+            }),
+            'vendido': forms.CheckboxInput(attrs={
+                'class': 'form-checkbox h-5 w-5 text-green-600',
             }),
         }
         labels = {
             'codigo': 'Código *',
-            'descripcion': 'Descripción *',
-            'valor': 'Valor (CLP) *',
+            'descripcion': 'Descripción',
+            'proveedor': 'Proveedor',
+            'valor_compra': 'Valor de compra *',
+            'valor_venta': 'Valor de venta',
+            'cantidad': 'Cantidad',
+            'vendido': '¿Vendido?',
             'imagen_principal': 'Imagen Principal',
             'imagen2': 'Imagen 2',
-            'imagen3': 'Imagen 3', 
+            'imagen3': 'Imagen 3',
             'imagen4': 'Imagen 4',
         }
     
@@ -57,6 +83,15 @@ class CataliticoForm(forms.ModelForm):
         return valor
 
 class ClienteForm(forms.ModelForm):
+    nueva_ciudad = forms.CharField(
+        required=False,
+        label="Agregar nueva ciudad",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Si la ciudad no existe, escríbela aquí'
+        })
+    )
+
     class Meta:
         model = Cliente
         fields = [
@@ -88,13 +123,11 @@ class ClienteForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Dirección (opcional)'
             }),
-            'region': forms.TextInput(attrs={
+            'region': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Región (opcional)'
             }),
-            'ciudad': forms.TextInput(attrs={
+            'ciudad': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Ciudad (opcional)'
             }),
         }
         labels = {
@@ -107,6 +140,28 @@ class ClienteForm(forms.ModelForm):
             'region': 'Región',
             'ciudad': 'Ciudad',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['region'].queryset = Region.objects.all().order_by('nombre')
+        self.fields['ciudad'].queryset = Ciudad.objects.none()
+        if 'region' in self.data:
+            try:
+                region_id = int(self.data.get('region'))
+                self.fields['ciudad'].queryset = Ciudad.objects.filter(region_id=region_id).order_by('nombre')
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk and self.instance.region:
+            self.fields['ciudad'].queryset = Ciudad.objects.filter(region=self.instance.region).order_by('nombre')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        nueva_ciudad = cleaned_data.get('nueva_ciudad')
+        region = cleaned_data.get('region')
+        if nueva_ciudad and region:
+            ciudad, created = Ciudad.objects.get_or_create(nombre=nueva_ciudad.strip(), region=region)
+            cleaned_data['ciudad'] = ciudad
+        return cleaned_data
 
 class CompraForm(forms.ModelForm):
     class Meta:

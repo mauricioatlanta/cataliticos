@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Editar Cliente{% endblock %}
+{% block content %}
+<style>
+  .planet-bg {
+    background: radial-gradient(ellipse at 60% 40%, #00fff7 0%, #0a0a23 60%, #000 100%);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.7;
+    filter: blur(8px);
+  }
+  .planet-orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 340px;
+    height: 340px;
+    margin-left: -170px;
+    margin-top: -170px;
+    border: 2px dashed #00fff7;
+    border-radius: 50%;
+    opacity: 0.25;
+    animation: spin 18s linear infinite;
+    z-index: 1;
+  }
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+  .form-planet {
+    position: relative;
+    z-index: 2;
+    background: rgba(10,20,40,0.92);
+    border-radius: 2rem;
+    box-shadow: 0 0 60px 0 #00fff7, 0 0 0 2px #00fff733;
+    padding: 3rem 2rem 2rem 2rem;
+    max-width: 480px;
+    margin: 0 auto;
+    font-family: 'Orbitron', 'Montserrat', sans-serif;
+  }
+  .form-planet label {
+    color: #00fff7;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px #00fff7cc;
+  }
+  .form-planet input, .form-planet select {
+    background: rgba(0,0,0,0.7);
+    border: 1.5px solid #00fff7;
+    color: #fff;
+    font-size: 1.1rem;
+    border-radius: 0.7rem;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1.2rem;
+    width: 100%;
+    outline: none;
+    box-shadow: 0 0 12px #00fff755 inset;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+  .form-planet input:focus, .form-planet select:focus {
+    border: 2px solid #fff;
+    box-shadow: 0 0 24px #00fff7cc;
+  }
+  .form-planet .futuristic-btn {
+    background: linear-gradient(90deg, #00fff7 0%, #0a0a23 100%);
+    color: #fff;
+    border: none;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 0.8rem 2.2rem;
+    margin: 0 0.5rem;
+    box-shadow: 0 0 18px #00fff7cc;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .form-planet .futuristic-btn:hover {
+    background: linear-gradient(90deg, #0a0a23 0%, #00fff7 100%);
+    box-shadow: 0 0 32px #00fff7;
+  }
+  .planet-title {
+    font-size: 2.2rem;
+    color: #fff;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 2.2rem;
+    text-shadow: 0 0 24px #00fff7, 0 0 8px #fff;
+  }
+</style>
+<div style="position:relative; min-height: 100vh;">
+  <div class="planet-bg"></div>
+  <div class="planet-orbit"></div>
+  <div class="form-planet mt-16 mb-16">
+    <div class="planet-title">🪐 Editar Cliente</div>
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-4">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="text-cyan-300 text-xs mt-1">{{ field.help_text }}</div>{% endif %}
+          {% for error in field.errors %}<div class="text-red-400 text-xs mt-1">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="flex gap-4 justify-center mt-8">
+        <button type="submit" class="futuristic-btn">💾 Guardar</button>
+        <a href="{% url 'cataliticos:clientes_listado' %}" class="futuristic-btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

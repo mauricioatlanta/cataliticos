@@ -126,51 +126,74 @@ label {
         <div class="card-glass p-6 mb-4">
             <h2 class="text-xl font-semibold mb-4 text-neon">📋 Información Básica</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Código -->
                 <div>
-                    <label for="{{ form.codigo.id_for_label }}">
-                        {{ form.codigo.label }} <span class="campo-requerido">*</span>
-                    </label>
+                    <label for="{{ form.codigo.id_for_label }}">{{ form.codigo.label }} <span class="campo-requerido">*</span></label>
                     {{ form.codigo }}
-                    <div id="codigo-validacion" class="mensaje-validacion" style="display: none;"></div>
                     {% if form.codigo.errors %}
-                        <div class="mensaje-validacion mensaje-error">
-                            {% for error in form.codigo.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.codigo.errors %}{{ error }}{% endfor %}</div>
                     {% endif %}
-                    <p class="text-xs text-gray-300 mt-1">El código debe ser único y se convertirá automáticamente a mayúsculas</p>
                 </div>
+                <!-- Proveedor -->
                 <div>
-                    <label for="{{ form.descripcion.id_for_label }}">
-                        {{ form.descripcion.label }} <span class="campo-requerido">*</span>
-                    </label>
+                    <label for="{{ form.proveedor.id_for_label }}">{{ form.proveedor.label }}</label>
+                    {{ form.proveedor }}
+                    {% if form.proveedor.errors %}
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.proveedor.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <!-- Descripción -->
+                <div class="md:col-span-2">
+                    <label for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label }}</label>
                     {{ form.descripcion }}
                     {% if form.descripcion.errors %}
-                        <div class="mensaje-validacion mensaje-error">
-                            {% for error in form.descripcion.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.descripcion.errors %}{{ error }}{% endfor %}</div>
                     {% endif %}
                 </div>
-                <div class="md:col-span-2">
-                    <label for="{{ form.valor.id_for_label }}">
-                        {{ form.valor.label }} <span class="campo-requerido">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                        <input type="number" name="valor" id="{{ form.valor.id_for_label }}" 
-                               class="pl-8 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="Ej: 15000" min="0" value="{{ form.valor.value|default:'' }}">
+                <!-- Fecha de compra -->
+                <div>
+                    <label for="{{ form.fecha_compra.id_for_label }}">{{ form.fecha_compra.label }}</label>
+                    {{ form.fecha_compra }}
+                    {% if form.fecha_compra.errors %}
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.fecha_compra.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <!-- Valor compra -->
+                <div>
+                    <label for="{{ form.valor_compra.id_for_label }}">{{ form.valor_compra.label }} <span class="campo-requerido">*</span> <span class="text-muted">(en $ CLP)</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.valor_compra }}
                     </div>
-                    <div id="valor-preview" class="text-sm text-gray-300 mt-1"></div>
-                    {% if form.valor.errors %}
-                        <div class="mensaje-validacion mensaje-error">
-                            {% for error in form.valor.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
+                    {% if form.valor_compra.errors %}
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.valor_compra.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <!-- Valor venta -->
+                <div>
+                    <label for="{{ form.valor_venta.id_for_label }}">{{ form.valor_venta.label }} <span class="text-muted">(en $ CLP)</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.valor_venta }}
+                    </div>
+                    {% if form.valor_venta.errors %}
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.valor_venta.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <!-- Cantidad -->
+                <div>
+                    <label for="{{ form.cantidad.id_for_label }}">{{ form.cantidad.label }}</label>
+                    {{ form.cantidad }}
+                    {% if form.cantidad.errors %}
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.cantidad.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <!-- Vendido -->
+                <div>
+                    <label for="{{ form.vendido.id_for_label }}">{{ form.vendido.label }}</label>
+                    {{ form.vendido }}
+                    {% if form.vendido.errors %}
+                        <div class="mensaje-validacion mensaje-error">{% for error in form.vendido.errors %}{{ error }}{% endfor %}</div>
                     {% endif %}
                 </div>
             </div>

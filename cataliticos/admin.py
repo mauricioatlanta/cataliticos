@@ -3,9 +3,9 @@ from .models import Catalitico, PrecioMetal, Cliente, CompraCatalitico, DetalleC
 
 @admin.register(Catalitico)
 class CataliticoAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'descripcion', 'valor', 'valor_actual']
+    list_display = ['codigo', 'descripcion', 'proveedor', 'valor_compra', 'valor_venta', 'cantidad', 'vendido']
     search_fields = ['codigo', 'descripcion']
-    list_filter = ['valor_actual']
+    list_filter = ['proveedor', 'vendido']
 
 @admin.register(PrecioMetal)
 class PrecioMetalAdmin(admin.ModelAdmin):

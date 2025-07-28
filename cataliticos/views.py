@@ -1,6 +1,21 @@
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+# Vista para marcar catalíticos como vendidos
+@login_required
+@require_POST
+def marcar_vendido(request, pk):
+    catalitico = get_object_or_404(Catalitico, pk=pk)
+    catalitico.vendido = True
+    catalitico.save()
+    messages.success(request, f"Catalítico {catalitico.codigo} marcado como vendido.")
+    return redirect('cataliticos:resumen_stock')
 from decimal import Decimal, InvalidOperation
+import logging
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.timezone import now, timedelta
@@ -17,7 +32,30 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
-from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico
+from .models import Catalitico, Cliente, CompraCatalitico, DetalleCatalitico, Region, Ciudad
+
+# AJAX: Obtener ciudades por región
+from django.views.decorators.http import require_GET, require_POST
+@require_GET
+def ajax_ciudades_por_region(request):
+    region_id = request.GET.get('region_id')
+    ciudades = []
+    if region_id:
+        ciudades = list(Ciudad.objects.filter(region_id=region_id).order_by('nombre').values('id', 'nombre'))
+    return JsonResponse({'ciudades': ciudades})
+
+# AJAX: Agregar nueva ciudad
+@require_POST
+def ajax_agregar_ciudad(request):
+    region_id = request.POST.get('region_id')
+    nombre = request.POST.get('nombre')
+    if not (region_id and nombre):
+        return JsonResponse({'ok': False, 'error': 'Datos incompletos'})
+    region = Region.objects.filter(id=region_id).first()
+    if not region:
+        return JsonResponse({'ok': False, 'error': 'Región no encontrada'})
+    ciudad, created = Ciudad.objects.get_or_create(nombre=nombre.strip(), region=region)
+    return JsonResponse({'ok': True, 'ciudad': {'id': ciudad.id, 'nombre': ciudad.nombre}, 'nueva': created})
 from .forms import CataliticoForm, ClienteForm, CompraForm, DetalleCataliticoFormSet
 
 from django.contrib.auth.decorators import login_required
@@ -32,8 +70,8 @@ def dashboard(request):
     total_cataliticos = Catalitico.objects.count()
     total_clientes = Cliente.objects.count()
     total_compras = CompraCatalitico.objects.count()
-    valor_total_inventario = Catalitico.objects.aggregate(total=Sum('valor_actual'))['total'] or 0
-    valor_promedio_catalitico = Catalitico.objects.aggregate(avg=Avg('valor_actual'))['avg'] or 0
+    valor_total_inventario = Catalitico.objects.aggregate(total=Sum('valor_venta'))['total'] or 0
+    valor_promedio_catalitico = Catalitico.objects.aggregate(avg=Avg('valor_venta'))['avg'] or 0
     
     # Ventas últimos 7 días
     dias, ventas, ingresos_diarios = [], [], []
@@ -79,15 +117,15 @@ def dashboard(request):
     
     # Distribución de precios de catalíticos
     rangos_precios = {
-        '0-10k': Catalitico.objects.filter(valor_actual__lt=10000).count(),
-        '10k-25k': Catalitico.objects.filter(valor_actual__gte=10000, valor_actual__lt=25000).count(),
-        '25k-50k': Catalitico.objects.filter(valor_actual__gte=25000, valor_actual__lt=50000).count(),
-        '50k+': Catalitico.objects.filter(valor_actual__gte=50000).count(),
+        '0-10k': Catalitico.objects.filter(valor_venta__lt=10000).count(),
+        '10k-25k': Catalitico.objects.filter(valor_venta__gte=10000, valor_venta__lt=25000).count(),
+        '25k-50k': Catalitico.objects.filter(valor_venta__gte=25000, valor_venta__lt=50000).count(),
+        '50k+': Catalitico.objects.filter(valor_venta__gte=50000).count(),
     }
     
     # Catalíticos más caros y más baratos
-    catalitico_mas_caro = Catalitico.objects.order_by('-valor_actual').first()
-    catalitico_mas_barato = Catalitico.objects.order_by('valor_actual').first()
+    catalitico_mas_caro = Catalitico.objects.order_by('-valor_venta').first()
+    catalitico_mas_barato = Catalitico.objects.order_by('valor_venta').first()
     
     # Compras recientes (últimas 5)
     compras_recientes = CompraCatalitico.objects.select_related().order_by('-fecha')[:5]
@@ -217,9 +255,62 @@ def crear_cliente(request):
     return render(request, 'cataliticos/crear_cliente.html', {'form': form})
 
 @login_required(login_url='cataliticos:employee_login')
+def clientes_listado(request):
+    q = request.GET.get('q', '').strip()
+    clientes = Cliente.objects.all()
+    if q:
+        clientes = clientes.filter(
+            models.Q(nombre__icontains=q) |
+            models.Q(apellido__icontains=q) |
+            models.Q(rut__icontains=q)
+        )
+    return render(request, 'cataliticos/clientes_listado.html', {'clientes': clientes})
+
+@login_required(login_url='cataliticos:employee_login')
+def ver_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    return render(request, 'cataliticos/ver_cliente.html', {'cliente': cliente})
+
+@login_required(login_url='cataliticos:employee_login')
+def editar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cliente actualizado correctamente.')
+            return redirect('cataliticos:clientes_listado')
+    else:
+        form = ClienteForm(instance=cliente)
+    return render(request, 'cataliticos/editar_cliente.html', {'form': form, 'cliente': cliente})
+
+@login_required(login_url='cataliticos:employee_login')
+def eliminar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    if request.method == 'POST':
+        cliente.delete()
+        messages.success(request, 'Cliente eliminado correctamente.')
+        return redirect('cataliticos:clientes_listado')
+    return render(request, 'cataliticos/eliminar_cliente.html', {'cliente': cliente})
 def crear_compra_multiple(request):
     cataliticos = Catalitico.objects.all()
+    cliente = None
+    cliente_nombre = ''
+    cliente_apellido = ''
+    cliente_rut = ''
+    cliente_telefono = ''
     if request.method == 'POST':
+        cliente_id = request.POST.get('cliente')
+        if cliente_id:
+            cliente = Cliente.objects.get(id=cliente_id)
+            cliente_nombre = cliente.nombre
+            cliente_apellido = cliente.apellido
+
+    logger = logging.getLogger("django")
+    if request.method == 'POST':
+        logger.info("POST recibido en crear_compra_multiple")
+        logger.info(f"POST data: {request.POST}")
+
         cliente_id = request.POST.get('cliente')
         if cliente_id:
             cliente = Cliente.objects.get(id=cliente_id)
@@ -243,6 +334,95 @@ def crear_compra_multiple(request):
             cliente_rut = rut
             cliente_telefono = telefono
 
+    logger.info("Cliente: %s, Nombre: %s, Apellido: %s, Rut: %s, Telefono: %s", cliente, cliente_nombre, cliente_apellido, cliente_rut, cliente_telefono)
+
+    compra = CompraCatalitico.objects.create(
+        cliente=cliente,
+        cliente_nombre=cliente_nombre or "",
+        cliente_apellido=cliente_apellido or "",
+        cliente_rut=cliente_rut or "",
+        cliente_telefono=cliente_telefono or "",
+        region=request.POST.get("region") or "",
+        ciudad=request.POST.get("ciudad") or "",
+    )
+
+    logger.info(f"Compra creada: {compra}")
+
+    codigos = request.POST.getlist('codigo[]')
+    cantidades = request.POST.getlist('cantidad[]')
+    valores = request.POST.getlist('valor_unitario[]')
+
+    logger.info(f"Codigos: {codigos}")
+    logger.info(f"Cantidades: {cantidades}")
+    logger.info(f"Valores: {valores}")
+
+    detalles_guardados = 0
+    for codigo, cantidad_str, valor_str in zip(codigos, cantidades, valores):
+        codigo = codigo.strip()
+        if not codigo or not cantidad_str or not valor_str:
+            continue  # omitir líneas vacías
+
+        try:
+            catalitico = Catalitico.objects.get(codigo__iexact=codigo)
+        except Catalitico.DoesNotExist:
+            continue  # omitir si el código no existe
+
+        try:
+            cantidad = Decimal(cantidad_str)
+            precio_unitario = Decimal(valor_str)
+        except Exception:
+            continue  # omitir si valores no son válidos
+
+        DetalleCatalitico.objects.create(
+            compra=compra,
+            catalitico=catalitico,
+            cantidad=cantidad,
+            precio_unitario=precio_unitario
+        )
+        detalles_guardados += 1
+
+    if detalles_guardados == 0:
+        compra.delete()
+        messages.error(request, "❌ Debes ingresar al menos un catalítico válido para guardar la compra.")
+        return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': Catalitico.objects.all()})
+
+    messages.success(request, f"✅ Compra creada con {detalles_guardados} catalítico(s).")
+    return redirect('cataliticos:listado_compras')
+
+    # Si es GET o POST inválido, mostrar el formulario vacío
+    return render(request, 'cataliticos/crear_compra_multiple.html', {
+        'cataliticos': Catalitico.objects.all(),
+    })
+    logger = logging.getLogger("django")
+    if request.method == 'POST':
+        logger.info("POST recibido en crear_compra_multiple")
+        logger.info(f"POST data: {request.POST}")
+
+        cliente_id = request.POST.get('cliente')
+        if cliente_id:
+            cliente = Cliente.objects.get(id=cliente_id)
+            cliente_nombre = cliente.nombre
+            cliente_apellido = cliente.apellido
+            cliente_rut = cliente.rut
+            cliente_telefono = cliente.telefono
+        else:
+            nombre = request.POST.get('cliente_nombre')
+            apellido = request.POST.get('cliente_apellido')
+            rut = request.POST.get('cliente_rut')
+            telefono = request.POST.get('cliente_telefono')
+            cliente = None
+            if nombre and rut:
+                cliente, _ = Cliente.objects.get_or_create(
+                    rut=rut,
+                    defaults={'nombre': nombre, 'apellido': apellido, 'telefono': telefono}
+                )
+            cliente_nombre = nombre
+            cliente_apellido = apellido
+            cliente_rut = rut
+            cliente_telefono = telefono
+
+        logger.info("Cliente: %s, Nombre: %s, Apellido: %s, Rut: %s, Telefono: %s", cliente, cliente_nombre, cliente_apellido, cliente_rut, cliente_telefono)
+
         compra = CompraCatalitico.objects.create(
             cliente=cliente,
             cliente_nombre=cliente_nombre or "",
@@ -253,64 +433,48 @@ def crear_compra_multiple(request):
             ciudad=request.POST.get("ciudad") or "",
         )
 
+        logger.info(f"Compra creada: {compra}")
+
         codigos = request.POST.getlist('codigo[]')
         cantidades = request.POST.getlist('cantidad[]')
         valores = request.POST.getlist('valor_unitario[]')
 
-        for codigo, cantidad_str, precio_str in zip(codigos, cantidades, valores):
+        logger.info(f"Codigos: {codigos}")
+        logger.info(f"Cantidades: {cantidades}")
+        logger.info(f"Valores: {valores}")
+
+        detalles_guardados = 0
+        for codigo, cantidad_str, valor_str in zip(codigos, cantidades, valores):
+            codigo = codigo.strip()
+            if not codigo or not cantidad_str or not valor_str:
+                continue  # omitir líneas vacías
+
             try:
-                catalitico = Catalitico.objects.get(codigo=codigo.strip())
-                try:
-                    cantidad = Decimal(cantidad_str)
-                    precio = Decimal(precio_str)
-                except (InvalidOperation, ValueError):
-                    continue
-
-                if cantidad > 0 and precio >= 0:
-                    DetalleCatalitico.objects.create(
-                        compra=compra,
-                        catalitico=catalitico,
-                        cantidad=cantidad,
-                        precio_unitario=precio
-                    )
+                catalitico = Catalitico.objects.get(codigo__iexact=codigo)
             except Catalitico.DoesNotExist:
-                continue
+                continue  # omitir si el código no existe
 
-        messages.success(request, "✅ La compra se guardó correctamente, incluso con datos parciales.")
+            try:
+                cantidad = Decimal(cantidad_str)
+                precio_unitario = Decimal(valor_str)
+            except Exception:
+                continue  # omitir si valores no son válidos
+
+            DetalleCatalitico.objects.create(
+                compra=compra,
+                catalitico=catalitico,
+                cantidad=cantidad,
+                precio_unitario=precio_unitario
+            )
+            detalles_guardados += 1
+
+        if detalles_guardados == 0:
+            compra.delete()
+            messages.error(request, "❌ Debes ingresar al menos un catalítico válido para guardar la compra.")
+            return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': Catalitico.objects.all()})
+
+        messages.success(request, f"✅ Compra creada con {detalles_guardados} catalítico(s).")
         return redirect('cataliticos:listado_compras')
-
-    return render(request, 'cataliticos/crear_compra_multiple.html', {'cataliticos': cataliticos})
-
-@login_required(login_url='cataliticos:employee_login')
-def listado_y_busqueda(request):
-    codigo = request.GET.get("q", "")
-    resultado = None
-    creado = False
-    form = CataliticoForm()
-    codigos = Catalitico.objects.all().order_by("-id")
-
-    if codigo:
-        try:
-            resultado = Catalitico.objects.get(codigo__iexact=codigo.strip())
-        except Catalitico.DoesNotExist:
-            if request.method == "POST":
-                form = CataliticoForm(request.POST, request.FILES)
-                if form.is_valid():
-                    form.save()
-                    creado = True
-                    resultado = form.instance
-        cataliticos = codigos.filter(codigo__icontains=codigo)
-    else:
-        cataliticos = codigos
-
-    return render(request, "cataliticos/listado.html", {
-        "codigo": codigo,
-        "resultado": resultado,
-        "creado": creado,
-        "form": form,
-        "codigos": codigos,
-        "cataliticos": cataliticos,
-    })
 
 @login_required(login_url='cataliticos:employee_login')
 def listado_compras(request):
@@ -323,33 +487,16 @@ def editar_compra(request, pk):
     formset = DetalleCataliticoFormSet(request.POST or None, instance=compra)
 
     if request.method == 'POST':
-        if form.is_valid():
+        if form.is_valid() and formset.is_valid():
             form.save()
-            
-            if formset.is_valid():
-                # Guardar el formset
-                instances = formset.save(commit=False)
-                
-                # Procesar cada instancia para manejar el código del catalítico
-                for instance in instances:
-                    # El método save del DetalleCataliticoForm ya maneja la lógica del código
-                    instance.save()
-                
-                # Eliminar las instancias marcadas para eliminación
-                for obj in formset.deleted_objects:
-                    obj.delete()
-                
-                messages.success(request, "✅ La compra se actualizó correctamente.")
-                return redirect('cataliticos:listado_compras')
-            else:
-                messages.error(request, "❌ Por favor, corrige los errores en los catalíticos.")
-        else:
-            messages.error(request, "❌ Por favor, corrige los errores en el formulario.")
+            formset.save()
+            messages.success(request, "✅ La compra se actualizó correctamente.")
+            return redirect('cataliticos:listado_compras')
 
-    return render(request, 'editar_compra.html', {
-        'form': form, 
-        'compra': compra, 
-        'formset': formset
+    return render(request, 'cataliticos/editar_compra.html', {
+        'form': form,
+        'formset': formset,
+        'compra': compra,
     })
 
 @login_required(login_url='cataliticos:employee_login')
@@ -368,63 +515,32 @@ def api_buscar_catalitico(request):
     if codigo:
         try:
             catalitico = Catalitico.objects.get(codigo__iexact=codigo)
-            # Asociar imágenes desde los campos del modelo
             imagenes = []
             campos_imagen = ['imagen_principal', 'imagen2', 'imagen3', 'imagen4']
             for campo in campos_imagen:
                 img_field = getattr(catalitico, campo, None)
                 if img_field and hasattr(img_field, 'url') and img_field.url:
                     imagenes.append(img_field.url)
-
-            # Complementar con imágenes en la carpeta si no hay ninguna asociada en el modelo
-            patrones_usados = []
-            archivos_en_carpeta = []
-            media_root = getattr(settings, 'MEDIA_ROOT', 'media')
-            codigo_lower = catalitico.codigo.lower()
-            cataliticos_dir = os.path.join(media_root, 'img', 'imagenes_cataliticos')
-            if os.path.isdir(cataliticos_dir):
-                archivos_en_carpeta = os.listdir(cataliticos_dir)
-            # Solo buscar en carpeta si no hay imágenes en el modelo
-            if not imagenes:
-                for ext in ['jpg', 'jpeg', 'png', 'webp']:
-                    pattern = os.path.join(media_root, 'img', 'imagenes_cataliticos', f"*.{ext}")
-                    patrones_usados.append(pattern)
-                    for img_path in glob.glob(pattern):
-                        filename = os.path.basename(img_path).lower()
-                        if codigo_lower in filename:
-                            url = os.path.relpath(img_path, media_root).replace('\\', '/')
-                            imagenes.append(settings.MEDIA_URL + url)
+            # Respuesta plana para JS del formulario de compras
             return JsonResponse({
                 'success': True,
-                'id': getattr(catalitico, 'id', None),
+                'id': catalitico.id,
                 'codigo': catalitico.codigo,
                 'descripcion': catalitico.descripcion,
-                'valor': catalitico.valor_actual or catalitico.valor,
-                'precio_sugerido': catalitico.valor_actual or catalitico.valor,
-                'imagenes': imagenes,
-                'debug_imgs': [os.path.basename(img) for img in imagenes],
-                'debug_patrones': patrones_usados,
-                'debug_archivos': archivos_en_carpeta
+                'valor': float(catalitico.valor_compra),
+                'valor_venta': float(catalitico.valor_venta) if catalitico.valor_venta else None,
+                'imagenes': imagenes
             })
         except Catalitico.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'error': f'Catalítico con código "{codigo}" no encontrado'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'error': f'Error interno: {str(e)}'
-            })
+            return JsonResponse({'success': False, 'error': 'No existe catalítico con ese código.'})
     elif term:
-        # Búsqueda insensible a mayúsculas/minúsculas
-        cataliticos = Catalitico.objects.filter(codigo__icontains=term).values('id', 'codigo', 'descripcion', 'valor')[:10]
+        cataliticos = Catalitico.objects.filter(codigo__icontains=term).values('id', 'codigo', 'descripcion', 'valor_compra')[:10]
         resultados = [
             {
                 'id': c['id'],
                 'text': c['codigo'],
                 'descripcion': c['descripcion'],
-                'valor': c['valor']
+                'valor': c['valor_compra']
             }
             for c in cataliticos
             if term.lower() in c['codigo'].lower()
@@ -511,9 +627,12 @@ def api_verificar_eliminacion_catalitico(request, pk):
 
 def api_buscar_cliente(request):
     q = request.GET.get('term', '').strip()
-    clientes = Cliente.objects.filter(
-        Q(nombre__icontains=q) | Q(apellido__icontains=q) | Q(rut__icontains=q)
-    ).values('id', 'nombre', 'apellido', 'rut')[:10]
+    if q:
+        clientes = Cliente.objects.filter(
+            Q(nombre__icontains=q) | Q(apellido__icontains=q) | Q(rut__icontains=q)
+        ).values('id', 'nombre', 'apellido', 'rut')[:20]
+    else:
+        clientes = Cliente.objects.all().order_by('nombre').values('id', 'nombre', 'apellido', 'rut')[:20]
     resultados = [
         {'id': c['id'], 'text': f"{c['nombre']} {c['apellido']} ({c['rut']})".strip()}
         for c in clientes
@@ -712,3 +831,16 @@ def password_reset_confirm(request, uidb64, token):
     else:
         messages.error(request, 'El enlace de recuperación no es válido o ha expirado.')
         return render(request, 'registration/password_reset_confirm.html', {'validlink': False})
+
+@login_required
+def resumen_stock(request):
+    stock = Catalitico.objects.filter(vendido=False)
+    total_invertido = sum((c.valor_compra or 0) * (c.cantidad or 0) for c in stock)
+    total_venta = sum((c.valor_venta or 0) * (c.cantidad or 0) for c in stock)
+    ganancia_esperada = total_venta - total_invertido
+    return render(request, 'cataliticos/resumen_stock.html', {
+        'stock': stock,
+        'total_invertido': total_invertido,
+        'total_venta': total_venta,
+        'ganancia_esperada': ganancia_esperada
+    })

@@ -2,558 +2,145 @@
 {% load humanize %}
 {% load formato_moneda %}
 
-{% block title %}Editar Compra - Atlanta Reciclajes{% endblock %}
+{% block title %}Editar Compra Futurista{% endblock %}
 
 {% block content %}
 <style>
-/* Forzar estilos para que todos los campos sean visibles y editables */
-input, select, textarea {
-    color: #111 !important;
-    background-color: #fff !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 0.5rem !important;
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.875rem !important;
+.futuristic-bg {
+  background: radial-gradient(ellipse at 60% 40%, #00fff7 0%, #0a0a23 60%, #000 100%);
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.7;
+  filter: blur(8px);
 }
-
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+.futuristic-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 420px;
+  height: 420px;
+  margin-left: -210px;
+  margin-top: -210px;
+  border: 2px dashed #00fff7;
+  border-radius: 50%;
+  opacity: 0.18;
+  animation: spin 22s linear infinite;
+  z-index: 1;
 }
-
-label {
-    color: #374151 !important;
-    font-weight: 500 !important;
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.futuristic-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(10,20,40,0.96);
+  border-radius: 2.5rem;
+  box-shadow: 0 0 80px 0 #00fff7, 0 0 0 2px #00fff733;
+  padding: 3rem 2rem 2rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: 'Orbitron', 'Montserrat', sans-serif;
 }
-
-/* Asegurar que los campos no estén deshabilitados */
-input:disabled, select:disabled, textarea:disabled {
-    background-color: #f9fafb !important;
-    cursor: not-allowed !important;
+.futuristic-card label {
+  color: #00fff7;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px #00fff7cc;
 }
-
-/* Estilos para los botones de eliminar */
-input[type="checkbox"] {
-    width: auto !important;
-    height: auto !important;
-    margin-right: 0.5rem !important;
+.futuristic-card input, .futuristic-card select {
+  background: rgba(0,0,0,0.7);
+  border: 1.5px solid #00fff7;
+  color: #fff;
+  font-size: 1.1rem;
+  border-radius: 0.7rem;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.2rem;
+  width: 100%;
+  outline: none;
+  box-shadow: 0 0 12px #00fff755 inset;
+  transition: border 0.2s, box-shadow 0.2s;
 }
-
-/* Animación para nuevos formularios */
-.formset-form {
-    transition: all 0.3s ease-in-out;
+.futuristic-card input:focus, .futuristic-card select:focus {
+  border: 2px solid #fff;
+  box-shadow: 0 0 24px #00fff7cc;
 }
-
-.formset-form:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.futuristic-btn {
+  background: linear-gradient(90deg, #00fff7 0%, #0a0a23 100%);
+  color: #fff;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.8rem 2.2rem;
+  margin: 0 0.5rem;
+  box-shadow: 0 0 18px #00fff7cc;
+  transition: background 0.2s, box-shadow 0.2s;
 }
-
-/* Estilo para formularios marcados para eliminar */
-.formset-form.marked-for-deletion {
-    opacity: 0.5;
-    background-color: #fef2f2 !important;
-    border-color: #fca5a5 !important;
+.futuristic-btn:hover {
+  background: linear-gradient(90deg, #0a0a23 0%, #00fff7 100%);
+  box-shadow: 0 0 32px #00fff7;
 }
-
-.formset-form.marked-for-deletion input,
-.formset-form.marked-for-deletion select {
-    background-color: #fef2f2 !important;
-    color: #991b1b !important;
+.futuristic-title {
+  font-size: 2.5rem;
+  color: #fff;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 2.2rem;
+  text-shadow: 0 0 24px #00fff7, 0 0 8px #fff;
 }
 </style>
-
-<div class="max-w-4xl mx-auto p-6 bg-white bg-opacity-95 rounded-xl shadow-xl">
-    <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">✏️ Editar Compra #{{ compra.id }}</h1>
-    
-    <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <div class="flex flex-wrap justify-between items-center">
-            <div>
-                <p class="text-sm text-blue-800"><strong>Fecha de compra:</strong> {{ compra.fecha|date:"d/m/Y H:i" }}</p>
-                <p class="text-sm text-blue-800"><strong>Total actual:</strong> {{ compra.total|formato_pesos }}</p>
-            </div>
-            <div class="text-sm text-blue-600">
-                ID: #{{ compra.id }}
-            </div>
+<div style="position:relative; min-height: 100vh;">
+  <div class="futuristic-bg"></div>
+  <div class="futuristic-orbit"></div>
+  <div class="futuristic-card mt-16 mb-16">
+    <div class="futuristic-title">🛸 Editar Compra</div>
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-4">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="text-cyan-300 text-xs mt-1">{{ field.help_text }}</div>{% endif %}
+          {% for error in field.errors %}<div class="text-red-400 text-xs mt-1">{{ error }}</div>{% endfor %}
         </div>
-    </div>
-
-    <form method="post" class="space-y-6">
-        {% csrf_token %}
-        
-        {% if form.errors %}
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                <h3 class="font-bold text-red-800 mb-2">⚠️ Errores en el formulario:</h3>
-                {% for field, errors in form.errors.items %}
-                    <ul class="text-red-700 text-sm">
-                        {% for error in errors %}
-                            <li>{{ field }}: {{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
+      {% endfor %}
+      <hr class="my-8 border-cyan-700">
+      <h3 class="text-xl neon font-bold mb-4 text-center">Catalíticos de la compra</h3>
+      {% for detalle_form in formset %}
+        <div class="mb-6 p-4 rounded-xl bg-black/40 shadow-lg">
+          {% for field in detalle_form %}
+            <label for="{{ field.id_for_label }}" class="block text-cyan-300 font-bold">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="text-cyan-300 text-xs mt-1">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}<div class="text-red-400 text-xs mt-1">{{ error }}</div>{% endfor %}
+          {% endfor %}
+          {% if detalle_form.instance.catalitico %}
+            <div class="mt-3 p-3 rounded-lg bg-black/60 border border-cyan-700">
+              <div class="text-cyan-200 text-sm mb-1"><strong>Descripción:</strong> {{ detalle_form.instance.catalitico.descripcion }}</div>
+              <div class="text-cyan-200 text-sm mb-1"><strong>Proveedor:</strong> {{ detalle_form.instance.catalitico.proveedor }}</div>
+              {% if detalle_form.instance.catalitico.imagen_principal %}
+                <div class="mb-2"><img src="{{ detalle_form.instance.catalitico.imagen_principal.url }}" alt="Imagen principal" style="max-width:120px; border-radius:12px; box-shadow:0 0 12px #00fff7;"></div>
+              {% endif %}
+              {% if detalle_form.instance.catalitico.imagen2 %}
+                <div class="mb-2"><img src="{{ detalle_form.instance.catalitico.imagen2.url }}" alt="Imagen 2" style="max-width:120px; border-radius:12px; box-shadow:0 0 12px #00fff7;"></div>
+              {% endif %}
+              {% if detalle_form.instance.catalitico.imagen3 %}
+                <div class="mb-2"><img src="{{ detalle_form.instance.catalitico.imagen3.url }}" alt="Imagen 3" style="max-width:120px; border-radius:12px; box-shadow:0 0 12px #00fff7;"></div>
+              {% endif %}
+              {% if detalle_form.instance.catalitico.imagen4 %}
+                <div class="mb-2"><img src="{{ detalle_form.instance.catalitico.imagen4.url }}" alt="Imagen 4" style="max-width:120px; border-radius:12px; box-shadow:0 0 12px #00fff7;"></div>
+              {% endif %}
             </div>
-        {% endif %}
-
-        <!-- Información del Cliente -->
-        <div class="bg-gray-50 rounded-lg p-4">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">👤 Información del Cliente</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="{{ form.cliente_nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.cliente_nombre.label }} <span class="text-red-500 text-xs">*</span>
-                    </label>
-                    {{ form.cliente_nombre }}
-                </div>
-                
-                <div>
-                    <label for="{{ form.cliente_apellido.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.cliente_apellido.label }} <span class="text-gray-500 text-xs">(opcional)</span>
-                    </label>
-                    {{ form.cliente_apellido }}
-                </div>
-                
-                <div>
-                    <label for="{{ form.cliente_rut.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.cliente_rut.label }} <span class="text-gray-500 text-xs">(opcional)</span>
-                    </label>
-                    {{ form.cliente_rut }}
-                </div>
-                
-                <div>
-                    <label for="{{ form.cliente_telefono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.cliente_telefono.label }} <span class="text-gray-500 text-xs">(opcional)</span>
-                    </label>
-                    {{ form.cliente_telefono }}
-                </div>
-                
-                <div>
-                    <label for="{{ form.region.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.region.label }} <span class="text-gray-500 text-xs">(opcional)</span>
-                    </label>
-                    {{ form.region }}
-                </div>
-                
-                <div>
-                    <label for="{{ form.ciudad.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.ciudad.label }} <span class="text-gray-500 text-xs">(opcional)</span>
-                    </label>
-                    {{ form.ciudad }}
-                </div>
-            </div>
+          {% endif %}
         </div>
-
-        <!-- Detalles de los Catalíticos - EDITABLES -->
-        <div class="bg-gray-50 rounded-lg p-4">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">🔧 Catalíticos Comprados</h2>
-            
-            <!-- Debug info -->
-            <div class="mb-4 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
-                <strong>Debug:</strong> 
-                Total forms: {{ formset.total_form_count }}, 
-                Initial forms: {{ formset.initial_form_count }}, 
-                Has errors: {{ formset.errors|yesno:"Sí,No" }}
-            </div>
-            
-            <!-- Formset para editar detalles -->
-            {{ formset.management_form }}
-            
-            {% if formset.errors %}
-                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                    <h3 class="font-bold text-red-800 mb-2">⚠️ Errores en los catalíticos:</h3>
-                    {{ formset.errors }}
-                </div>
-            {% endif %}
-            
-            <div class="space-y-4" id="formset-container">
-                {% for detalle_form in formset %}
-                <div class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm formset-form">
-                    <h3 class="font-semibold text-gray-800 mb-3">
-                        Catalítico {{ forloop.counter }}
-                        {% if detalle_form.instance.pk %}(ID: {{ detalle_form.instance.pk }}){% else %}(Nuevo){% endif %}
-                    </h3>
-                    
-                    <!-- Hidden fields -->
-                    {% for hidden in detalle_form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
-                    
-                    <!-- Visible fields -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Código del Catalítico:
-                                <span class="text-blue-500 text-xs">🔍 (búsqueda automática)</span>
-                            </label>
-                            {{ detalle_form.codigo_catalitico }}
-                            {% if detalle_form.codigo_catalitico.errors %}
-                                <div class="text-red-500 text-xs mt-1">{{ detalle_form.codigo_catalitico.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Cantidad:
-                            </label>
-                            {{ detalle_form.cantidad }}
-                            {% if detalle_form.cantidad.errors %}
-                                <div class="text-red-500 text-xs mt-1">{{ detalle_form.cantidad.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Precio Unitario:
-                            </label>
-                            {{ detalle_form.precio_unitario }}
-                            {% if detalle_form.precio_unitario.errors %}
-                                <div class="text-red-500 text-xs mt-1">{{ detalle_form.precio_unitario.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Subtotal:
-                            </label>
-                            <div class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 font-semibold subtotal-display">
-                                $<span class="subtotal-amount">0</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {% if detalle_form.DELETE %}
-                        <div class="mt-3 flex items-center">
-                            {{ detalle_form.DELETE }}
-                            <label for="{{ detalle_form.DELETE.id_for_label }}" class="ml-2 text-sm text-red-600">
-                                Eliminar este catalítico
-                            </label>
-                        </div>
-                    {% endif %}
-                    
-                    {% if detalle_form.non_field_errors %}
-                        <div class="mt-2 text-red-500 text-sm">
-                            {{ detalle_form.non_field_errors }}
-                        </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Botón para agregar más catalíticos -->
-            <div class="mt-4 text-center">
-                <button type="button" id="add-more" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
-                    ➕ Agregar Catalítico
-                </button>
-            </div>
-            
-            <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                <div class="text-center">
-                    <span class="text-lg font-bold text-green-800" id="total-display">Total de la Compra: <span id="total-amount">{{ compra.total|formato_pesos }}</span></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Botones de Acción -->
-        <div class="flex flex-col md:flex-row gap-3 pt-4">
-            <button type="submit" 
-                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
-                    onclick="return validarFormulario()">
-                ✅ Guardar Cambios
-            </button>
-            <a href="{% url 'cataliticos:listado_compras' %}" 
-               class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center transition duration-200">
-                ❌ Cancelar
-            </a>
-            <button type="button" onclick="confirmarEliminar()" 
-                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
-                🗑️ Eliminar Compra
-            </button>
-        </div>
+      {% endfor %}
+      <div class="flex gap-4 justify-center mt-8">
+        <button type="submit" class="futuristic-btn">💾 Guardar</button>
+        <a href="{% url 'cataliticos:listado_compras' %}" class="futuristic-btn">Cancelar</a>
+        <a href="{% url 'cataliticos:eliminar_compra' compra.id %}" class="futuristic-btn bg-red-600" onclick="return confirm('¿Seguro que deseas eliminar esta compra?');">🗑️ Eliminar Compra</a>
+      </div>
     </form>
-
-    <!-- Información adicional -->
-    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h3 class="font-semibold text-blue-800 mb-2">ℹ️ Instrucciones de Edición:</h3>
-        <ul class="text-sm text-blue-700 space-y-1">
-            <li>• Puedes editar la información del cliente en la sección superior</li>
-            <li>• <strong>🔍 Búsqueda automática:</strong> Al ingresar un código de catalítico y presionar Enter o salir del campo, se buscará automáticamente el precio</li>
-            <li>• Los subtotales se calculan automáticamente al cambiar cantidades o precios</li>
-            <li>• El total general se actualiza en tiempo real</li>
-            <li>• Para eliminar un catalítico, marca la casilla "Eliminar este catalítico"</li>
-            <li>• Para agregar más catalíticos, usa el botón "➕ Agregar Catalítico"</li>
-            <li>• Los catalíticos marcados para eliminar se muestran en rojo y no cuentan en el total</li>
-        </ul>
-    </div>
+  </div>
+  </div>
 </div>
-
-<!-- Script para confirmación de eliminación -->
-<script>
-function confirmarEliminar() {
-    if (confirm('¿Estás seguro de que deseas eliminar esta compra? Esta acción no se puede deshacer.')) {
-        window.location.href = '{% url "cataliticos:eliminar_compra" compra.id %}';
-    }
-}
-
-// Función para formatear números como moneda chilena en JavaScript
-function formatearPesos(valor) {
-    if (!valor || isNaN(valor)) return '$0';
-    
-    const numero = Math.round(parseFloat(valor));
-    const numeroFormateado = numero.toLocaleString('es-CL');
-    return `$${numeroFormateado.replace(/,/g, '.')}`;
-}
-
-// Función para buscar precio automáticamente por código
-async function buscarPrecioPorCodigo(codigoInput, precioInput) {
-    const codigo = codigoInput.value.trim();
-    
-    if (!codigo) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/api/catalitico-codigo/?codigo=${encodeURIComponent(codigo)}`);
-        const data = await response.json();
-        
-        if (data.success && precioInput) {
-            // Rellenar automáticamente el precio
-            precioInput.value = data.precio_sugerido;
-            
-            // Mostrar feedback visual
-            codigoInput.style.borderColor = '#10b981';
-            codigoInput.style.backgroundColor = '#f0fdf4';
-            
-            // Agregar tooltip o mensaje temporal con formato chileno
-            const precioFormateado = formatearPesos(data.precio_sugerido);
-            mostrarMensajeTemporal(codigoInput, `✅ ${data.descripcion} - ${precioFormateado}`);
-            
-            // Recalcular total
-            calcularTotal();
-        } else {
-            // Catalítico no encontrado
-            codigoInput.style.borderColor = '#f59e0b';
-            codigoInput.style.backgroundColor = '#fffbeb';
-            mostrarMensajeTemporal(codigoInput, '⚠️ Código no encontrado');
-        }
-    } catch (error) {
-        console.error('Error al buscar catalítico:', error);
-        codigoInput.style.borderColor = '#ef4444';
-        codigoInput.style.backgroundColor = '#fef2f2';
-        mostrarMensajeTemporal(codigoInput, '❌ Error al buscar');
-    }
-}
-
-// Función para mostrar mensajes temporales
-function mostrarMensajeTemporal(elemento, mensaje) {
-    // Remover mensaje anterior si existe
-    const mensajeAnterior = elemento.parentNode.querySelector('.mensaje-temporal');
-    if (mensajeAnterior) {
-        mensajeAnterior.remove();
-    }
-    
-    // Crear nuevo mensaje
-    const mensajeDiv = document.createElement('div');
-    mensajeDiv.className = 'mensaje-temporal text-xs mt-1 p-1 rounded';
-    mensajeDiv.textContent = mensaje;
-    
-    if (mensaje.includes('✅')) {
-        mensajeDiv.className += ' text-green-700 bg-green-50';
-    } else if (mensaje.includes('⚠️')) {
-        mensajeDiv.className += ' text-yellow-700 bg-yellow-50';
-    } else {
-        mensajeDiv.className += ' text-red-700 bg-red-50';
-    }
-    
-    elemento.parentNode.appendChild(mensajeDiv);
-    
-    // Remover mensaje después de 3 segundos
-    setTimeout(() => {
-        if (mensajeDiv.parentNode) {
-            mensajeDiv.remove();
-        }
-    }, 3000);
-}
-
-// Función para limpiar estilos de feedback
-function limpiarFeedbackVisual(input) {
-    input.style.borderColor = '';
-    input.style.backgroundColor = '';
-}
-function validarFormulario() {
-    const nombreInput = document.querySelector('input[name="cliente_nombre"]');
-    if (!nombreInput || !nombreInput.value.trim()) {
-        alert('⚠️ El nombre del cliente es obligatorio');
-        if (nombreInput) {
-            nombreInput.focus();
-            nombreInput.style.borderColor = '#ef4444';
-        }
-        return false;
-    }
-    return true;
-}
-
-// Función para calcular el total en tiempo real
-function calcularTotal() {
-    let total = 0;
-    const forms = document.querySelectorAll('.formset-form');
-    
-    forms.forEach(function(form) {
-        const deleteCheckbox = form.querySelector('input[type="checkbox"][name$="-DELETE"]');
-        
-        // Solo incluir en el total si no está marcado para eliminar
-        if (!deleteCheckbox || !deleteCheckbox.checked) {
-            const cantidadInput = form.querySelector('input[name$="-cantidad"]');
-            const precioInput = form.querySelector('input[name$="-precio_unitario"]');
-            const subtotalElement = form.querySelector('.subtotal-amount');
-            
-            if (cantidadInput && precioInput) {
-                const cantidad = parseFloat(cantidadInput.value) || 0;
-                const precio = parseFloat(precioInput.value) || 0;
-                const subtotal = cantidad * precio;
-                
-                // Actualizar subtotal individual
-                if (subtotalElement) {
-                    subtotalElement.textContent = formatearPesos(subtotal).replace('$', '');
-                }
-                
-                total += subtotal;
-            }
-        } else {
-            // Si está marcado para eliminar, mostrar subtotal como 0
-            const subtotalElement = form.querySelector('.subtotal-amount');
-            if (subtotalElement) {
-                subtotalElement.textContent = '0';
-            }
-        }
-    });
-    
-    // Actualizar el display del total
-    const totalElement = document.getElementById('total-amount');
-    if (totalElement) {
-        totalElement.textContent = formatearPesos(total).replace('$', '');
-    }
-    
-    return total;
-}
-
-// Función para agregar más formularios al formset
-document.addEventListener('DOMContentLoaded', function() {
-    const addButton = document.getElementById('add-more');
-    const container = document.getElementById('formset-container');
-    const totalForms = document.getElementById('id_detalles-TOTAL_FORMS');
-    
-    // Agregar event listeners para calcular total en tiempo real
-    function addCalculationListeners(form) {
-        const cantidadInput = form.querySelector('input[name$="-cantidad"]');
-        const precioInput = form.querySelector('input[name$="-precio_unitario"]');
-        const deleteCheckbox = form.querySelector('input[type="checkbox"][name$="-DELETE"]');
-        const codigoInput = form.querySelector('input[name$="-codigo_catalitico"]');
-        
-        if (cantidadInput) {
-            cantidadInput.addEventListener('input', calcularTotal);
-            cantidadInput.addEventListener('change', calcularTotal);
-        }
-        
-        if (precioInput) {
-            precioInput.addEventListener('input', calcularTotal);
-            precioInput.addEventListener('change', calcularTotal);
-        }
-        
-        if (deleteCheckbox) {
-            deleteCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    form.classList.add('marked-for-deletion');
-                } else {
-                    form.classList.remove('marked-for-deletion');
-                }
-                calcularTotal();
-            });
-        }
-        
-        // Agregar listener para búsqueda automática de precio por código
-        if (codigoInput && precioInput) {
-            // Búsqueda al dejar el campo (blur)
-            codigoInput.addEventListener('blur', function() {
-                buscarPrecioPorCodigo(this, precioInput);
-            });
-            
-            // Búsqueda al presionar Enter
-            codigoInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    buscarPrecioPorCodigo(this, precioInput);
-                }
-            });
-            
-            // Limpiar feedback visual al empezar a escribir
-            codigoInput.addEventListener('input', function() {
-                limpiarFeedbackVisual(this);
-                // Remover mensajes temporales al escribir
-                const mensaje = this.parentNode.querySelector('.mensaje-temporal');
-                if (mensaje) {
-                    mensaje.remove();
-                }
-            });
-        }
-    }
-    
-    // Agregar listeners a formularios existentes
-    document.querySelectorAll('.formset-form').forEach(addCalculationListeners);
-    
-    // Calcular total inicial
-    calcularTotal();
-    
-    if (addButton) {
-        addButton.addEventListener('click', function() {
-            const formCount = parseInt(totalForms.value);
-            const emptyForm = document.querySelector('.formset-form').cloneNode(true);
-            
-            // Limpiar los valores de los campos clonados
-            const inputs = emptyForm.querySelectorAll('input, select');
-            inputs.forEach(function(input) {
-                if (input.type === 'checkbox') {
-                    input.checked = false;
-                } else {
-                    input.value = '';
-                }
-                
-                // Actualizar los nombres e IDs de los campos
-                if (input.name) {
-                    input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
-                }
-                if (input.id) {
-                    input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
-                }
-            });
-            
-            // Actualizar labels
-            const labels = emptyForm.querySelectorAll('label');
-            labels.forEach(function(label) {
-                if (label.getAttribute('for')) {
-                    label.setAttribute('for', label.getAttribute('for').replace(/-\d+-/, `-${formCount}-`));
-                }
-            });
-            
-            // Actualizar el título del formulario
-            const title = emptyForm.querySelector('h3');
-            if (title) {
-                title.textContent = `Catalítico ${formCount + 1} (Nuevo)`;
-            }
-            
-            // Agregar el nuevo formulario al contenedor
-            container.appendChild(emptyForm);
-            
-            // Agregar listeners al nuevo formulario
-            addCalculationListeners(emptyForm);
-            
-            // Incrementar el total de formularios
-            totalForms.value = formCount + 1;
-            
-            // Recalcular total
-            calcularTotal();
-        });
-    }
-});
-</script>
-
 {% endblock %}

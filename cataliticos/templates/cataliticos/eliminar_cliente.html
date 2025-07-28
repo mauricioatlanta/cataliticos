@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Cliente{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto p-8 glass shadow-2xl mt-10 mb-16 relative" style="font-family:'Orbitron',sans-serif;">
+  <h1 class="text-3xl neon font-extrabold mb-8 text-center tracking-widest drop-shadow-lg">🗑️ Eliminar Cliente</h1>
+  <div class="text-lg mb-6 text-center">¿Estás seguro que deseas eliminar al cliente <span class="font-bold">{{ cliente.nombre }} {{ cliente.apellido }}</span>?</div>
+  <form method="post" class="flex gap-4 justify-center">
+    {% csrf_token %}
+    <button type="submit" class="futuristic-btn px-8 bg-red-700 hover:bg-red-800">Eliminar</button>
+    <a href="{% url 'cataliticos:clientes_listado' %}" class="futuristic-btn px-8">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
