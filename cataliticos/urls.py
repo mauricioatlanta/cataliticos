@@ -17,6 +17,7 @@ urlpatterns = [
     
     # Rutas protegidas (requieren login)
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('chatarra-electronica-test/', TemplateView.as_view(template_name="chatarra_electronica_test.html"), name='chatarra_electronica_test'),
     # path('listado/', views.listado_y_busqueda, name='listado'),
     path('listado/', views.listado_compras, name='listado'),
     path('crear/', views.crear_catalitico, name='crear'),
