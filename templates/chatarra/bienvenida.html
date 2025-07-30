@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Venta de Chatarra Electrónica - Bienvenida{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-gray-900 text-white py-12 px-6 relative">
+  <div class="max-w-4xl mx-auto text-center">
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4 tracking-wide text-cyan-400">♻️ Convierte tu chatarra en dinero</h1>
+    <p class="text-lg sm:text-xl text-gray-300 mb-8">
+      Compramos chatarra electrónica en todo Chile. Contáctanos y vende fácil, rápido y seguro.
+    </p>
+    <a href="https://wa.me/56912345678?text=Hola%20quiero%20vender%20chatarra%20electrónica" 
+       class="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg text-lg shadow-lg transition">
+      💬 Vender por WhatsApp ahora
+    </a>
+  </div>
+
+  <div class="mt-20">
+    <h2 class="text-2xl font-bold mb-6 text-center text-cyan-300">¿Qué tipo de chatarra compramos?</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <img src="{% static 'catalogo_chatarra/imagenes/WhatsApp Image 2025-07-30 at 11.08.28.jpeg' %}" alt="Memoria" class="w-full h-32 object-cover rounded mb-2">
+        <h3 class="text-sm font-semibold text-white">Memoria RAM</h3>
+      </div>
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <img src="{% static 'catalogo_chatarra/imagenes/WhatsApp Image 2025-07-30 at 11.13.11.jpeg' %}" alt="Placa dorada" class="w-full h-32 object-cover rounded mb-2">
+        <h3 class="text-sm font-semibold text-white">Placa dorada</h3>
+      </div>
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <img src="{% static 'catalogo_chatarra/imagenes/WhatsApp Image 2025-07-30 at 11.12.44.jpeg' %}" alt="Placa telefónica" class="w-full h-32 object-cover rounded mb-2">
+        <h3 class="text-sm font-semibold text-white">Placa telefónica</h3>
+      </div>
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <h3 class="text-sm font-semibold text-white py-12">CD-ROM con carcasa metálica</h3>
+      </div>
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <h3 class="text-sm font-semibold text-white py-12">Celular sin batería</h3>
+      </div>
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <h3 class="text-sm font-semibold text-white py-12">Disco duro aluminio</h3>
+      </div>
+      <div class="bg-gray-800 p-3 rounded-xl shadow-md text-center">
+        <h3 class="text-sm font-semibold text-white py-12">Fuente de poder completa</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-20 text-center">
+    <p class="text-gray-400 mb-4">¿Quieres ver todos los productos y precios?</p>
+    <a href="{% url 'chatarra:catalogo_chatarra' %}" class="text-cyan-400 hover:underline font-semibold text-lg">🧮 Ver catálogo completo</a>
+  </div>
+</section>
+{% endblock %}

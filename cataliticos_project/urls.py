@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cataliticos/', include('cataliticos.urls', namespace='cataliticos')),
+    path('chatarra-electronica/', include(('chatarra.urls', 'chatarra'), namespace='chatarra')),
     path('', TemplateView.as_view(template_name="bienvenida_atlanta.html"), name="home"),
 ]
 

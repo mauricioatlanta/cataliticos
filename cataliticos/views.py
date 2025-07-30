@@ -1,7 +1,31 @@
+from django.http import JsonResponse, HttpResponse
+import csv
+from .models import ProductoChatarra
+
+def exportar_catalogo_json(request):
+    productos = list(ProductoChatarra.objects.values("codigo", "nombre", "precio_kg", "categoria"))
+    return JsonResponse(productos, safe=False)
+
+def exportar_catalogo_csv(request):
+    productos = ProductoChatarra.objects.all()
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="catalogo_chatarra.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["Código", "Nombre", "Precio CLP/kg", "Categoría"])
+    for p in productos:
+        writer.writerow([p.codigo, p.nombre, p.precio_kg, p.categoria])
+    return response
+def bienvenida_chatarra(request):
+    return render(request, 'chatarra/bienvenida.html')
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from .models import ProductoChatarra
+
+def catalogo_chatarra(request):
+    productos = ProductoChatarra.objects.all()
+    return render(request, "chatarra/catalogo.html", {"productos": productos})
 # Vista para marcar catalíticos como vendidos
 @login_required
 @require_POST
@@ -703,11 +727,9 @@ def detalle_catalitico(request, pk):
     return render(request, 'cataliticos/detalle.html', {'catalitico': catalitico})
 
 def chatarra_electronica(request):
-    """
-    Página especializada para la compra de chatarra electrónica.
-    Diseño moderno y tecnológico para atraer a vendedores de componentes electrónicos.
-    """
-    return render(request, 'chatarra_electronica.html')
+    # Mostrar el catálogo de productos chatarra
+    productos = ProductoChatarra.objects.all()
+    return render(request, 'chatarra/catalogo.html', {'productos': productos})
 
 def bienvenida_atlanta(request):
     """

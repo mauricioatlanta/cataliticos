@@ -1,5 +1,15 @@
 
 from django.db import models
+
+class ProductoChatarra(models.Model):
+    nombre = models.CharField(max_length=100)
+    codigo = models.CharField(max_length=20, unique=True)
+    precio_kg = models.PositiveIntegerField()
+    imagen = models.ImageField(upload_to="chatarra/", blank=True, null=True)
+    categoria = models.CharField(max_length=50, blank=True, null=True)  # ej: "placa", "fuente", etc.
+
+    def __str__(self):
+        return f"{self.nombre} ({self.codigo})"
 from datetime import date
 from decimal import Decimal
 

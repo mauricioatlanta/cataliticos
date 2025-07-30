@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="row">
+<div class="flex flex-col md:flex-row gap-4 mb-6">
+  <select id="filtro" class="w-full md:w-1/4 p-2 rounded bg-gray-800 text-white">
+    <option value="">Todas las categorías</option>
+    <option value="placa">Placas</option>
+    <option value="memoria">Memorias</option>
+    <option value="fuente">Fuentes</option>
+    <option value="disco">Discos</option>
+    <option value="procesador">Procesadores</option>
+    <option value="celular">Celulares</option>
+  </select>
+  <input id="buscador" type="text" placeholder="🔍 Buscar por nombre o código..." class="w-full md:w-1/3 p-2 rounded bg-gray-800 text-white">
+</div>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<div id="grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 animate-fade-in">
+  {% for p in page_obj %}
+    <div class="producto transition duration-300 transform hover:scale-105 max-w-xs mx-auto sm:max-w-sm md:max-w-md bg-gray-800 p-4 rounded-xl shadow text-center mb-4"
+         data-nombre="{{ p.nombre }}"
+         data-codigo="{{ p.codigo }}"
+         data-categoria="{{ p.categoria }}"
+         data-aos="fade-up" data-aos-delay="100">
+      {% if p.imagen %}
+        <img src="{{ p.imagen.url }}" class="w-full h-32 object-cover mb-2 rounded" alt="{{ p.nombre }}">
+      {% else %}
+        <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="w-full h-32 object-cover mb-2 rounded" alt="Sin imagen">
+      {% endif %}
+      <span class="text-xs bg-cyan-700 text-white px-2 py-1 rounded-full mb-2 inline-block">{{ p.categoria }}</span>
+      <h3 class="text-white font-semibold text-sm">{{ p.nombre }}</h3>
+      <p class="text-sm text-gray-400">Código: {{ p.codigo }}</p>
+      <p class="text-cyan-300 font-bold text-lg">${{ p.precio_kg|floatformat:0 }} CLP/kg</p>
+      <a href="https://wa.me/56912345678?text=Hola,%20quiero%20vender%20{{ p.nombre }}" class="text-green-400 hover:underline text-sm">💬 Vender por WhatsApp</a>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="mt-8 flex justify-center gap-4 text-white">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="hover:underline">← Anterior</a>
+  {% endif %}
+  <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="hover:underline">Siguiente →</a>
+  {% endif %}
+</div>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
+<script>
+const filtro = document.getElementById("filtro");
+const buscador = document.getElementById("buscador");
+const productos = document.querySelectorAll(".producto");
+
+function filtrarCatalogo() {
+  const texto = buscador.value.toLowerCase();
+  const categoria = filtro.value;
+
+  productos.forEach(p => {
+    const nombre = p.dataset.nombre.toLowerCase();
+    const codigo = p.dataset.codigo.toLowerCase();
+    const cat = p.dataset.categoria;
+    const visible = (nombre.includes(texto) || codigo.includes(texto)) && 
+                    (categoria === "" || cat === categoria);
+    p.style.display = visible ? "block" : "none";
+  });
+}
+
+buscador.addEventListener("input", filtrarCatalogo);
+filtro.addEventListener("change", filtrarCatalogo);
+</script>
+  </div>
+</div>
+{% endblock %}

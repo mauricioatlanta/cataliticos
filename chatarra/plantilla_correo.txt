@@ -1,0 +1,20 @@
+Asunto: ¡Convierte tu chatarra electrónica en dinero con nuestro módulo Django!
+
+Hola [Nombre],
+
+¿Tienes productos de chatarra electrónica y quieres gestionarlos, venderlos o mostrar tu catálogo online?
+
+Te ofrecemos nuestro módulo Django listo para instalar, con:
+- Catálogo web moderno y responsivo
+- Exportación a JSON/CSV
+- API REST para apps móviles o dashboard
+- Filtros, búsqueda y paginación
+- Subida de imágenes y contacto por WhatsApp
+
+¿Te gustaría una demo o recibir el ZIP para tu empresa?
+
+Responde este correo y te ayudamos a implementarlo en minutos.
+
+Saludos,
+[Tu nombre]
+[Tu empresa]

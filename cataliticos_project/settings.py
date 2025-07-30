@@ -9,10 +9,10 @@ SECRET_KEY = 'django-insecure-1234567890'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'www.atlantareciclajes.cl',
+    'atlantareciclajes.pythonanywhere.com',
     '127.0.0.1',
-    'localhost',
-    'cataliticos-9wjq.onrender.com',
-    'cataliticos.onrender.com'  # opcional si redireccionas
+    'localhost'
 ]
 
 

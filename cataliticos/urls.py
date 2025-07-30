@@ -1,10 +1,17 @@
-from django.urls import path
+    # Exportación catálogo
+# Las siguientes rutas estaban mal indentadas, se corrigen:
+# path('chatarra-electronica/export/json/', views.exportar_catalogo_json, name='exportar_catalogo_json'),
+# path('chatarra-electronica/export/csv/', views.exportar_catalogo_csv, name='exportar_catalogo_csv'),
+from django.urls import path, include
 from django.views.generic import TemplateView
 from . import views
 
 app_name = 'cataliticos'
 
 urlpatterns = [
+path('chatarra-electronica/', include(('chatarra.urls', 'chatarra'), namespace='chatarra')),
+    path('chatarra-electronica/export/json/', views.exportar_catalogo_json, name='exportar_catalogo_json'),
+    path('chatarra-electronica/export/csv/', views.exportar_catalogo_csv, name='exportar_catalogo_csv'),
     path('stock/', views.resumen_stock, name='resumen_stock'),
     path('marcar-vendido/<int:pk>/', views.marcar_vendido, name='marcar_vendido'),
     path('', TemplateView.as_view(template_name="index.html"), name="catalíticos_home"),
@@ -45,9 +52,12 @@ urlpatterns = [
     path('consulta-catalitico/', views.consulta_catalitico, name='consulta_catalitico'),
     path('detalle/<int:pk>/', views.detalle_catalitico, name='detalle'),
     path('bienvenida-atlanta/', views.bienvenida_atlanta, name='bienvenida_atlanta'),
-    path('chatarra-electronica/', views.chatarra_electronica, name='chatarra_electronica'),
+    path('chatarra-electronica/', views.bienvenida_chatarra, name='bienvenida_chatarra'),
 
     # AJAX para ciudades
     path('ajax/ciudades-por-region/', views.ajax_ciudades_por_region, name='ajax_ciudades_por_region'),
     path('ajax/agregar-ciudad/', views.ajax_agregar_ciudad, name='ajax_agregar_ciudad'),
+
+    # Nueva ruta para catalogo chatarra
+    # La ruta ahora está en chatarra/urls.py
 ]
