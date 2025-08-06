@@ -548,7 +548,7 @@ def api_buscar_catalitico(request):
             # Respuesta plana para JS del formulario de compras
             return JsonResponse({
                 'success': True,
-                'id': catalitico.id,
+                'id': catalitico.pk,
                 'codigo': catalitico.codigo,
                 'descripcion': catalitico.descripcion,
                 'valor': float(catalitico.valor_compra),
