@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'cataliticos',
     'background_task',
+    'django_filters',
 ]
 
 CRON_CLASSES = [
@@ -73,7 +74,7 @@ DATABASES = {
 }
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [ BASE_DIR / 'cataliticos' / 'static',] 
+STATICFILES_DIRS = [ BASE_DIR / 'cataliticos' / 'static',]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
