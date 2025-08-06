@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'cataliticos',
     'background_task',
+    'rest_framework',
+    'django_filters',
 ]
 
 CRON_CLASSES = [
