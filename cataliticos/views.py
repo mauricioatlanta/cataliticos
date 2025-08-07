@@ -1,3 +1,20 @@
+
+from django.contrib.auth.decorators import login_required
+
+# ...existing code...
+
+@login_required(login_url='cataliticos:employee_login')
+def listado_cataliticos(request):
+    q = request.GET.get('q', '').strip()
+    cataliticos = Catalitico.objects.all()
+    if q:
+        cataliticos = cataliticos.filter(
+            models.Q(codigo__icontains=q) |
+            models.Q(descripcion__icontains=q)
+        )
+    return render(request, 'cataliticos/listado.html', {'cataliticos': cataliticos, 'codigo': q})
+
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 import csv
 from .models import ProductoChatarra
@@ -883,6 +900,15 @@ def reporte_fechas(request):
         cataliticos = qs
         total_compras = qs.aggregate(s=Sum('valor_compra'))['s'] or 0
         total_ventas = qs.aggregate(s=Sum('valor_venta'))['s'] or 0
+        # Forzar a enteros para formato CLP
+        try:
+            total_compras = int(total_compras)
+        except Exception:
+            total_compras = 0
+        try:
+            total_ventas = int(total_ventas)
+        except Exception:
+            total_ventas = 0
         utilidad = total_ventas - total_compras
     return render(request, 'cataliticos/reporte_fechas.html', {
         'cataliticos': cataliticos,

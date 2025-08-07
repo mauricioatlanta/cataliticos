@@ -44,6 +44,7 @@
                 {% if user.is_authenticated %}
                   <a href="{% url 'cataliticos:consulta_catalitico' %}" class="hover:text-cyan-400 transition">🔍 Buscar</a>
                   <a href="{% url 'cataliticos:crear' %}" class="hover:text-cyan-400 transition">➕ Agregar</a>
+                  <a href="{% url 'cataliticos:listado' %}" class="hover:text-cyan-400 transition">🗂️ Catalíticos</a>
                   <a href="{% url 'cataliticos:listado_compras' %}" class="hover:text-cyan-400 transition">🧾 Compras</a>
                   <a href="{% url 'cataliticos:dashboard' %}" class="hover:text-cyan-400 transition">📊 Dashboard</a>
                   <a href="{% url 'cataliticos:reporte_fechas' %}" class="hover:text-cyan-400 transition">📅 Reporte por Fechas</a>
@@ -65,6 +66,7 @@
                 {% if user.is_authenticated %}
                   <a href="{% url 'cataliticos:consulta_catalitico' %}" class="block text-white hover:text-cyan-400">🔍 Buscar</a>
                   <a href="{% url 'cataliticos:crear' %}" class="block text-white hover:text-cyan-400">➕ Agregar</a>
+                  <a href="{% url 'cataliticos:listado' %}" class="block text-white hover:text-cyan-400">🗂️ Catalíticos</a>
                   <a href="{% url 'cataliticos:listado_compras' %}" class="block text-white hover:text-cyan-400">🧾 Compras</a>
                   <a href="{% url 'cataliticos:dashboard' %}" class="block text-white hover:text-cyan-400">📊 Dashboard</a>
                   <a href="{% url 'cataliticos:reporte_fechas' %}" class="block text-white hover:text-cyan-400">📅 Reporte por Fechas</a>
