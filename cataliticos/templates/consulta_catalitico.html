@@ -1,11 +1,9 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Precios de Catalíticos</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+{% block title %}Consulta de Precios de Catalíticos{% endblock %}
+
+{% block extra_head %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap">
     <style>
       body {
@@ -104,13 +102,10 @@
         z-index: 1001;
       }
     </style>
-</head>
-<body class="min-h-screen flex flex-col justify-center items-center">
+{% endblock %}
+
+{% block content %}
     <div id="futuristic-bg"></div>
-    <header class="w-full flex justify-between px-6 pt-6 z-10">
-      <a href="{% url 'cataliticos:catalíticos_home' %}" class="futur-btn text-base font-bold">🚗 Cataliticos</a>
-      <a href="{% url 'home' %}" class="futur-btn text-base font-bold">🏠 Atlanta Reciclajes</a>
-    </header>
     <div class="w-full max-w-md mx-auto mt-8 p-8 glass relative" style="z-index:1;">
         <h1 class="text-2xl md:text-3xl neon text-center mb-6 font-bold" style="letter-spacing:0.04em;">🔍 Consulta el Precio de tu Catalítico</h1>
         <form id="consulta-form" class="flex flex-col gap-4">
@@ -126,6 +121,9 @@
       <span class="close-btn" onclick="document.getElementById('modal-img').style.display='none'">&times;</span>
       <img src="" alt="Zoom catalítico" id="modal-img-src">
     </div>
+{% endblock %}
+
+{% block extra_js %}
     <script>
       // Búsqueda en tiempo real de códigos
       const codigoInput = document.getElementById('codigo');
@@ -267,5 +265,4 @@
         });
     });
     </script>
-</body>
-</html>
+{% endblock %}
