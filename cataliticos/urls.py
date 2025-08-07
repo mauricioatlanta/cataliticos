@@ -1,4 +1,4 @@
-    # Exportación catálogo
+# Exportación catálogo
 # Las siguientes rutas estaban mal indentadas, se corrigen:
 # path('chatarra-electronica/export/json/', views.exportar_catalogo_json, name='exportar_catalogo_json'),
 # path('chatarra-electronica/export/csv/', views.exportar_catalogo_csv, name='exportar_catalogo_csv'),
@@ -60,4 +60,5 @@ path('chatarra-electronica/', include(('chatarra.urls', 'chatarra'), namespace='
 
     # Nueva ruta para catalogo chatarra
     # La ruta ahora está en chatarra/urls.py
+    path('reporte-fechas/', views.reporte_fechas, name='reporte_fechas'),
 ]

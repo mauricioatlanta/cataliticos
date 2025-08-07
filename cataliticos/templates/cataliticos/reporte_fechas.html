@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Reporte por Fechas - Catalíticos{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 p-6 glass">
+  <h1 class="text-2xl font-bold neon mb-6 text-center">📅 Reporte de Compras y Ventas por Fechas</h1>
+  <form method="get" class="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
+    <div>
+      <label for="fecha_inicio" class="block text-cyan-300 font-semibold mb-1">Desde</label>
+      <input type="date" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" class="input-transp px-3 py-2 rounded-lg">
+    </div>
+    <div>
+      <label for="fecha_fin" class="block text-cyan-300 font-semibold mb-1">Hasta</label>
+      <input type="date" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" class="input-transp px-3 py-2 rounded-lg">
+    </div>
+    <button type="submit" class="futur-btn mt-4 md:mt-6">🔍 Consultar</button>
+  </form>
+  {% if cataliticos %}
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-gray-900 text-white rounded-xl shadow-lg">
+      <thead>
+        <tr class="bg-cyan-900 text-cyan-200">
+          <th class="py-2 px-4">Código</th>
+          <th class="py-2 px-4">Descripción</th>
+          <th class="py-2 px-4">Fecha Compra</th>
+          <th class="py-2 px-4">Valor Compra</th>
+          <th class="py-2 px-4">Valor Venta</th>
+          <th class="py-2 px-4">Utilidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cat in cataliticos %}
+        <tr class="border-b border-gray-700 hover:bg-cyan-950/30">
+          <td class="py-2 px-4">{{ cat.codigo }}</td>
+          <td class="py-2 px-4">{{ cat.descripcion|default:'-' }}</td>
+          <td class="py-2 px-4">{{ cat.fecha_compra }}</td>
+          <td class="py-2 px-4">${{ cat.valor_compra|intcomma }}</td>
+          <td class="py-2 px-4">${{ cat.valor_venta|default:'-'|intcomma }}</td>
+          <td class="py-2 px-4">${{ cat.ganancia_unidad|intcomma }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-8 text-lg text-center">
+    <div class="flex flex-row justify-center gap-8 mb-1 text-cyan-300 font-bold">
+      <span>Total Compras: <span class="text-white">${{ total_compras|intcomma }}</span></span>
+      <span>Total Ventas: <span class="text-white">${{ total_ventas|intcomma }}</span></span>
+    </div>
+    <div class="text-cyan-300 font-bold">Utilidad/Pérdida: <span class="text-white">${{ utilidad|intcomma }}</span></div>
+  </div>
+  {% elif fecha_inicio and fecha_fin %}
+    <div class="text-center text-pink-400 font-bold mt-8">No hay catalíticos en ese rango de fechas.</div>
+  {% endif %}
+</div>
+{% endblock %}

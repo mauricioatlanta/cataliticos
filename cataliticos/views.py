@@ -866,3 +866,29 @@ def resumen_stock(request):
         'total_venta': total_venta,
         'ganancia_esperada': ganancia_esperada
     })
+from django.db.models import Sum
+from .models import Catalitico
+from django.utils.dateparse import parse_date
+
+@login_required
+def reporte_fechas(request):
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    cataliticos = []
+    total_compras = 0
+    total_ventas = 0
+    utilidad = 0
+    if fecha_inicio and fecha_fin:
+        qs = Catalitico.objects.filter(fecha_compra__range=[fecha_inicio, fecha_fin])
+        cataliticos = qs
+        total_compras = qs.aggregate(s=Sum('valor_compra'))['s'] or 0
+        total_ventas = qs.aggregate(s=Sum('valor_venta'))['s'] or 0
+        utilidad = total_ventas - total_compras
+    return render(request, 'cataliticos/reporte_fechas.html', {
+        'cataliticos': cataliticos,
+        'fecha_inicio': fecha_inicio,
+        'fecha_fin': fecha_fin,
+        'total_compras': total_compras,
+        'total_ventas': total_ventas,
+        'utilidad': utilidad,
+    })
